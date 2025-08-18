@@ -1,4 +1,4 @@
-# Quantum Mechanical Formulation of the Squiggly Line Conjecture
+# [Quantum Mechanical Formulation of the Squiggly Line Conjecture](https://claude.ai/share/91316488-aa14-432b-93c8-372ad4e668ef)
 
 ## Abstract
 
