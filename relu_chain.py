@@ -239,7 +239,8 @@ def visualize_polynomial_behavior_1d():
         fontsize=14,
     )
     plt.tight_layout()
-    plt.show()
+    plt.savefig("./graphs/polynomial_behavior_1d.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 def analyze_all_positive_regime():
@@ -356,7 +357,8 @@ def plot_squiggly_line_scaling():
 
     plt.suptitle("Neural Network Width and the Squiggly Line Conjecture", fontsize=14)
     plt.tight_layout()
-    plt.show()
+    plt.savefig("./graphs/squiggly_line_scaling.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
     return results
 
