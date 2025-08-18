@@ -2,13 +2,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from IPython.display import HTML
-import seaborn as sns
 
 # Set style
-plt.style.use("seaborn-v0_8-darkgrid")
-sns.set_palette("husl")
+plt.style.use("ggplot")
 
 
 class ReLUNetwork(nn.Module):
