@@ -1,6 +1,4 @@
-# Mathematical Formalization of the Squiggly Line Conjecture
-
-[Claude chat Part 1](https://claude.ai/share/39f58f0c-70e3-4b12-a087-d32d96efa458)
+# [Mathematical Formalization of the Squiggly Line Conjecture](https://claude.ai/share/39f58f0c-70e3-4b12-a087-d32d96efa458)
 
 When you scatter random points on a plane and draw two curves through the same space - one simple and straight-ish, another complex and squiggly - the squiggly curve will, on average, pass closer to your random points even though both curves are drawn randomly without "seeing" the points first. This happens because a squiggly line covers more total length as it winds through the space, giving it more opportunities to accidentally pass near any given point, much like how a longer fishing line cast randomly into a pond has better chances of landing near fish than a shorter one. This geometric insight explains why larger neural networks often learn faster from the very beginning of training: their random initialization already positions them closer to the data they need to fit, not because they're "smarter" but simply because their complexity gives them better coverage of the possible solution space - though this advantage plateaus once the curve becomes so squiggly it starts wasting its length by looping back on itself.
 
