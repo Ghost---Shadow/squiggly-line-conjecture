@@ -1,1 +1,53 @@
-TODO
+\section{Mathematical Preliminaries}
+\label{sec:preliminaries}
+
+This section establishes the mathematical framework for the Squiggly Line Conjecture and defines key concepts used throughout the paper.
+
+\subsection{Problem Setup}
+
+Let $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ be a set of points in $[-1, 1]^d \times \mathbb{R}$.
+
+For a function $f: [-1, 1]^d \to \mathbb{R}$, define the \textbf{average distance to the dataset}:
+$$L(f, \mathcal{D}) = \frac{1}{n} \sum_{i=1}^n \min_{x \in [-1,1]^d} \|(x_i, y_i) - (x, f(x))\|_2$$
+
+\subsection{The Squiggly Line Conjecture}
+
+\begin{definition}[The Squiggly Line Conjecture]
+For randomly initialized functions $f_{\theta_1}$ and $f_{\theta_2}$ where $|\theta_1| < |\theta_2|$ (parameter count):
+$$\mathbb{E}[L(f_{\theta_2}, \mathcal{D})] < \mathbb{E}[L(f_{\theta_1}, \mathcal{D})]$$
+\end{definition}
+
+\subsection{Spatial Coverage Mechanism}
+
+The conjecture relies on three key geometric concepts:
+
+\begin{definition}[Curve Length]
+For a function $f: [-1,1]^d \to \mathbb{R}$, its curve length is:
+$$\ell(f) = \int_{[-1,1]^d} \sqrt{1 + \|\nabla f(x)\|^2} dx$$
+\end{definition}
+
+\begin{definition}[Coverage Volume]
+The $\epsilon$-neighborhood of function $f$ is:
+$$V_\epsilon(f) = \text{Vol}\{(x, y) : \exists t \in [-1,1]^d, \|(x, y) - (t, f(t))\| < \epsilon\}$$
+\end{definition}
+
+\begin{definition}[Expected Minimum Distance]
+For uniform random points, the expected minimum distance satisfies:
+$$\mathbb{E}[\text{dist}(p, f)] \approx \left(\frac{V_{\text{uncovered}}}{V_{\text{total}}}\right)^{1/d}$$
+\end{definition}
+
+\subsection{Polynomial Spaces}
+
+Let $P_d$ be the space of polynomials of degree $d$:
+$$P_d = \left\{p(x) = \sum_{k=0}^d a_k x^k : a_k \in \mathbb{R}\right\}$$
+
+For a polynomial $p \in P_d$ with random coefficients $a_k \sim \text{Uniform}(-\alpha, \alpha)$, we can compute:
+
+\textbf{Variance of the polynomial}:
+$$\text{Var}[p(x)] = \sum_{k=0}^d \text{Var}[a_k] x^{2k} = \frac{\alpha^2}{3} \sum_{k=0}^d x^{2k}$$
+
+For $x \in [-1, 1]$: $\text{Var}[p(x)] \leq \frac{\alpha^2}{3}(d + 1)$
+
+\textbf{Expected number of local extrema}:
+By Kac's theorem, a random polynomial of degree $d$ has expected number of real roots:
+$$\mathbb{E}[\#\text{extrema}] \approx \frac{2}{\pi} \log(d) + O(1)$$

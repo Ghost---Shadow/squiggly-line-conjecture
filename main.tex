@@ -55,13 +55,13 @@
 
 % The \icmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
-\icmltitlerunning{Submission and Formatting Instructions for ICML 2025}
+\icmltitlerunning{The Squiggly Line Conjecture}
 
 \begin{document}
 
 \twocolumn[
-\icmltitle{Submission and Formatting Instructions for \\
-           International Conference on Machine Learning (ICML 2025)}
+\icmltitle{The Squiggly Line Conjecture: A Universal Geometric Principle \\
+           for Neural Network Initialization}
 
 % It is OKAY to include author information, even for blind
 % submissions: the style file will automatically remove it for you
@@ -103,7 +103,7 @@
 % You may provide any keywords that you
 % find helpful for describing your paper; these are used to populate
 % the "keywords" metadata in the PDF but will not be shown in the document
-\icmlkeywords{Machine Learning, ICML}
+\icmlkeywords{Machine Learning, Neural Networks, Initialization, Geometric Principles, Overparameterization, Function Space Coverage}
 
 \vskip 0.3in
 ]
@@ -120,9 +120,7 @@
 \printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
 
 \begin{abstract}
-This document provides a basic paper template and submission guidelines.
-Abstracts must be a single paragraph, ideally between 4--6 sentences long.
-Gross violations will trigger corrections at the camera-ready phase.
+We present and validate the Squiggly Line Conjecture, which states that randomly initialized complex functions (polynomials or neural networks) are geometrically closer to random data points than simpler functions, purely due to their increased "spatial coverage" in function space. Through comprehensive theoretical analysis and empirical validation, we demonstrate that this principle is dimension-independent and provides a fundamental geometric explanation for the success of overparameterized models in machine learning. Our experiments reveal that this initial proximity advantage translates directly to faster convergence and better final performance, providing a unified framework for understanding phenomena such as the lottery ticket hypothesis and the benefits of overparameterization.
 \end{abstract}
 
 \input{10_introduction}
@@ -134,6 +132,8 @@ Gross violations will trigger corrections at the camera-ready phase.
 \input{40_theory}
 
 \input{50_experiments}
+
+\input{60_outro}
 
 % In the unusual situation where you want a paper to appear in the
 % references without citing it in the main text, use \nocite

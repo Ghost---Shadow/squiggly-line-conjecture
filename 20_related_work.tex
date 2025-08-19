@@ -1,1 +1,26 @@
-TODO
+\section{Related Work}
+\label{sec:related_work}
+
+Our work connects several strands of research in deep learning theory, geometric analysis, and random polynomial theory.
+
+\subsection{Neural Network Theory}
+
+\textbf{Neural Tangent Kernels.} The Neural Tangent Kernel (NTK) framework \cite{jacot2018neural} analyzes neural networks in the infinite width limit, where the network behaves as a linear model. While NTK theory provides insights into training dynamics, it primarily focuses on the limit behavior rather than the finite-width initialization advantages we study.
+
+\textbf{Lottery Ticket Hypothesis.} Frankle \& Carbin \cite{frankle2018lottery} demonstrated that dense networks contain sparse subnetworks that can achieve comparable accuracy. Our work provides a geometric explanation for why some initializations are ``luckier'' than others---they have better spatial coverage of the solution space.
+
+\textbf{Double Descent and Overparameterization.} The phenomenon where larger models sometimes generalize better has been studied extensively \cite{belkin2019reconciling}. Our geometric perspective complements existing statistical explanations by showing that overparameterized models have initialization advantages.
+
+\subsection{Geometric Analysis}
+
+\textbf{Random Projections and Johnson-Lindenstrauss.} The Johnson-Lindenstrauss lemma shows that high-dimensional data can be embedded into lower dimensions while preserving distances. Our work inverses this perspective: higher-dimensional function spaces provide better coverage of data points.
+
+\textbf{Covering Numbers and VC Dimension.} Classical learning theory uses covering numbers and VC dimension to bound generalization \cite{vapnik1971uniform}. We contribute a new perspective on how function complexity relates to geometric coverage rather than just learning capacity.
+
+\subsection{Random Polynomials}
+
+\textbf{Kac's Theorem.} Classical results on random polynomials, such as Kac's theorem on the expected number of real roots \cite{kac1943average}, provide foundations for understanding random function behavior. Our analysis extends these ideas to spatial coverage properties.
+
+\textbf{Gaussian Processes.} Random function priors in Gaussian processes \cite{neal1996priors} offer another lens on function space geometry. While GPs focus on smoothness assumptions, we examine coverage properties without smoothness constraints.
+
+Our work is unique in providing a unified geometric framework that explains initialization advantages across different function classes and connects classical polynomial analysis to modern deep learning phenomena.
