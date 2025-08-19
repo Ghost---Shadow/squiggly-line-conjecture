@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 import math
+
+# Set seaborn style
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 8)
 from utils import (
     count_activation_patterns,
     measure_coverage,
@@ -274,131 +280,130 @@ if __name__ == "__main__":
         f"Distance reduction: {((initial_dist - final_dist) / initial_dist * 100):.1f}%"
     )
 
-    # Create comprehensive plots
-    fig, axes = plt.subplots(2, 4, figsize=(20, 10))
-
-    # Plot 1: Dimension scaling
+    # Plot 1: Dimension Effects - Distance by Width
+    plt.figure(figsize=(10, 8))
     dimensions = sorted(dim_results.keys())
-    colors = ["blue", "green", "red"]
-    for i, width in enumerate([20, 40, 80]):
-        distances = [dim_results[d]["avg_distance"][i] for d in dimensions]
-        axes[0, 0].loglog(
-            dimensions, distances, "o-", color=colors[i], label=f"Width {width}"
-        )
-    axes[0, 0].set_xlabel("Dimension")
-    axes[0, 0].set_ylabel("Average Distance")
-    axes[0, 0].set_title("Distance vs Dimension")
-    axes[0, 0].legend()
-    axes[0, 0].grid(True, alpha=0.3)
+    dim_data = []
+    for d in dimensions:
+        for i, width in enumerate([20, 40, 80]):
+            distance = dim_results[d]["avg_distance"][i]
+            dim_data.append({"dimension": d, "distance": distance, "width": f"Width {width}"})
+    
+    dim_df = pd.DataFrame(dim_data)
+    sns.lineplot(data=dim_df, x="dimension", y="distance", hue="width", 
+                marker="o", linewidth=2, markersize=8)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Dimension")
+    plt.ylabel("Average Distance")
+    plt.title("Distance vs Dimension by Network Width")
+    plt.legend(title="Network Width")
+    plt.tight_layout()
+    plt.savefig("../graphs/more_effects_dimension_distance.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Plot 2: Distribution effects
+    # Plot 2: Dimension Effects - Patterns by Width
+    plt.figure(figsize=(10, 8))
+    pattern_data = []
+    for d in dimensions:
+        for i, width in enumerate([20, 40, 80]):
+            patterns = dim_results[d]["n_patterns"][i]
+            pattern_data.append({"dimension": d, "patterns": patterns, "width": f"Width {width}"})
+    
+    pattern_df = pd.DataFrame(pattern_data)
+    sns.lineplot(data=pattern_df, x="dimension", y="patterns", hue="width", 
+                marker="o", linewidth=2, markersize=8)
+    plt.yscale('log')
+    plt.xlabel("Dimension")
+    plt.ylabel("Number of Patterns")
+    plt.title("Patterns vs Dimension by Network Width")
+    plt.legend(title="Network Width")
+    plt.tight_layout()
+    plt.savefig("../graphs/more_effects_dimension_patterns.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+    # Plot 3: Distribution Effects - Combined Distance and Quality
+    plt.figure(figsize=(10, 8))
     dist_names = list(dist_results.keys())
-    dist_distances = [
-        np.mean(dist_results[dist]["avg_distance"]) for dist in dist_names
-    ]
-    axes[0, 1].bar(dist_names, dist_distances, alpha=0.7)
-    axes[0, 1].set_ylabel("Average Distance")
-    axes[0, 1].set_title("Distance by Data Distribution")
-    axes[0, 1].tick_params(axis="x", rotation=45)
+    dist_data = []
+    for dist in dist_names:
+        dist_distance = np.mean(dist_results[dist]["avg_distance"])
+        dist_quality = np.mean(dist_results[dist]["quality_score"])
+        dist_data.append({"distribution": dist, "distance": dist_distance, "metric": "Distance"})
+        dist_data.append({"distribution": dist, "distance": dist_quality, "metric": "Quality"})
+    
+    dist_df = pd.DataFrame(dist_data)
+    sns.barplot(data=dist_df, x="distribution", y="distance", hue="metric", palette=["skyblue", "lightcoral"])
+    plt.ylabel("Value")
+    plt.title("Distance and Quality by Data Distribution")
+    plt.xticks(rotation=45)
+    plt.legend(title="Metric")
+    plt.tight_layout()
+    plt.savefig("../graphs/more_effects_distribution_comparison.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Plot 3: Depth effects
+    # Plot 4: Depth Effects - Combined metrics
+    plt.figure(figsize=(10, 8))
     depths = sorted(depth_results.keys())
-    depth_distances = [depth_results[d]["avg_distance"] for d in depths]
-    depth_patterns = [depth_results[d]["n_patterns"] for d in depths]
+    depth_data = []
+    for d in depths:
+        depth_data.append({"depth": d, "value": depth_results[d]["avg_distance"], "metric": "Distance"})
+        depth_data.append({"depth": d, "value": depth_results[d]["n_patterns"], "metric": "Patterns"})
+        depth_data.append({"depth": d, "value": depth_results[d]["effective_regions"], "metric": "Regions"})
+    
+    depth_df = pd.DataFrame(depth_data)
+    sns.lineplot(data=depth_df, x="depth", y="value", hue="metric", style="metric",
+                markers=True, linewidth=2, markersize=8)
+    plt.xlabel('Network Depth')
+    plt.ylabel('Value')
+    plt.title("Network Depth Effects on Multiple Metrics")
+    plt.legend(title="Metric")
+    plt.tight_layout()
+    plt.savefig("../graphs/more_effects_depth_analysis.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    ax_depth = axes[0, 2]
-    ax_depth.plot(depths, depth_distances, "ro-", label="Distance")
-    ax_depth.set_xlabel("Network Depth")
-    ax_depth.set_ylabel("Average Distance", color="red")
-    ax_depth.tick_params(axis="y", labelcolor="red")
-
-    ax_depth2 = ax_depth.twinx()
-    ax_depth2.plot(depths, depth_patterns, "bo-", label="Patterns")
-    ax_depth2.set_ylabel("Number of Patterns", color="blue")
-    ax_depth2.tick_params(axis="y", labelcolor="blue")
-    ax_depth.set_title("Depth Effects")
-
-    # Plot 4: Training dynamics
+    # Plot 5: Training Dynamics - Combined Loss and Distance
+    plt.figure(figsize=(10, 8))
     epochs = training_result["epochs"]
     distances = training_result["distances"]
-    losses = training_result["training_losses"][::10]  # Subsample losses
+    losses = training_result["training_losses"][::10]
+    
+    train_data = []
+    for i, epoch in enumerate(epochs):
+        train_data.append({"epoch": epoch, "value": distances[i], "metric": "Test Distance"})
+        train_data.append({"epoch": epoch, "value": losses[i], "metric": "Training Loss"})
+    
+    train_df = pd.DataFrame(train_data)
+    sns.lineplot(data=train_df, x="epoch", y="value", hue="metric", style="metric",
+                markers=True, linewidth=2, markersize=8)
+    plt.xlabel('Epoch')
+    plt.ylabel('Value')
+    plt.title("Training Dynamics: Loss and Distance Evolution")
+    plt.legend(title="Metric")
+    plt.tight_layout()
+    plt.savefig("../graphs/more_effects_training_dynamics.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    ax_train = axes[0, 3]
-    ax_train.plot(epochs, distances, "go-", label="Test Distance")
-    ax_train.set_xlabel("Epoch")
-    ax_train.set_ylabel("Distance to Test Points", color="green")
-    ax_train.tick_params(axis="y", labelcolor="green")
-
-    ax_train2 = ax_train.twinx()
-    ax_train2.plot(epochs, losses, "mo-", label="Training Loss")
-    ax_train2.set_ylabel("Training Loss", color="magenta")
-    ax_train2.tick_params(axis="y", labelcolor="magenta")
-    ax_train.set_title("Training Dynamics")
-
-    # Bottom row: Pattern counts and quality metrics
-
-    # Plot 5: Dimension vs patterns
-    for i, width in enumerate([20, 40, 80]):
-        patterns = [dim_results[d]["n_patterns"][i] for d in dimensions]
-        axes[1, 0].semilogy(
-            dimensions, patterns, "o-", color=colors[i], label=f"Width {width}"
-        )
-    axes[1, 0].set_xlabel("Dimension")
-    axes[1, 0].set_ylabel("Number of Patterns")
-    axes[1, 0].set_title("Patterns vs Dimension")
-    axes[1, 0].legend()
-    axes[1, 0].grid(True, alpha=0.3)
-
-    # Plot 6: Distribution quality scores
-    dist_qualities = [
-        np.mean(dist_results[dist]["quality_score"]) for dist in dist_names
-    ]
-    axes[1, 1].bar(dist_names, dist_qualities, alpha=0.7, color="orange")
-    axes[1, 1].set_ylabel("Quality Score")
-    axes[1, 1].set_title("Quality by Distribution")
-    axes[1, 1].tick_params(axis="x", rotation=45)
-
-    # Plot 7: Effective regions vs depth
-    effective_regions = [depth_results[d]["effective_regions"] for d in depths]
-    axes[1, 2].plot(depths, effective_regions, "co-")
-    axes[1, 2].set_xlabel("Network Depth")
-    axes[1, 2].set_ylabel("Effective Regions")
-    axes[1, 2].set_title("Effective Regions vs Depth")
-    axes[1, 2].grid(True, alpha=0.3)
-
-    # Plot 8: Summary heatmap
-    # Create a summary matrix of effects
+    # Plot 6: Summary heatmap
+    plt.figure(figsize=(10, 6))
+    dist_distances = [np.mean(dist_results[dist]["avg_distance"]) for dist in dist_names]
     summary_data = np.array(
         [
             [
-                np.mean(
-                    [dim_results[d]["avg_distance"][1] for d in [2, 3, 4, 5]]
-                ),  # Dimension effect
+                np.mean([dim_results[d]["avg_distance"][1] for d in [2, 3, 4, 5]]),  # Dimension effect
                 np.std(dist_distances),  # Distribution variance
-                depth_results[4]["avg_distance"]
-                - depth_results[1]["avg_distance"],  # Depth effect
-                (initial_dist - final_dist) / initial_dist,
-            ],  # Training effect
+                depth_results[4]["avg_distance"] - depth_results[1]["avg_distance"],  # Depth effect
+                (initial_dist - final_dist) / initial_dist,  # Training effect
+            ],
         ]
     ).reshape(1, -1)
 
-    im = axes[1, 3].imshow(summary_data, aspect="auto", cmap="viridis")
-    axes[1, 3].set_xticks(range(4))
-    axes[1, 3].set_xticklabels(
-        ["Dimension", "Distribution", "Depth", "Training"], rotation=45
-    )
-    axes[1, 3].set_yticks([0])
-    axes[1, 3].set_yticklabels(["Effect Size"])
-    axes[1, 3].set_title("Summary of Effects")
-
-    # Add colorbar
-    plt.colorbar(im, ax=axes[1, 3], fraction=0.046, pad=0.04)
-
-    plt.suptitle(
-        "Extended Analysis: Squiggly Line Effects in Neural Networks", fontsize=16
-    )
+    sns.heatmap(summary_data, annot=True, fmt='.3f', cmap="viridis",
+                xticklabels=["Dimension", "Distribution", "Depth", "Training"],
+                yticklabels=["Effect Size"])
+    plt.title("Summary of All Effects")
     plt.tight_layout()
-    plt.savefig("./graphs/more_effects_analysis.png", dpi=300, bbox_inches="tight")
+    plt.savefig("../graphs/more_effects_summary.png", dpi=300, bbox_inches="tight")
     plt.close()
 
     print("\n" + "=" * 60)
@@ -407,5 +412,11 @@ if __name__ == "__main__":
     print("2. Clustered data shows different coverage patterns than uniform/Gaussian")
     print("3. Depth has diminishing returns beyond 2-3 layers")
     print("4. Training reduces distance to test points, confirming the conjecture")
-    print("Results saved to ./graphs/more_effects_analysis.png")
+    print("Individual graphs saved to ./graphs/:")
+    print("- more_effects_dimension_distance.png")
+    print("- more_effects_dimension_patterns.png")
+    print("- more_effects_distribution_comparison.png")
+    print("- more_effects_depth_analysis.png")
+    print("- more_effects_training_dynamics.png")
+    print("- more_effects_summary.png")
     print("=" * 60)

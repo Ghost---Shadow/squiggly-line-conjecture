@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 from utils import count_activation_patterns, generate_data_distribution
+
+# Set seaborn style
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 8)
 
 
 class QuantumInspiredNetwork:
@@ -298,152 +304,148 @@ if __name__ == "__main__":
         f"  Coverage ratio (max/min) = {max(coverage_results)/min(coverage_results):.2f}"
     )
 
-    # Create comprehensive plots
-    fig, axes = plt.subplots(2, 4, figsize=(20, 12))
-
-    # Plot 1: Quantum advantage vs qubits for different dimensions
+    # Plot 1: Quantum Advantage by Dimension
+    plt.figure(figsize=(10, 8))
     dimensions = sorted(set(scaling_results["dimension"]))
-    colors = ["blue", "green", "red"]
+    quantum_data = []
+    for i, d in enumerate(scaling_results["dimension"]):
+        quantum_data.append({
+            "qubits": scaling_results["qubits"][i],
+            "dimension": d,
+            "quantum_advantage": scaling_results["quantum_advantage"][i]
+        })
+    quantum_df = pd.DataFrame(quantum_data)
+    
+    sns.lineplot(data=quantum_df, x="qubits", y="quantum_advantage", hue="dimension",
+                marker="o", linewidth=2, markersize=8)
+    plt.yscale('log')
+    plt.xlabel("Number of Qubits")
+    plt.ylabel("Quantum Advantage")
+    plt.title("Quantum Advantage vs Qubits by Dimension")
+    plt.legend(title="Dimension")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_advantage_vs_qubits.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    for i, d in enumerate(dimensions):
-        d_qubits = [
-            scaling_results["qubits"][j]
-            for j in range(len(scaling_results["dimension"]))
-            if scaling_results["dimension"][j] == d
-        ]
-        d_advantages = [
-            scaling_results["quantum_advantage"][j]
-            for j in range(len(scaling_results["dimension"]))
-            if scaling_results["dimension"][j] == d
-        ]
+    # Plot 2: Pattern Comparison - Quantum vs Classical
+    plt.figure(figsize=(10, 8))
+    quantum_2d = quantum_df[quantum_df["dimension"] == 2]
+    
+    pattern_data = []
+    for i, d in enumerate(scaling_results["dimension"]):
+        if d == 2:  # Focus on 2D for clarity
+            pattern_data.append({"qubits": scaling_results["qubits"][i], 
+                               "patterns": scaling_results["quantum_patterns"][i], "type": "Quantum"})
+            pattern_data.append({"qubits": scaling_results["qubits"][i], 
+                               "patterns": scaling_results["classical_patterns"][i], "type": "Classical"})
+    
+    pattern_df = pd.DataFrame(pattern_data)
+    sns.lineplot(data=pattern_df, x="qubits", y="patterns", hue="type", style="type",
+                markers=True, linewidth=2, markersize=8)
+    plt.yscale('log')
+    plt.xlabel("Qubits / Equivalent Width")
+    plt.ylabel("Number of Patterns")
+    plt.title("Quantum vs Classical Patterns (2D)")
+    plt.legend(title="Approach")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_vs_classical_patterns.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-        axes[0, 0].semilogy(
-            d_qubits, d_advantages, "o-", color=colors[i], label=f"Dimension {d}"
-        )
-
-    axes[0, 0].set_xlabel("Number of Qubits")
-    axes[0, 0].set_ylabel("Quantum Advantage")
-    axes[0, 0].set_title("Quantum Advantage vs Qubits")
-    axes[0, 0].legend()
-    axes[0, 0].grid(True, alpha=0.3)
-
-    # Plot 2: Pattern counts comparison
-    max_qubits = max(scaling_results["qubits"])
-    qubits_range = list(range(1, max_qubits + 1))
-    quantum_patterns_2d = [
-        scaling_results["quantum_patterns"][i]
-        for i in range(len(scaling_results["dimension"]))
-        if scaling_results["dimension"][i] == 2
-    ][:max_qubits]
-    classical_patterns_2d = [
-        scaling_results["classical_patterns"][i]
-        for i in range(len(scaling_results["dimension"]))
-        if scaling_results["dimension"][i] == 2
-    ][:max_qubits]
-
-    axes[0, 1].semilogy(qubits_range, quantum_patterns_2d, "bo-", label="Quantum")
-    axes[0, 1].semilogy(qubits_range, classical_patterns_2d, "ro-", label="Classical")
-    axes[0, 1].set_xlabel("Qubits / Equivalent Width")
-    axes[0, 1].set_ylabel("Number of Patterns")
-    axes[0, 1].set_title("Quantum vs Classical Patterns (2D)")
-    axes[0, 1].legend()
-    axes[0, 1].grid(True, alpha=0.3)
-
-    # Plot 3: Decoherence effects
-    axes[0, 2].plot(
-        decoherence_results["decoherence_rate"],
-        decoherence_results["advantage_ratio"],
-        "mo-",
-    )
-    axes[0, 2].set_xlabel("Decoherence Rate")
-    axes[0, 2].set_ylabel("Advantage Ratio")
-    axes[0, 2].set_title("Decoherence Impact")
-    axes[0, 2].grid(True, alpha=0.3)
-
-    # Plot 4: Entanglement benefits
-    for qubits in [2, 3, 4, 5]:
-        qubit_results = [
-            (
-                entanglement_results["entanglement"][i],
-                entanglement_results["pattern_efficiency"][i],
-            )
-            for i in range(len(entanglement_results["n_qubits"]))
-            if entanglement_results["n_qubits"][i] == qubits
-        ]
-
-        entanglement_levels, efficiencies = zip(*qubit_results)
-        axes[1, 0].plot(
-            entanglement_levels, efficiencies, "o-", label=f"{qubits} qubits"
-        )
-
-    axes[1, 0].set_xlabel("Entanglement Level")
-    axes[1, 0].set_ylabel("Pattern Efficiency")
-    axes[1, 0].set_title("Entanglement Benefits")
-    axes[1, 0].legend()
-    axes[1, 0].grid(True, alpha=0.3)
-
-    # Plot 5: Error correction overhead
-    for logical_qubits in [1, 2, 3, 4]:
-        logical_results = [
-            (error_results["error_rate"][i], error_results["net_advantage"][i])
-            for i in range(len(error_results["logical_qubits"]))
-            if error_results["logical_qubits"][i] == logical_qubits
-        ]
-
-        error_rates, advantages = zip(*logical_results)
-        axes[1, 1].semilogx(
-            error_rates, advantages, "o-", label=f"{logical_qubits} logical qubits"
-        )
-
-    axes[1, 1].set_xlabel("Error Rate")
-    axes[1, 1].set_ylabel("Net Quantum Advantage")
-    axes[1, 1].set_title("Error Correction Impact")
-    axes[1, 1].legend()
-    axes[1, 1].grid(True, alpha=0.3)
-
-    # Plot 6: Quantum distance advantage
+    # Plot 3: Distance Comparison - Quantum vs Classical
+    plt.figure(figsize=(10, 8))
     distances_2d = [
-        (
-            scaling_results["qubits"][i],
-            scaling_results["classical_distance"][i],
-            scaling_results["quantum_distance"][i],
-        )
+        (scaling_results["qubits"][i], scaling_results["classical_distance"][i], scaling_results["quantum_distance"][i])
         for i in range(len(scaling_results["dimension"]))
         if scaling_results["dimension"][i] == 2
-    ][
-        :6
-    ]  # First 6 points
+    ][:6]
+    
+    dist_data = []
+    for qubits, classical_dist, quantum_dist in distances_2d:
+        dist_data.append({"qubits": qubits, "distance": classical_dist, "type": "Classical"})
+        dist_data.append({"qubits": qubits, "distance": quantum_dist, "type": "Quantum"})
+    
+    dist_df = pd.DataFrame(dist_data)
+    sns.lineplot(data=dist_df, x="qubits", y="distance", hue="type", style="type",
+                markers=True, linewidth=2, markersize=8)
+    plt.yscale('log')
+    plt.xlabel("Qubits")
+    plt.ylabel("Distance to Random Data")
+    plt.title("Distance Comparison: Quantum vs Classical (2D)")
+    plt.legend(title="Approach")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_distance_comparison.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    qubits, classical_dist, quantum_dist = zip(*distances_2d)
-    axes[1, 2].semilogy(qubits, classical_dist, "ro-", label="Classical Distance")
-    axes[1, 2].semilogy(qubits, quantum_dist, "bo-", label="Quantum Distance")
-    axes[1, 2].set_xlabel("Qubits")
-    axes[1, 2].set_ylabel("Distance to Random Data")
-    axes[1, 2].set_title("Distance Comparison (2D)")
-    axes[1, 2].legend()
-    axes[1, 2].grid(True, alpha=0.3)
+    # Plot 4: Decoherence Effects
+    plt.figure(figsize=(10, 8))
+    sns.lineplot(x=decoherence_results["decoherence_rate"], 
+                y=decoherence_results["advantage_ratio"],
+                marker="o", color="magenta", linewidth=2, markersize=8)
+    plt.xlabel("Decoherence Rate")
+    plt.ylabel("Advantage Ratio")
+    plt.title("Quantum Decoherence Impact on Advantage")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_decoherence_effects.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Plot 7: Quantum coverage by energy level
-    axes[1, 3].plot(energy_levels, coverage_results, "go-", linewidth=2, markersize=8)
-    axes[1, 3].set_xlabel("Energy Level (n)")
-    axes[1, 3].set_ylabel("Coverage")
-    axes[1, 3].set_title("Quantum Mechanical Coverage")
-    axes[1, 3].grid(True, alpha=0.3)
+    # Plot 5: Entanglement Benefits
+    plt.figure(figsize=(10, 8))
+    ent_data = []
+    for i, qubits in enumerate(entanglement_results["n_qubits"]):
+        ent_data.append({
+            "qubits": f"{qubits} qubits",
+            "entanglement": entanglement_results["entanglement"][i],
+            "efficiency": entanglement_results["pattern_efficiency"][i]
+        })
+    ent_df = pd.DataFrame(ent_data)
+    
+    sns.lineplot(data=ent_df, x="entanglement", y="efficiency", hue="qubits",
+                marker="o", linewidth=2, markersize=8)
+    plt.xlabel("Entanglement Level")
+    plt.ylabel("Pattern Efficiency")
+    plt.title("Entanglement Benefits by Qubit Count")
+    plt.legend(title="System Size")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_entanglement_benefits.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
+    # Plot 6: Error Correction Overhead
+    plt.figure(figsize=(10, 8))
+    err_data = []
+    for i, logical_qubits in enumerate(error_results["logical_qubits"]):
+        err_data.append({
+            "logical_qubits": f"{logical_qubits} logical",
+            "error_rate": error_results["error_rate"][i],
+            "net_advantage": error_results["net_advantage"][i]
+        })
+    err_df = pd.DataFrame(err_data)
+    
+    sns.lineplot(data=err_df, x="error_rate", y="net_advantage", hue="logical_qubits",
+                marker="o", linewidth=2, markersize=8)
+    plt.xscale('log')
+    plt.xlabel("Error Rate")
+    plt.ylabel("Net Quantum Advantage")
+    plt.title("Error Correction Impact on Quantum Advantage")
+    plt.legend(title="Logical Qubits")
+    plt.tight_layout()
+    plt.savefig("../graphs/quantum_error_correction.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+    # Plot 7: Quantum Coverage by Energy Level
+    plt.figure(figsize=(10, 8))
+    sns.lineplot(x=energy_levels, y=coverage_results, marker="o", color="green", 
+                linewidth=2, markersize=8)
+    
     # Highlight the best energy level
     best_idx = np.argmax(coverage_results)
-    axes[1, 3].plot(
-        energy_levels[best_idx],
-        coverage_results[best_idx],
-        "ro",
-        markersize=12,
-        label=f"Best: n={energy_levels[best_idx]}",
-    )
-    axes[1, 3].legend()
-
-    plt.suptitle("Quantum Squiggly Line Conjecture: Complete Analysis", fontsize=16)
+    plt.scatter(energy_levels[best_idx], coverage_results[best_idx], 
+               color="red", s=200, zorder=5, label=f"Best: n={energy_levels[best_idx]}")
+    plt.xlabel("Energy Level (n)")
+    plt.ylabel("Coverage")
+    plt.title("Quantum Mechanical Coverage by Energy Level")
+    plt.legend()
     plt.tight_layout()
-    plt.savefig("./graphs/quantum_squiggly_analysis.png", dpi=300, bbox_inches="tight")
+    plt.savefig("../graphs/quantum_coverage_by_energy.png", dpi=300, bbox_inches="tight")
     plt.close()
 
     print("\n" + "=" * 60)
@@ -454,8 +456,13 @@ if __name__ == "__main__":
     print("4. Entanglement provides additional efficiency gains")
     print("5. Error correction overhead may negate advantages for near-term devices")
     print("6. Quantum mechanical coverage varies significantly with energy levels")
-    print(
-        "7. Fault-tolerant quantum computers could revolutionize function approximation"
-    )
-    print("Results saved to ./graphs/quantum_squiggly_analysis.png")
+    print("7. Fault-tolerant quantum computers could revolutionize function approximation")
+    print("Individual graphs saved to ./graphs/:")
+    print("- quantum_advantage_vs_qubits.png")
+    print("- quantum_vs_classical_patterns.png")
+    print("- quantum_distance_comparison.png")
+    print("- quantum_decoherence_effects.png")
+    print("- quantum_entanglement_benefits.png")
+    print("- quantum_error_correction.png")
+    print("- quantum_coverage_by_energy.png")
     print("=" * 60)

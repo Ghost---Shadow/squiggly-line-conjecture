@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 import math
+
+# Set seaborn style
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 8)
 from utils import (
     count_activation_patterns,
     measure_true_geometric_distance,
@@ -70,97 +76,102 @@ if __name__ == "__main__":
         geom_distances.append(geom_dist)
         print(f"Width {n}: Geometric distance = {geom_dist:.3f}")
 
-    # Plot all results
-    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    # Plot 1: Scaling Laws - combine distance and patterns using dual y-axis and hue
+    plt.figure(figsize=(10, 8))
+    
+    # Prepare data combining both distance and patterns
+    scaling_data = []
+    for i, n in enumerate(neurons):
+        scaling_data.append({"neurons": n, "value": avg_distances[i], "metric": "Distance", "type": "Measured"})
+        theory_dist = n ** (-1 / d)
+        scaling_data.append({"neurons": n, "value": theory_dist, "metric": "Distance", "type": "Theory"})
+        scaling_data.append({"neurons": n, "value": avg_patterns[i], "metric": "Patterns", "type": "Measured"})
+        theory_patt = min(sum(math.comb(n, k) for k in range(d + 1)), m)
+        scaling_data.append({"neurons": n, "value": theory_patt, "metric": "Patterns", "type": "Theory"})
+    
+    scaling_df = pd.DataFrame(scaling_data)
+    
+    # Plot distance data
+    dist_data = scaling_df[scaling_df["metric"] == "Distance"]
+    sns.lineplot(data=dist_data, x="neurons", y="value", hue="type", style="type",
+                markers=True, linewidth=2, markersize=8)
+    
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Number of neurons")
+    plt.ylabel("Scaling Value")
+    plt.title("Neural Network Coverage Scaling Laws")
+    plt.legend(title="Distance Scaling")
+    plt.tight_layout()
+    plt.savefig("../graphs/coverage_distance_scaling.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Original scaling plots
-    axes[0, 0].loglog(neurons, avg_distances, "o-", label="Measured")
-    axes[0, 0].loglog(
-        neurons, [n ** (-1 / d) for n in neurons], "--", label=f"n^(-1/{d})"
-    )
-    axes[0, 0].set_xlabel("Number of neurons")
-    axes[0, 0].set_ylabel("Average distance")
-    axes[0, 0].legend()
-    axes[0, 0].set_title("Distance Scaling")
-    axes[0, 0].grid(True, alpha=0.3)
+    # Plot 2: Pattern Scaling 
+    plt.figure(figsize=(10, 8))
+    patt_data = scaling_df[scaling_df["metric"] == "Patterns"]
+    sns.lineplot(data=patt_data, x="neurons", y="value", hue="type", style="type",
+                markers=True, linewidth=2, markersize=8)
+    
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Number of neurons")
+    plt.ylabel("Number of activation patterns")
+    plt.title("Pattern Count Scaling")
+    plt.legend(title="Pattern Scaling")
+    plt.tight_layout()
+    plt.savefig("../graphs/coverage_pattern_scaling.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    axes[0, 1].loglog(neurons, avg_patterns, "o-", label="Measured")
-    theory = [min(sum(math.comb(n, k) for k in range(d + 1)), m) for n in neurons]
-    axes[0, 1].loglog(neurons, theory, "--", label="Theory bound")
-    axes[0, 1].set_xlabel("Number of neurons")
-    axes[0, 1].set_ylabel("Number of activation patterns")
-    axes[0, 1].legend()
-    axes[0, 1].set_title("Pattern Count Scaling")
-    axes[0, 1].grid(True, alpha=0.3)
-
-    # Initialization scale effects
+    # Plot 3: Initialization Effects by Width
+    plt.figure(figsize=(10, 8))
+    init_data = []
     for width in widths:
         width_data = [
             (init_results["init_scale"][i], init_results["quality_score"][i])
             for i in range(len(init_results["width"]))
             if init_results["width"][i] == width
         ]
-        scales, scores = zip(*width_data)
-        axes[0, 2].semilogx(scales, scores, "o-", label=f"Width {width}")
-    axes[0, 2].set_xlabel("Initialization Scale")
-    axes[0, 2].set_ylabel("Quality Score")
-    axes[0, 2].set_title("Initialization Scale vs Quality")
-    axes[0, 2].legend()
-    axes[0, 2].grid(True, alpha=0.3)
+        for scale, score in width_data:
+            init_data.append({"scale": scale, "quality": score, "width": f"Width {width}"})
+    
+    init_df = pd.DataFrame(init_data)
+    sns.lineplot(data=init_df, x="scale", y="quality", hue="width", 
+                marker="o", linewidth=2, markersize=8)
+    plt.xscale('log')
+    plt.xlabel("Initialization Scale")
+    plt.ylabel("Quality Score")
+    plt.title("Initialization Scale Effects by Network Width")
+    plt.legend(title="Network Width")
+    plt.tight_layout()
+    plt.savefig("../graphs/coverage_initialization_effects.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Distance vs patterns
+    # Plot 4: Patterns vs Distance Trade-off
+    plt.figure(figsize=(10, 8))
+    plot_data = []
     for width in widths:
         width_data = [
             (init_results["n_patterns"][i], init_results["avg_distance"][i])
             for i in range(len(init_results["width"]))
             if init_results["width"][i] == width
         ]
-        patterns, dists = zip(*width_data)
-        axes[1, 0].scatter(patterns, dists, label=f"Width {width}", alpha=0.7)
-    axes[1, 0].set_xlabel("Number of Patterns")
-    axes[1, 0].set_ylabel("Average Distance")
-    axes[1, 0].set_title("Patterns vs Distance Trade-off")
-    axes[1, 0].legend()
-    axes[1, 0].grid(True, alpha=0.3)
-
-    # Geometric distance scaling
-    if len(geom_distances) > 1:
-        test_widths = [10, 20, 40]
-        axes[1, 1].loglog(
-            test_widths, geom_distances, "ro-", label="Geometric Distance"
-        )
-        axes[1, 1].set_xlabel("Network Width")
-        axes[1, 1].set_ylabel("True Geometric Distance")
-        axes[1, 1].set_title("True Geometric Distance Scaling")
-        axes[1, 1].legend()
-        axes[1, 1].grid(True, alpha=0.3)
-
-    # Quality vs width
-    width_quality = {}
-    for i, width in enumerate(init_results["width"]):
-        if width not in width_quality:
-            width_quality[width] = []
-        width_quality[width].append(init_results["quality_score"][i])
-
-    widths_plot = sorted(width_quality.keys())
-    avg_qualities = [np.mean(width_quality[w]) for w in widths_plot]
-    std_qualities = [np.std(width_quality[w]) for w in widths_plot]
-
-    axes[1, 2].errorbar(
-        widths_plot, avg_qualities, yerr=std_qualities, fmt="go-", capsize=5
-    )
-    axes[1, 2].set_xlabel("Network Width")
-    axes[1, 2].set_ylabel("Average Quality Score")
-    axes[1, 2].set_title("Quality vs Network Width")
-    axes[1, 2].grid(True, alpha=0.3)
-
-    plt.suptitle("Neural Network Coverage Analysis: Complete Results", fontsize=16)
+        for patterns, distance in width_data:
+            plot_data.append({"patterns": patterns, "distance": distance, "width": f"Width {width}"})
+    
+    df = pd.DataFrame(plot_data)
+    sns.scatterplot(data=df, x="patterns", y="distance", hue="width", s=60, alpha=0.7)
+    plt.xlabel("Number of Patterns")
+    plt.ylabel("Average Distance")
+    plt.title("Patterns vs Distance Trade-off by Network Width")
+    plt.legend(title="Network Width")
     plt.tight_layout()
-    plt.savefig("./graphs/coverage_analysis_complete.png", dpi=300, bbox_inches="tight")
+    plt.savefig("../graphs/coverage_patterns_vs_distance.png", dpi=300, bbox_inches="tight")
     plt.close()
 
     print("\n" + "=" * 60)
-    print(
-        "ANALYSIS COMPLETE - Results saved to ./graphs/coverage_analysis_complete.png"
-    )
+    print("ANALYSIS COMPLETE - Individual graphs saved to ./graphs/")
+    print("- coverage_distance_scaling.png")
+    print("- coverage_pattern_scaling.png")
+    print("- coverage_initialization_effects.png")
+    print("- coverage_patterns_vs_distance.png")
     print("=" * 60)

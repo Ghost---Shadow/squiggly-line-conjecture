@@ -2,9 +2,12 @@ import torch
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
-# Set style
-plt.style.use("ggplot")
+# Set seaborn style
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 8)
 
 
 class ReLUNetwork(nn.Module):
@@ -150,11 +153,8 @@ def analyze_squiggly_line_effect(
 
 def visualize_polynomial_behavior_1d():
     """Visualize how networks of different widths behave as polynomials in 1D."""
-
+    
     torch.manual_seed(42)
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    axes = axes.flatten()
-
     widths = [1, 2, 4, 8, 16, 32]
     x = torch.linspace(-3, 3, 1000).unsqueeze(1)
 
@@ -163,17 +163,18 @@ def visualize_polynomial_behavior_1d():
     data_x = torch.rand(n_points) * 6 - 3
     data_y = torch.randn(n_points) * 0.5
 
-    for idx, width in enumerate(widths):
-        ax = axes[idx]
-
-        # Create network
+    # Create data for all widths combined - show complexity vs width using hue
+    plt.figure(figsize=(10, 8))
+    
+    # Collect data for all networks
+    all_data = []
+    for width in widths:
         net = ReLUNetwork(input_dim=1, hidden_dims=[width, width], output_dim=1)
-
+        
         with torch.no_grad():
             y, activations = net(x, return_activations=True)
-
-            # Color code by activation pattern
-            # This shows where different "polynomial pieces" are
+            
+            # Count unique activation patterns (linear regions)
             activation_pattern = torch.cat(
                 [act["post_relu"].mean(dim=1, keepdim=True) > 0 for act in activations],
                 dim=1,
@@ -181,30 +182,9 @@ def visualize_polynomial_behavior_1d():
             pattern_id = activation_pattern.float() @ (
                 2.0 ** torch.arange(len(activations)).float()
             ).unsqueeze(1)
-
-            # Plot the function
-            scatter = ax.scatter(
-                x.numpy(),
-                y.numpy(),
-                c=pattern_id.numpy(),
-                s=1,
-                cmap="viridis",
-                alpha=0.7,
-            )
-
-            # Plot data points
-            ax.scatter(
-                data_x.numpy(),
-                data_y.numpy(),
-                c="red",
-                s=30,
-                zorder=5,
-                label="Data points",
-                edgecolors="black",
-                linewidth=1,
-            )
-
-            # Compute and display average minimum distance
+            unique_patterns = len(torch.unique(pattern_id))
+            
+            # Compute average minimum distance to data points
             min_dists = []
             for i in range(n_points):
                 dists = torch.sqrt(
@@ -212,30 +192,36 @@ def visualize_polynomial_behavior_1d():
                 )
                 min_dists.append(dists.min().item())
             avg_dist = np.mean(min_dists)
-
-            ax.set_title(f"Width={width}, Avg Min Dist={avg_dist:.3f}")
-            ax.set_xlabel("x")
-            ax.set_ylabel("f(x)")
-            ax.set_ylim([-3, 3])
-
-            # Add text showing number of linear regions
-            unique_patterns = len(torch.unique(pattern_id))
-            ax.text(
-                0.02,
-                0.98,
-                f"Regions: {unique_patterns}",
-                transform=ax.transAxes,
-                va="top",
-                fontsize=10,
-                bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
-            )
-
-    plt.suptitle(
-        "ReLU Networks as Piecewise Polynomials: Width vs Complexity\n(Colors indicate different linear regions)",
-        fontsize=14,
-    )
+            
+            all_data.append({
+                "width": width,
+                "regions": unique_patterns,
+                "avg_distance": avg_dist,
+                "complexity": unique_patterns / width  # Regions per width unit
+            })
+    
+    # Convert to DataFrame for seaborn
+    behavior_df = pd.DataFrame(all_data)
+    
+    # Plot regions vs width
+    sns.lineplot(data=behavior_df, x="width", y="regions", marker="o", 
+                linewidth=3, markersize=10, color="blue")
+    plt.xlabel("Network Width")
+    plt.ylabel("Number of Linear Regions")
+    plt.title("ReLU Network Complexity: Linear Regions vs Width")
     plt.tight_layout()
-    plt.savefig("./graphs/polynomial_behavior_1d.png", dpi=300, bbox_inches="tight")
+    plt.savefig("../graphs/relu_complexity_vs_width.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+    # Plot average distance vs width  
+    plt.figure(figsize=(10, 8))
+    sns.lineplot(data=behavior_df, x="width", y="avg_distance", marker="o", 
+                linewidth=3, markersize=10, color="red")
+    plt.xlabel("Network Width")
+    plt.ylabel("Average Distance to Data Points")
+    plt.title("ReLU Networks: Distance to Random Data vs Width")
+    plt.tight_layout()
+    plt.savefig("../graphs/relu_distance_vs_width.png", dpi=300, bbox_inches="tight")
     plt.close()
 
 
@@ -285,57 +271,78 @@ def plot_squiggly_line_scaling():
     print("Running scaling analysis (this may take a minute)...")
     results = analyze_squiggly_line_effect(input_dim=2, max_width=64, n_samples=50)
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    # Create DataFrame for consistent plotting
+    scaling_data = []
+    for i, width in enumerate(results["width"]):
+        scaling_data.append({
+            "width": width,
+            "avg_distance": results["avg_min_distance"][i],
+            "std_distance": results["std_min_distance"][i],
+            "activation_ratio": results["positive_activation_ratio"][i],
+            "effective_params": results["effective_params"][i]
+        })
+    scaling_df = pd.DataFrame(scaling_data)
 
-    # Plot 1: Distance vs Width
-    ax1 = axes[0]
-    ax1.errorbar(
-        results["width"],
-        results["avg_min_distance"],
-        yerr=results["std_min_distance"],
+    # Plot 1: Distance vs Width with error bars
+    plt.figure(figsize=(10, 8))
+    plt.errorbar(
+        scaling_df["width"],
+        scaling_df["avg_distance"],
+        yerr=scaling_df["std_distance"],
         marker="o",
         capsize=5,
+        linewidth=2,
+        markersize=8,
+        color='blue'
     )
-    ax1.set_xlabel("Network Width")
-    ax1.set_ylabel("Average Minimum Distance to Data")
-    ax1.set_title("Squiggly Line Effect: Width vs Distance")
-    ax1.set_xscale("log")
-    ax1.grid(True, alpha=0.3)
+    plt.xlabel("Network Width")
+    plt.ylabel("Average Minimum Distance to Data")
+    plt.title("Squiggly Line Effect: Width vs Distance")
+    plt.xscale("log")
 
     # Fit power law
     log_width = np.log(results["width"])
     log_dist = np.log(results["avg_min_distance"])
     coef = np.polyfit(log_width, log_dist, 1)
-    ax1.text(
+    plt.text(
         0.05,
         0.95,
         f"Scaling: d ~ w^{coef[0]:.2f}",
-        transform=ax1.transAxes,
+        transform=plt.gca().transAxes,
         va="top",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+        fontsize=10,
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.7),
     )
+    plt.tight_layout()
+    plt.savefig("../graphs/relu_distance_vs_width_scaling.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Plot 2: Activation Patterns
-    ax2 = axes[1]
-    ax2.plot(
-        results["width"],
-        results["positive_activation_ratio"],
+    # Plot 2: Activation Patterns vs Width
+    plt.figure(figsize=(10, 8))
+    sns.lineplot(
+        data=scaling_df,
+        x="width",
+        y="activation_ratio",
         marker="s",
         color="orange",
+        linewidth=2,
+        markersize=8
     )
-    ax2.set_xlabel("Network Width")
-    ax2.set_ylabel("Fraction of Positive Activations")
-    ax2.set_title("Activation Patterns vs Width")
-    ax2.set_xscale("log")
-    ax2.grid(True, alpha=0.3)
+    plt.xlabel("Network Width")
+    plt.ylabel("Fraction of Positive Activations")
+    plt.title("Activation Patterns vs Width")
+    plt.xscale("log")
+    plt.tight_layout()
+    plt.savefig("../graphs/relu_activation_patterns_vs_width.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-    # Plot 3: Parameters vs Distance
-    ax3 = axes[2]
-    ax3.scatter(results["effective_params"], results["avg_min_distance"], s=100)
-    ax3.set_xlabel("Number of Parameters")
-    ax3.set_ylabel("Average Minimum Distance")
-    ax3.set_title("Overparameterization Effect")
-    ax3.set_xscale("log")
+    # Plot 3: Parameters vs Distance with fit curve
+    plt.figure(figsize=(10, 8))
+    plt.scatter(scaling_df["effective_params"], scaling_df["avg_distance"], s=100, color='green', alpha=0.7)
+    plt.xlabel("Number of Parameters")
+    plt.ylabel("Average Minimum Distance")
+    plt.title("Overparameterization Effect")
+    plt.xscale("log")
 
     # Fit curve
     params = np.array(results["effective_params"])
@@ -347,13 +354,10 @@ def plot_squiggly_line_scaling():
     # Plot fit
     params_smooth = np.logspace(np.log10(params.min()), np.log10(params.max()), 100)
     dists_fit = np.exp(coef2[1]) * params_smooth ** coef2[0]
-    ax3.plot(params_smooth, dists_fit, "r--", alpha=0.5, label=f"d ~ p^{coef2[0]:.2f}")
-    ax3.legend()
-    ax3.grid(True, alpha=0.3)
-
-    plt.suptitle("Neural Network Width and the Squiggly Line Conjecture", fontsize=14)
+    plt.plot(params_smooth, dists_fit, "r--", alpha=0.7, linewidth=2, label=f"d ~ p^{coef2[0]:.2f}")
+    plt.legend()
     plt.tight_layout()
-    plt.savefig("./graphs/squiggly_line_scaling.png", dpi=300, bbox_inches="tight")
+    plt.savefig("../graphs/relu_overparameterization_effect.png", dpi=300, bbox_inches="tight")
     plt.close()
 
     return results
@@ -384,4 +388,10 @@ if __name__ == "__main__":
     print("2. When all ReLUs fire positive, network = linear polynomial")
     print("3. More parameters create more 'squiggles' in function space")
     print("4. This validates the Squiggly Line Conjecture for neural networks!")
+    print("Individual graphs saved to ./graphs/:")
+    print("- relu_complexity_vs_width.png")
+    print("- relu_distance_vs_width.png")
+    print("- relu_distance_vs_width_scaling.png")
+    print("- relu_activation_patterns_vs_width.png")
+    print("- relu_overparameterization_effect.png")
     print("=" * 60)
