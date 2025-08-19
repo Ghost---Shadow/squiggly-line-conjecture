@@ -79,6 +79,12 @@ The crucial insight is that "squiggliness" corresponds to the dimension of param
 
 Higher-dimensional parameter spaces provide better coverage of function space.
 
+<div align="center">
+<img src="../graphs/relu_distance_vs_width.png" alt="ReLU Distance vs Width" width="50%">
+</div>
+
+*Figure 3: ReLU neural networks show improved distance to random points with increased width, confirming the squiggly line conjecture for neural architectures.*
+
 ## 4. Theoretical Results
 
 ### 4.1 Main Theorem
@@ -97,6 +103,12 @@ where:
 **Surprising Result**: The scaling is dimension-independent for $d \in [2, 10]$.
 
 This suggests a universal geometric principle that transcends specific dimensionality.
+
+<div align="center">
+<img src="../graphs/more_effects_dimension_distance.png" alt="More Effects Dimension Distance" width="50%">
+</div>
+
+*Figure 4: Dimension independence of the squiggly line effect, showing consistent scaling across different dimensional spaces.*
 
 ### 4.3 Saturation Analysis
 
@@ -143,12 +155,30 @@ We tested the conjecture across multiple dimensions:
 - Final performance correlates with initial distance
 - Crossover point at epochs 40-60
 
+<div align="center">
+<img src="../graphs/more_effects_training_dynamics.png" alt="More Effects Training Dynamics" width="50%">
+</div>
+
+*Figure 5: Training dynamics show how networks with better initial coverage converge faster and achieve better final performance.*
+
 ### 5.3 Robustness
 
 The effect is robust to:
 - **Initialization scale**: Consistent across $\sigma \in [0.1, 10]$
 - **Data distribution**: Works for all tested distributions
 - **Dimension**: Remarkably dimension-independent
+
+<div align="center">
+<img src="../graphs/relu_activation_patterns_vs_width.png" alt="ReLU Activation Patterns vs Width" width="50%">
+</div>
+
+*Figure 6: Activation pattern analysis showing how network width affects the complexity and coverage of learned representations.*
+
+<div align="center">
+<img src="../graphs/more_effects_summary.png" alt="More Effects Summary" width="50%">
+</div>
+
+*Figure 7: Comprehensive summary of all effects, showing the universal nature of the squiggly line principle across different parameters and conditions.*
 
 ## 6. Implications
 

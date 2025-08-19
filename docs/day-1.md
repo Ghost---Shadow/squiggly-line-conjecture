@@ -45,6 +45,12 @@ $$V_\epsilon(p) \approx 2\epsilon \cdot \ell(p)$$
 
 Therefore: $\mathbb{E}[V_\epsilon(p_{d'})] > \mathbb{E}[V_\epsilon(p_d)]$ for $d' > d$
 
+<div align="center">
+<img src="../graphs/coverage_patterns_vs_distance.png" alt="Coverage Patterns vs Distance" width="50%">
+</div>
+
+*Figure 1: Coverage patterns demonstrate how higher-degree polynomials provide better spatial coverage, with distance to random points decreasing as polynomial complexity increases.*
+
 ### 3.3 Expected Minimum Distance
 
 For a uniform random point $(x, y) \in [-1, 1]^2$, the probability it lies within distance $r$ of polynomial $p$ is approximately:
@@ -90,6 +96,12 @@ The optimal degree $d^*$ satisfies:
 $$d^* = \arg\min_d \left[ \mathbb{E}[L(p_d, \mathcal{D})] + \lambda \cdot \text{Penalty}(d) \right]$$
 
 where the penalty term accounts for self-intersection and boundary effects.
+
+<div align="center">
+<img src="../graphs/coverage_distance_scaling.png" alt="Coverage Distance Scaling" width="50%">
+</div>
+
+*Figure 2: Distance scaling shows the improvement in coverage with increased polynomial degree, demonstrating the saturation effect predicted by the theory.*
 
 ## 5. Connection to Neural Networks
 

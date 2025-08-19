@@ -82,6 +82,12 @@ $$\text{Coverage} = N_{nodes} \times (\text{coverage per node}) \propto \sqrt{E}
 
 The $\sqrt{E}$ scaling emerges from the balance between more nodes (∝√E) and smaller node spacing (∝1/√E), with the amplitude squared contributing an additional E factor. ∎
 
+<div align="center">
+<img src="../graphs/quantum_coverage_by_energy.png" alt="Quantum Coverage by Energy" width="50%">
+</div>
+
+*Figure 8: Quantum coverage scaling with energy levels, demonstrating the fundamental √E relationship predicted by quantum mechanics.*
+
 ### 3.2 Theorem 2: Uncertainty Principle and Coverage
 
 **Theorem (Heisenberg Coverage Bound)**: The minimum expected distance to random points is bounded by the uncertainty principle:
@@ -113,6 +119,12 @@ $$\left\langle \left(\sum_i c_i \psi_i\right) \Big| \hat{C}_\mathcal{D} \Big| \l
 where $\sum_i |c_i|^2 = 1$.
 
 **Proof**: Via quantum interference terms that add constructively for coverage. ∎
+
+<div align="center">
+<img src="../graphs/quantum_entanglement_benefits.png" alt="Quantum Entanglement Benefits" width="50%">
+</div>
+
+*Figure 9: Quantum entanglement provides exponential advantages in coverage compared to classical systems, showing the power of quantum superposition.*
 
 ## 4. Path Integral Formulation
 
@@ -193,6 +205,12 @@ Classical exploration time: $O(2^n)$
 Quantum exploration time: $O(\sqrt{2^n})$ via amplitude amplification
 
 **Coverage Speedup**: Quadratic to exponential depending on the problem structure.
+
+<div align="center">
+<img src="../graphs/quantum_advantage_vs_qubits.png" alt="Quantum Advantage vs Qubits" width="50%">
+</div>
+
+*Figure 10: Quantum computational advantage scales exponentially with the number of qubits, demonstrating the fundamental superiority of quantum coverage.*
 
 ### 7.2 Variational Quantum Eigensolver (VQE) Connection
 
@@ -277,6 +295,12 @@ For any system with complexity parameter Λ:
 $$\text{Coverage}(Λ) = \alpha\sqrt{Λ} + \beta + O(Λ^{-1/2})$$
 
 This appears to be a universal law of nature!
+
+<div align="center">
+<img src="../graphs/quantum_vs_classical_patterns.png" alt="Quantum vs Classical Patterns" width="50%">
+</div>
+
+*Figure 11: Direct comparison of quantum and classical coverage patterns, showing the universal √Λ scaling law across different physical systems.*
 
 ## 12. Conclusion
 
