@@ -533,5 +533,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+scripts/data
 scratch
 main.pdf
