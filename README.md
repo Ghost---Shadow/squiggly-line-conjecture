@@ -2,11 +2,13 @@
 
 > **A Geometric Perspective on Neural Network Initialization**
 
+**📈 [PowerPoint Presentation](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)**
+
 This repository contains the implementation, experiments, and paper for "The Squiggly Line Conjecture: A Geometric Perspective on Neural Network Initialization" - a theoretical and empirical study exploring potential geometric factors in overparameterized neural networks.
 
 ## 📄 Abstract
 
-We present the Squiggly Line Conjecture, which proposes that randomly initialized complex functions (polynomials or neural networks) tend to be geometrically closer to random data points than simpler functions, due to their increased "spatial coverage" in function space. Through theoretical analysis and empirical validation, we show evidence that this principle appears dimension-independent and may help explain some aspects of overparameterized model behavior in machine learning.
+We present the Squiggly Line Conjecture, which proposes that randomly initialized complex functions (polynomials or neural networks) tend to be geometrically closer to random data points than simpler functions, due to their increased "spatial coverage" in function space. Through theoretical analysis and empirical validation, we show evidence that this principle appears dimension-independent and may help explain some aspects of overparameterized model behavior in machine learning. Our experiments suggest that this initial proximity advantage can contribute to faster convergence and improved performance, potentially offering a geometric perspective on phenomena such as the lottery ticket hypothesis and overparameterization benefits.
 
 ## 🔑 Key Contributions
 
