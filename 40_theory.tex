@@ -177,21 +177,21 @@ We quantify "squiggliness" using total variation, which scales as $\mathbb{E}[TV
 \subsection{Connection to Training Dynamics}
 
 \begin{theorem}[Initial Gradient Advantage]
-Networks with better initial coverage have larger initial gradients:
+Networks with better initial coverage may have larger initial gradients:
 $$\|\nabla_\theta \mathcal{L}(f_\theta, \mathcal{D})\|_0 \propto L(f_\theta, \mathcal{D})^{-1}$$
 \end{theorem}
 
-\textbf{Mechanism}: Networks with better initial coverage have larger gradients and converge faster. See Appendix~\ref{subsec:training-dynamics-proofs} for detailed proofs of the gradient advantage and convergence acceleration theorems.
+\textbf{Mechanism}: Networks with better initial coverage may have larger gradients and potentially converge faster. See Appendix~\ref{subsec:training-dynamics-proofs} for detailed proofs of the gradient advantage and convergence acceleration theorems.
 
 \subsection{Connection to Existing Theory}
 
 Our geometric framework connects to several established results:
 
-\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage. This explains why certain sparse subnetworks (winning tickets) can achieve comparable performance and why the sign rather than magnitude of weights is crucial \cite{Frankle2018TheLT, Zhou2019DeconstructingLT, Chen2021TheEL}.
+\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage. This may help explain why certain sparse subnetworks (winning tickets) can achieve comparable performance and why the sign rather than magnitude of weights appears crucial \cite{Frankle2018TheLT, Zhou2019DeconstructingLT, Chen2021TheEL}.
 
-\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space. This geometric perspective complements statistical explanations of double descent phenomena \cite{Zhang2016UnderstandingDL, Arora2019FineGrainedAO, Nakkiran2019DeepDD}.
+\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space. This geometric perspective may complement statistical explanations of double descent phenomena \cite{Zhang2016UnderstandingDL, Arora2019FineGrainedAO, Nakkiran2019DeepDD}.
 
-\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists \cite{Telgarsky2016BenefitsOD, Hanin2019ComplexityOL}.
+\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests that an optimal balance may exist \cite{Telgarsky2016BenefitsOD, Hanin2019ComplexityOL}.
 
 \subsection{Summary of Theoretical Results}
 
