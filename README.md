@@ -1,26 +1,26 @@
 # The Squiggly Line Conjecture
 
-> **A Universal Geometric Principle for Neural Network Initialization**
+> **A Geometric Perspective on Neural Network Initialization**
 
-This repository contains the complete implementation, experiments, and paper for "The Squiggly Line Conjecture: A Universal Geometric Principle for Neural Network Initialization" - a theoretical and empirical study revealing fundamental geometric advantages in overparameterized neural networks.
+This repository contains the implementation, experiments, and paper for "The Squiggly Line Conjecture: A Geometric Perspective on Neural Network Initialization" - a theoretical and empirical study exploring potential geometric factors in overparameterized neural networks.
 
 ## 📄 Abstract
 
-We present and validate the Squiggly Line Conjecture, which states that randomly initialized complex functions (polynomials or neural networks) are geometrically closer to random data points than simpler functions, purely due to their increased "spatial coverage" in function space. Through comprehensive theoretical analysis and empirical validation, we demonstrate that this principle is dimension-independent and provides a fundamental geometric explanation for the success of overparameterized models in machine learning.
+We present the Squiggly Line Conjecture, which proposes that randomly initialized complex functions (polynomials or neural networks) tend to be geometrically closer to random data points than simpler functions, due to their increased "spatial coverage" in function space. Through theoretical analysis and empirical validation, we show evidence that this principle appears dimension-independent and may help explain some aspects of overparameterized model behavior in machine learning.
 
 ## 🔑 Key Contributions
 
-1. **Universal Geometric Principle**: The √Λ scaling law appears across classical polynomials, neural networks, quantum states, and potentially biological systems
-2. **Dimension Independence**: The scaling relationship holds consistently across dimensions d ∈ [2, 10]  
-3. **Practical Implications**: Initial geometric advantage translates to 15-25% faster convergence and 10-20% better final performance
-4. **Quantum Foundation**: Extension to quantum mechanics reveals deeper principles rooted in wave function node structure
+1. **Geometric Scaling Pattern**: We observe a √Λ scaling law across classical polynomials, neural networks, and quantum states, with potential applications to biological systems
+2. **Apparent Dimension Independence**: The scaling relationship appears consistent across dimensions d ∈ [2, 10]  
+3. **Potential Practical Benefits**: Initial geometric advantage may contribute to 15-25% faster convergence and 10-20% improved performance in some cases
+4. **Quantum Formulation**: Extension to quantum mechanics suggests connections to wave function node structure
 
 ## 📊 Main Results
 
 - **Power Law Scaling**: Expected distance scales as `L ~ w^(-α)` with α ≈ 0.42 ± 0.04
 - **Saturation Point**: Benefits plateau at width `w* = Θ(√n)` where n is dataset size
-- **Training Acceleration**: Networks with better initial coverage converge exponentially faster
-- **Universal Behavior**: Same principles apply across polynomials, neural networks, and quantum systems
+- **Training Benefits**: Networks with better initial coverage may converge faster
+- **Cross-Domain Patterns**: Similar principles appear to apply across polynomials, neural networks, and quantum systems
 
 ## 🏗️ Repository Structure
 
@@ -120,10 +120,10 @@ The intuition behind the Squiggly Line Conjecture:
 
 > Consider casting fishing lines into a pond with randomly distributed fish. A straight line has limited chances of intersecting fish locations. However, a curved, meandering line covers more water surface area, increasing intersection probability purely through geometry.
 
-This geometric advantage explains:
-- **Lottery Ticket Hypothesis**: Some initializations are geometrically "luckier"
-- **Overparameterization Benefits**: Large networks have better geometric positioning
-- **Width vs Depth Trade-offs**: Width provides coverage, depth provides refinement
+This geometric perspective may help explain:
+- **Lottery Ticket Hypothesis**: Some initializations may be geometrically "luckier"
+- **Overparameterization Benefits**: Large networks may have better geometric positioning
+- **Width vs Depth Trade-offs**: Width potentially provides coverage, depth provides refinement
 
 ## 📊 Key Theoretical Results
 
@@ -138,7 +138,7 @@ where:
 - L∞ is the saturation distance
 
 ### Dimension Independence
-The scaling exponent α shows remarkable stability:
+The scaling exponent α appears relatively stable:
 - d=2: α = 0.41 ± 0.04
 - d=3: α = 0.43 ± 0.03  
 - d=5: α = 0.42 ± 0.05
@@ -147,13 +147,13 @@ The scaling exponent α shows remarkable stability:
 
 ## 🌌 Quantum Extension
 
-The paper extends the conjecture to quantum mechanics, showing that higher energy quantum states provide superior spatial coverage through increased wave function nodes:
+The paper explores extending the conjecture to quantum mechanics, investigating whether higher energy quantum states may provide improved spatial coverage through increased wave function nodes:
 
 ```
 E_quantum[C_D|E⟩] = α√E + β
 ```
 
-This reveals deep connections between classical geometric coverage and quantum mechanical principles.
+This suggests potential connections between classical geometric coverage and quantum mechanical principles.
 
 ## 📚 Citation
 
@@ -170,10 +170,10 @@ If you use this work in your research, please cite:
 
 ## 🔄 Future Directions
 
-1. **Architectural Optimization**: Design initialization schemes that maximize geometric coverage
-2. **Quantum Machine Learning**: Leverage quantum superposition for exponential coverage advantages  
-3. **Biological Validation**: Test whether biological neural systems exploit coverage principles
-4. **Theoretical Foundations**: Develop rigorous proofs for dimension independence
+1. **Architectural Optimization**: Explore initialization schemes that may improve geometric coverage
+2. **Quantum Machine Learning**: Investigate potential quantum superposition advantages for coverage  
+3. **Biological Validation**: Test whether biological neural systems might exploit coverage principles
+4. **Theoretical Foundations**: Develop more rigorous theoretical analysis of dimension independence
 
 ## 🤝 Contributing
 
@@ -194,8 +194,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-Special recognition goes to the geometric interpretation of neural networks that made this analysis possible. We acknowledge the fundamental role of randomness in nature, without which neither squiggly lines nor neural networks would provide their remarkable coverage advantages.
+We acknowledge the geometric interpretation of neural networks that enabled this analysis. We recognize the important role of randomness in nature, which may contribute to the coverage properties observed in both squiggly lines and neural networks.
 
 ---
 
-*"Just as a meandering river covers more ground than a straight canal, complex neural networks naturally position themselves closer to the data they need to learn."*
+*"Just as a meandering river covers more ground than a straight canal, complex neural networks may position themselves closer to the data they need to learn."*
