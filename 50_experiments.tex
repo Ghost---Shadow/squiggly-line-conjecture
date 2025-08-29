@@ -5,55 +5,10 @@ We validate the Squiggly Line Conjecture through comprehensive experiments acros
 
 \subsection{Experimental Setup}
 
-\subsubsection{Parameter Space}
-
-We conducted comprehensive experiments across multiple dimensions of the parameter space:
-
-\textbf{Network Architecture}:
-\begin{itemize}
-    \item \textbf{Dimensions}: $d \in \{2, 3, 4, 5, 8, 10\}$
-    \item \textbf{Network widths}: $w \in \{10, 20, 40, 80, 160, 320\}$
-    \item \textbf{Depths}: $L \in \{1, 2, 3, 4, 5\}$
-    \item \textbf{Dataset sizes}: $n \in \{100, 500, 1000, 2000\}$
-\end{itemize}
-
-\textbf{Data Distributions}:
-\begin{itemize}
-    \item \textbf{Uniform}: $x_i \sim \text{Unif}([-1,1]^d)$, $y_i \sim \text{Unif}([-2,2])$
-    \item \textbf{Gaussian}: $x_i \sim \mathcal{N}(0, 0.5^2 I_d)$, $y_i \sim \mathcal{N}(0,1)$
-    \item \textbf{Clustered}: $k=5$ Gaussian clusters with $\sigma = 0.2$
-    \item \textbf{Manifold}: Data sampled from $d$-dimensional sphere surface
-\end{itemize}
-
-\textbf{Initialization Schemes}:
-\begin{itemize}
-    \item \textbf{Xavier}: $w_{ij} \sim \mathcal{N}(0, 1/\sqrt{\text{fan-in}})$ \cite{Glorot2010UnderstandingTD}
-    \item \textbf{He}: $w_{ij} \sim \mathcal{N}(0, 2/\sqrt{\text{fan-in}})$ \cite{He2015DelvingDI}
-    \item \textbf{Scaled Uniform}: $w_{ij} \sim \text{Unif}([-a, a])$ with $a = \sqrt{3/\text{fan-in}}$
-\end{itemize}
-
-\subsubsection{Distance Metric}
-
-We implement the geometric distance as defined in Theorem~\ref{thm:main}:
+We test networks with widths $w \in \{10, 20, 40, 80, 160, 320\}$, dimensions $d \in \{2, 3, 4, 5, 8, 10\}$, and various data distributions (uniform, Gaussian, clustered, manifold). The geometric distance is computed as:
 $$L(f_w, \mathcal{D}) = \frac{1}{n} \sum_{i=1}^n \min_{x \in [-1,1]^d} \|(x_i, y_i) - (x, f_w(x))\|_2$$
 
-The minimization is performed using:
-\begin{enumerate}
-    \item Grid search over $[-1,1]^d$ with resolution $0.01$
-    \item Local optimization using L-BFGS starting from grid points
-    \item Verification using multiple random starting points
-\end{enumerate}
-
-\subsubsection{Statistical Analysis}
-
-For each configuration, we:
-\begin{itemize}
-    \item Generate 50 independent random network initializations
-    \item Compute distance for each initialization
-    \item Record mean, standard deviation, and confidence intervals
-    \item Perform statistical significance tests (t-test, Mann-Whitney U)
-    \item Control for multiple comparisons using Bonferroni correction
-\end{itemize}
+Each configuration is averaged over 50 independent random initializations. See Appendix~\ref{subsec:detailed-setup} for complete experimental details.
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -69,22 +24,10 @@ For each configuration, we:
 
 \subsubsection{Distance Scaling Validation}
 
-\textbf{Power Law Confirmation}: We observe consistent power law scaling:
+We observe consistent power law scaling:
 $$\mathbb{E}[L(f_w, \mathcal{D})] = L_0 \cdot w^{-\alpha} + L_\infty$$
 
-with fitted parameters:
-\begin{itemize}
-    \item $\alpha = 0.42 \pm 0.05$ across all dimensions
-    \item $L_0$ ranges from 1.2 to 2.8 depending on data distribution
-    \item $L_\infty = 0.15 \pm 0.02$ for uniform data on $[-1,1]^d$
-\end{itemize}
-
-\textbf{Goodness of Fit}: The power law model explains $R^2 > 0.95$ of variance in all tested configurations.
-
-\textbf{Saturation Confirmation}: Empirical saturation occurs at:
-$$w^*_{\text{empirical}} = (1.4 \pm 0.3) \sqrt{n}$$
-
-consistent with theoretical prediction $w^* = \Theta(\sqrt{n})$.
+with $\alpha = 0.42 \pm 0.05$ across all dimensions. The power law model explains $R^2 > 0.95$ of variance in all configurations, and empirical saturation at $w^*_{\text{empirical}} = (1.4 \pm 0.3) \sqrt{n}$ matches theoretical predictions.
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -96,74 +39,11 @@ consistent with theoretical prediction $w^* = \Theta(\sqrt{n})$.
 \vskip -0.2in
 \end{figure}
 
-\subsubsection{Activation Pattern Analysis}
-
-\textbf{Pattern Count Scaling}: We observe sub-linear growth:
-$$\mathbb{E}[\#\text{patterns}] \propto w^{\beta}$$
-
-with $\beta = 0.52 \pm 0.08$ across dimensions, confirming theoretical predictions.
-
-\textbf{Pattern Saturation}: The number of distinct patterns saturates at:
-\begin{itemize}
-    \item $d=2$: $\sim 8 \times 10^3$ patterns for $n=1000$
-    \item $d=5$: $\sim 1.2 \times 10^4$ patterns for $n=1000$
-    \item $d=10$: $\sim 1.5 \times 10^4$ patterns for $n=1000$
-\end{itemize}
-
-\textbf{Pattern-Distance Correlation}: Strong negative correlation ($r = -0.87$) between number of patterns and average distance, confirming the coverage mechanism.
-
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{graphs/relu_activation_patterns_vs_width}}
-\caption{Activation pattern analysis showing how network width affects the complexity and coverage of learned representations.}
-\label{fig:activation-patterns}
-\end{center}
-\vskip -0.2in
-\end{figure}
-
-\subsubsection{Architecture Effects}
-
-\textbf{Depth Analysis}: Systematic study reveals optimal depth:
-\begin{itemize}
-    \item \textbf{Depth 1}: $L = 1.8 \pm 0.2$ (baseline linear regions)
-    \item \textbf{Depth 2}: $L = 1.2 \pm 0.1$ (33\% improvement)
-    \item \textbf{Depth 3}: $L = 1.1 \pm 0.1$ (best performance)
-    \item \textbf{Depth 4}: $L = 1.15 \pm 0.12$ (marginal degradation)
-    \item \textbf{Depth 5+}: $L = 1.2 \pm 0.15$ (clear diminishing returns)
-\end{itemize}
-
-\textbf{Width vs Depth Trade-off}: For fixed parameter budget $P = w^2 L$:
-\begin{itemize}
-    \item Wide-shallow (large $w$, small $L$): Better initial coverage
-    \item Deep-narrow (small $w$, large $L$): Worse initial performance
-    \item Optimal: $L = 2$ or $3$ regardless of total parameters
-\end{itemize}
-
-\textbf{Initialization Scale Effects}: Systematic study of initialization variance $\sigma^2$:
-\begin{itemize}
-    \item $\sigma < 0.1/\sqrt{w}$: Nearly constant function, poor coverage
-    \item $\sigma \approx 1/\sqrt{w}$: Optimal coverage (Xavier initialization)
-    \item $\sigma > 10/\sqrt{w}$: High oscillation, self-intersection reduces effective coverage
-\end{itemize}
-
 \subsubsection{Dimension Independence Validation}
 
-\textbf{Scaling Exponent Consistency}: The power law exponent $\alpha$ shows remarkable stability:
-\begin{itemize}
-    \item $d=2$: $\alpha = 0.41 \pm 0.04$
-    \item $d=3$: $\alpha = 0.43 \pm 0.03$
-    \item $d=5$: $\alpha = 0.42 \pm 0.05$
-    \item $d=8$: $\alpha = 0.44 \pm 0.06$
-    \item $d=10$: $\alpha = 0.40 \pm 0.07$
-\end{itemize}
+The scaling exponent $\alpha$ shows remarkable stability across dimensions, ranging from $\alpha = 0.41 \pm 0.04$ for $d=2$ to $\alpha = 0.40 \pm 0.07$ for $d=10$, with $\alpha = 0.42 \pm 0.05$ at $d=5$.
 
-\textbf{Statistical Test}: ANOVA across dimensions yields $p > 0.05$, confirming no significant difference in scaling exponents.
-
-\textbf{Universal Curve}: When data is rescaled as $L/L_\infty$ vs $w/w^*$, all dimensions collapse onto a single universal curve:
-$$\frac{L(f_w, \mathcal{D})}{L_\infty} = 1 + A \left(1 + \frac{w}{w^*}\right)^{-\alpha}$$
-
-with $A = 2.1 \pm 0.3$ and $\alpha = 0.42 \pm 0.04$ across all dimensions.
+ANOVA confirms no significant difference ($p > 0.05$). When rescaled, all dimensions collapse onto a universal curve. See Appendix~\ref{subsec:detailed-architecture} for complete dimension analysis.
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -175,41 +55,11 @@ with $A = 2.1 \pm 0.3$ and $\alpha = 0.42 \pm 0.04$ across all dimensions.
 \vskip -0.2in
 \end{figure}
 
-\subsection{Training Dynamics Validation}
+\subsubsection{Training Dynamics Connection}
 
-\subsubsection{Convergence Rate Analysis}
+Networks with better initial coverage demonstrate $15-25\%$ faster convergence to target loss, $10-20\%$ better final test performance, and strong correlation ($r = 0.92$) between initial distance and early training loss.
 
-\textbf{Experimental Protocol}:
-\begin{itemize}
-    \item Train networks with different initial widths on regression tasks
-    \item Monitor loss convergence using SGD with learning rate $\eta = 0.01$
-    \item Record convergence time to reach target loss $\mathcal{L} < 0.1$
-    \item Average over 50 independent runs per configuration
-\end{itemize}
-
-\textbf{Key Findings}:
-\begin{enumerate}
-    \item \textbf{Initial gradient magnitude}: $\|\nabla \mathcal{L}\|_0 \propto L_0^{-1.2}$ (consistent with theory)
-    \item \textbf{Convergence time scaling}: $T_{\text{conv}} \propto L_0^{1.8}$
-    \item \textbf{Final performance}: Networks with better initial coverage achieve 15-25\% better final test performance
-\end{enumerate}
-
-\textbf{Persistence of Advantage}: Initial geometric advantage persists throughout training:
-\begin{itemize}
-    \item Epochs 1-20: Strong correlation ($r = 0.92$) between initial distance and loss
-    \item Epochs 20-50: Moderate correlation ($r = 0.65$) persists
-    \item Epochs 50+: Weak but significant correlation ($r = 0.35$, $p < 0.01$)
-    \item Crossover occurs at epoch $45 \pm 12$ across different architectures
-\end{itemize}
-
-\subsubsection{Learning Rate Sensitivity}
-
-The initial distance advantage interacts with learning rate:
-\begin{itemize}
-    \item \textbf{Low LR} ($\eta < 0.001$): Advantage persists longest (100+ epochs)
-    \item \textbf{Medium LR} ($\eta \approx 0.01$): Optimal trade-off between speed and advantage retention
-    \item \textbf{High LR} ($\eta > 0.1$): Advantage quickly overwhelmed by optimization noise
-\end{itemize}
+The initial advantage persists for $45 \pm 12$ epochs across architectures. See Appendix~\ref{subsec:detailed-training} for complete training dynamics analysis.
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -221,129 +71,20 @@ The initial distance advantage interacts with learning rate:
 \vskip -0.2in
 \end{figure}
 
-\subsection{Robustness Analysis}
+\subsection{Robustness and Architecture Effects}
 
-\subsubsection{Initialization Robustness}
+The effect is robust across initialization schemes (Xavier, He, and scaled uniform all show $\alpha \approx 0.42$), activation functions (ReLU gives $\alpha = 0.42$, Leaky ReLU $\alpha = 0.40$, while Tanh gives $\alpha = 0.28$), and architectures where skip connections and normalization preserve the effect.
 
-\textbf{Scale Invariance}: The scaling law holds across initialization scales:
-\begin{itemize}
-    \item $\sigma \in [0.01, 0.1]$: $\alpha = 0.38 \pm 0.06$ (slightly reduced due to near-constant functions)
-    \item $\sigma \in [0.1, 1.0]$: $\alpha = 0.42 \pm 0.04$ (optimal range)
-    \item $\sigma \in [1.0, 5.0]$: $\alpha = 0.41 \pm 0.07$ (robust performance)
-    \item $\sigma > 5.0$: $\alpha = 0.35 \pm 0.10$ (degradation due to self-intersection)
-\end{itemize}
-
-\textbf{Distribution Robustness}: Consistent scaling across data distributions:
-\begin{itemize}
-    \item \textbf{Uniform}: $\alpha = 0.42 \pm 0.04$ (baseline)
-    \item \textbf{Gaussian}: $\alpha = 0.44 \pm 0.05$ (slightly better due to concentration)
-    \item \textbf{Clustered}: $\alpha = 0.48 \pm 0.06$ (improved due to structure)
-    \item \textbf{Manifold}: $\alpha = 0.40 \pm 0.08$ (consistent with theory)
-\end{itemize}
-
-\subsubsection{Activation Function Comparison}
-
-We tested alternative activations to verify ReLU-specific predictions:
-\begin{itemize}
-    \item \textbf{ReLU}: $\alpha = 0.42 \pm 0.04$ (baseline)
-    \item \textbf{Leaky ReLU}: $\alpha = 0.40 \pm 0.05$ (similar piecewise structure)
-    \item \textbf{Tanh}: $\alpha = 0.28 \pm 0.08$ (smooth, reduced effect)
-    \item \textbf{Sigmoid}: $\alpha = 0.25 \pm 0.10$ (smooth, minimal effect)
-    \item \textbf{Swish}: $\alpha = 0.32 \pm 0.06$ (intermediate behavior)
-\end{itemize}
-
-The effect is strongest for piecewise linear activations, confirming our theoretical analysis.
-
-\subsubsection{Network Architecture Variations}
-
-\textbf{Skip Connections}: ResNet-style skip connections preserve the effect:
-\begin{itemize}
-    \item No skip connections: $\alpha = 0.42 \pm 0.04$
-    \item Every 2 layers: $\alpha = 0.44 \pm 0.05$ (slight improvement)
-    \item Every layer (DenseNet): $\alpha = 0.46 \pm 0.06$ (best performance)
-\end{itemize}
-
-\textbf{Normalization}: Batch normalization effects:
-\begin{itemize}
-    \item No normalization: $\alpha = 0.42 \pm 0.04$ (baseline)
-    \item Batch norm: $\alpha = 0.39 \pm 0.05$ (slight reduction, maintains scale)
-    \item Layer norm: $\alpha = 0.40 \pm 0.06$ (similar to batch norm)
-\end{itemize}
-
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{graphs/more_effects_summary}}
-\caption{Comprehensive summary of all effects, showing the universal nature of the squiggly line principle across different parameters and conditions.}
-\label{fig:summary}
-\end{center}
-\vskip -0.2in
-\end{figure}
+Optimal depth is $L = 2$ or $3$ layers regardless of parameter budget. Width provides better coverage than depth for fixed parameters. See Appendix~\ref{subsec:comprehensive-robustness} for complete robustness analysis.
 
 \subsection{Statistical Validation}
 
-\subsubsection{Hypothesis Testing}
+Hypothesis testing confirms the primary effect with $t = 12.4$ and $p < 10^{-15}$ (highly significant). Dimension independence is validated by ANOVA with $F(4,245) = 1.12$ and $p = 0.35$ (no dimension effect). Saturation scaling shows $R^2 = 0.89$ for the $w^* = c\sqrt{n}$ model.
 
-\textbf{Primary Hypothesis}: $H_0: \alpha = 0$ vs $H_1: \alpha > 0$
-\begin{itemize}
-    \item Test statistic: $t = \frac{\hat{\alpha} - 0}{\text{SE}(\hat{\alpha})} = 12.4$
-    \item $p$-value: $< 10^{-15}$ (highly significant)
-    \item Effect size: Cohen's $d = 2.3$ (large effect) \cite{Cohen1969StatisticalPA}
-\end{itemize}
+See Appendix~\ref{subsec:complete-statistical} for detailed statistical analysis.
 
-\textbf{Dimension Independence}: $H_0:$ scaling varies with dimension
-\begin{itemize}
-    \item ANOVA F-statistic: $F(4,245) = 1.12$
-    \item $p$-value: $0.35$ (no significant dimension effect)
-    \item Eta-squared: $\eta^2 = 0.018$ (negligible effect size)
-\end{itemize}
+\subsection{Summary}
 
-\textbf{Saturation Point}: $H_0: w^* \neq c\sqrt{n}$
-\begin{itemize}
-    \item Fitted coefficient: $c = 1.42 \pm 0.28$
-    \item $R^2 = 0.89$ for $w^* = c\sqrt{n}$ model
-    \item Residual analysis shows no systematic deviations
-\end{itemize}
+Our experiments confirm power law scaling with $\alpha = 0.42 \pm 0.04$ universally, dimension independence with consistent scaling from $d=2$ to $d=10$, empirical saturation at $w^* = 1.4\sqrt{n}$ matching theory, training benefits where initial geometric advantage translates to faster convergence, and robustness across architectures and data distributions.
 
-\subsection{Practical Implications}
-
-\subsubsection{Architecture Design Guidelines}
-
-\textbf{Validated Design Principles}:
-\begin{enumerate}
-    \item \textbf{Width prioritization}: For fixed parameter budget, prefer width over depth
-    \item \textbf{Optimal depth}: Use $L = 2$ or $3$ layers for best initialization benefits
-    \item \textbf{Initialization}: Use Xavier/He initialization with $\sigma \approx 1/\sqrt{\text{fan-in}}$
-    \item \textbf{Early stopping}: Networks with better initial coverage may need fewer epochs
-    \item \textbf{Architecture search}: Include initial distance as a criterion alongside capacity
-\end{enumerate}
-
-\textbf{Quantified Benefits}:
-\begin{itemize}
-    \item 15-25\% faster convergence for optimally-sized networks
-    \item 10-20\% better final test performance
-    \item Reduced sensitivity to hyperparameter choices
-    \item More stable training dynamics
-\end{itemize}
-
-\subsubsection{Transfer Learning Insights}
-
-\textbf{Pre-training Advantage}: Pre-trained networks already have good coverage:
-\begin{itemize}
-    \item Initial distance 40-60\% smaller than random initialization
-    \item Faster fine-tuning convergence (2-3x speedup observed)
-    \item Better transfer to out-of-domain tasks
-\end{itemize}
-
-\subsection{Experimental Summary}
-
-Our comprehensive experimental validation confirms:
-\begin{enumerate}
-    \item \textbf{Power law scaling}: $\alpha = 0.42 \pm 0.04$ across all tested conditions
-    \item \textbf{Universal behavior}: Dimension-independent scaling from $d=2$ to $d=10$
-    \item \textbf{Saturation}: Empirical $w^* = 1.4\sqrt{n}$ matches theoretical prediction
-    \item \textbf{Training connection}: Initial geometric advantage translates to faster convergence
-    \item \textbf{Robustness}: Effect persists across architectures, activations, and data distributions
-\end{enumerate}
-
-The experiments validate our geometric framework and demonstrate that the Squiggly Line Conjecture provides practical guidance for neural network design and training.
+The experiments validate our geometric framework and provide practical guidance for neural network design.
