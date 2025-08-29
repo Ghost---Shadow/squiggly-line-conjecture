@@ -9,7 +9,7 @@ The key intuition is that a squiggly line covers more total length as it winds t
 
 More formally, consider two functions randomly drawn from different complexity classes: a simple linear function versus a high-degree polynomial. When evaluated on random data points, the polynomial will typically achieve smaller distances to those points, not through intelligent design, but purely through geometric advantage. The polynomial's increased oscillations provide more surface area to ``accidentally'' pass near random points in the input-output space.
 
-This geometric principle extends beyond polynomials to neural networks, where width corresponds to functional complexity. A randomly initialized wide network explores a richer subspace of functions, naturally positioning itself closer to any target function through sheer coverage density rather than optimization.
+This geometric principle extends beyond polynomials to neural networks, where width corresponds to functional complexity. A randomly initialized wide network explores a richer subspace of functions, naturally positioning itself closer to any target function through sheer coverage density rather than optimization \cite{jacot2018neural, matthews2018gaussian}.
 
 \subsection{The Fishing Line Analogy}
 
@@ -21,9 +21,9 @@ Crucially, this advantage has limits. A line that is too tangled wastes length b
 
 Our geometric framework naturally explains several puzzling aspects of deep learning:
 
-\textbf{Lottery Ticket Hypothesis}: Some random initializations are geometrically positioned closer to target solutions, making them ``luckier'' starting points that require less movement during training.
+\textbf{Lottery Ticket Hypothesis}: Some random initializations are geometrically positioned closer to target solutions, making them ``luckier'' starting points that require less movement during training \cite{frankle2018lottery}.
 
-\textbf{Overparameterization Benefits}: Large networks don't just have more capacity---they have better geometric positioning from initialization, providing optimization advantages beyond mere expressivity.
+\textbf{Overparameterization Benefits}: Large networks don't just have more capacity---they have better geometric positioning from initialization, providing optimization advantages beyond mere expressivity \cite{belkin2019reconciling, neyshabur2017exploring}.
 
 \textbf{Width vs Depth Trade-offs}: Width provides spatial coverage of function space, while depth provides hierarchical refinement. Our analysis reveals optimal architectural choices balancing these geometric factors.
 
@@ -44,6 +44,6 @@ Our work makes the following key contributions:
 
 This work suggests that the success of overparameterized models in machine learning is not mysterious but follows from fundamental geometric principles. Just as a meandering river covers more ground than a straight canal, complex neural networks naturally position themselves closer to the data they need to learn.
 
-The implications extend beyond machine learning to physics, biology, and computation theory. We show that the same $\sqrt{\Lambda}$ scaling law (where $\Lambda$ is a complexity parameter) appears across classical polynomials, neural networks, quantum states, and potentially biological neural systems.
+The implications extend beyond machine learning to physics, biology, and computation theory. We show that the same $\sqrt{\Lambda}$ scaling law (where $\Lambda$ is a complexity parameter) appears across classical polynomials, neural networks, quantum states, and potentially biological neural systems \cite{kaplan2020scaling}.
 
 The remainder of this paper is structured as follows: Section~\ref{sec:related_work} discusses related work in neural network theory and initialization. Section~\ref{sec:preliminaries} provides the mathematical foundations and formal problem setup. Section~\ref{sec:theory} presents our main theoretical results including scaling laws and saturation analysis. Section~\ref{sec:experiments} validates our theory through comprehensive experiments across multiple settings. The appendix extends our framework to quantum mechanics, revealing universal principles governing spatial coverage across physical systems.

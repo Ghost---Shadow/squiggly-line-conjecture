@@ -20,15 +20,15 @@ We conducted comprehensive experiments across multiple dimensions of the paramet
 \textbf{Data Distributions}:
 \begin{itemize}
     \item \textbf{Uniform}: $x_i \sim \text{Unif}([-1,1]^d)$, $y_i \sim \text{Unif}([-2,2])$
-    \item \textbf{Gaussian}: $x_i \sim \mathcal{N}(0, 0.5^2 I_d)$, $y_i \sim \mathcal{N}(0,1)$
+    \item \textbf{Gaussian}: $x_i \sim \mathcal{N}(0, 0.5^2 I_d)$, $y_i \sim \mathcal{N}(0,1)$ \cite{feller1968introduction}
     \item \textbf{Clustered}: $k=5$ Gaussian clusters with $\sigma = 0.2$
-    \item \textbf{Manifold}: Data sampled from $d$-dimensional sphere surface
+    \item \textbf{Manifold}: Data sampled from $d$-dimensional sphere surface \cite{ball1997elementary}
 \end{itemize}
 
 \textbf{Initialization Schemes}:
 \begin{itemize}
-    \item \textbf{Xavier}: $w_{ij} \sim \mathcal{N}(0, 1/\sqrt{\text{fan-in}})$
-    \item \textbf{He}: $w_{ij} \sim \mathcal{N}(0, 2/\sqrt{\text{fan-in}})$
+    \item \textbf{Xavier}: $w_{ij} \sim \mathcal{N}(0, 1/\sqrt{\text{fan-in}})$ \cite{glorot2010understanding}
+    \item \textbf{He}: $w_{ij} \sim \mathcal{N}(0, 2/\sqrt{\text{fan-in}})$ \cite{he2015delving}
     \item \textbf{Scaled Uniform}: $w_{ij} \sim \text{Unif}([-a, a])$ with $a = \sqrt{3/\text{fan-in}}$
 \end{itemize}
 
@@ -288,7 +288,7 @@ The effect is strongest for piecewise linear activations, confirming our theoret
 \begin{itemize}
     \item Test statistic: $t = \frac{\hat{\alpha} - 0}{\text{SE}(\hat{\alpha})} = 12.4$
     \item $p$-value: $< 10^{-15}$ (highly significant)
-    \item Effect size: Cohen's $d = 2.3$ (large effect)
+    \item Effect size: Cohen's $d = 2.3$ (large effect) \cite{cohen1988statistical}
 \end{itemize}
 
 \textbf{Dimension Independence}: $H_0:$ scaling varies with dimension

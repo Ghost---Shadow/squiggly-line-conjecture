@@ -48,7 +48,7 @@ A depth-$L$ ReLU network can represent piecewise polynomial functions where:
 \textbf{Hyperplane Arrangements}: Each neuron $i$ in layer $l$ defines a hyperplane in the space of layer $l-1$ activations:
 $$H_i^{(l)} = \{h_{l-1} : W_i^{(l)} \cdot h_{l-1} + b_i^{(l)} = 0\}$$
 
-The collection of all hyperplanes forms an arrangement that partitions the input space.
+The collection of all hyperplanes forms an arrangement that partitions the input space \cite{stanley2004introduction, orlik1992arrangements}.
 
 \begin{theorem}[Region Count Upper Bound]
 A ReLU network with $n$ total neurons and input dimension $d$ has at most:
@@ -57,14 +57,14 @@ linear regions.
 \end{theorem}
 
 \begin{proof}
-Using induction on the number of neurons:
+Using induction on the number of neurons \cite{montufar2014number}:
 
 \textit{Base case}: With 0 neurons, we have 1 region.
 
 \textit{Inductive step}: When adding the $n$-th neuron, its hyperplane can intersect at most $\sum_{j=0}^{d-1} \binom{n-1}{j}$ existing regions. Therefore:
 $$R(n,d) = R(n-1,d) + \sum_{j=0}^{d-1} \binom{n-1}{j}$$
 
-Using Pascal's identity yields the result.
+Using Pascal's identity \cite{abramowitz1964handbook} yields the result.
 \end{proof}
 
 \begin{theorem}[Activation Pattern Coverage]
@@ -275,6 +275,8 @@ where $\alpha = (\alpha_1, ..., \alpha_d)$ is a multi-index.
 The number of coefficients is:
 $$N_{\text{poly}}(d,k) = \binom{d+k}{k} = \frac{(d+k)!}{d! \cdot k!}$$
 
+This combinatorial result \cite{abramowitz1964handbook} determines the parameter space dimension for polynomial functions.
+
 \subsubsection{Neural Network Parameter Counting}
 
 For a fully connected network with architecture $[d, w_1, w_2, ..., w_L, 1]$:
@@ -305,7 +307,7 @@ $$TV(f) = \int_{[-1,1]^d} \|\nabla f(x)\| dx$$
 \begin{theorem}[TV Scaling]
 For a random ReLU network with width $w$:
 $$\mathbb{E}[TV(f_w)] = \Theta(w \cdot \sigma_W)$$
-where $\sigma_W$ is the weight initialization scale.
+where $\sigma_W$ is the weight initialization scale \cite{glorot2010understanding, he2015delving}. This connects to classical results on the complexity of piecewise linear functions \cite{arora2018understanding}.
 \end{theorem}
 
 \begin{figure}[ht]
@@ -328,7 +330,7 @@ $$\|\nabla_\theta \mathcal{L}(f_\theta, \mathcal{D})\|_0 \propto L(f_\theta, \ma
 \textbf{Mechanism}: The loss gradient depends on the distance to data points. Closer initialization means larger local gradient signal, accelerating initial learning.
 
 \begin{theorem}[Convergence Acceleration]
-For gradient descent with learning rate $\eta$:
+For gradient descent with learning rate $\eta$ \cite{nocedal2006numerical}:
 $$\mathcal{L}(f_w, \mathcal{D}, t) \leq \mathcal{L}_0 \cdot \exp\left(-\frac{\eta t}{L(f_w, \mathcal{D})^2}\right) + \mathcal{L}_\infty$$
 Networks with smaller initial $L$ converge exponentially faster.
 \end{theorem}
@@ -337,11 +339,11 @@ Networks with smaller initial $L$ converge exponentially faster.
 
 Our geometric framework connects to several established results:
 
-\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage.
+\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage \cite{frankle2018lottery}.
 
-\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space.
+\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space \cite{zhang2016understanding, arora2019fine}.
 
-\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists.
+\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists \cite{telgarsky2016benefits, hanin2019complexity}.
 
 \subsection{Summary of Theoretical Results}
 
