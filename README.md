@@ -28,16 +28,17 @@ We present the Squiggly Line Conjecture, which proposes that randomly initialize
 squiggly-line-conjecture/
 ├── README.md                    # This file
 ├── main.tex                     # Main paper document
-├── references.bib               # Bibliography (Semantic Scholar format)
-├── sections/
-│   ├── 10_introduction.tex      # Introduction and core insight
-│   ├── 20_related_work.tex      # Related work and context
-│   ├── 30_preliminaries.tex     # Mathematical foundations
-│   ├── 40_theory.tex           # Main theoretical results
-│   ├── 50_experiments.tex      # Experimental validation
-│   ├── 60_outro.tex            # Conclusions and future work
-│   ├── 91_quantum_theory.tex   # Quantum mechanical formulation
-│   └── 92_quantum_experiments.tex # Quantum experimental validation
+├── references.bib               # Bibliography
+├── 10_introduction.tex          # Introduction and core insight
+├── 20_related_work.tex          # Related work and context
+├── 30_preliminaries.tex         # Mathematical foundations
+├── 40_theory.tex               # Main theoretical results
+├── 50_experiments.tex          # Experimental validation
+├── 60_outro.tex                # Conclusions and future work
+├── 91_detailed_proofs.tex       # Detailed mathematical proofs
+├── 92_additional_experiments.tex # Additional experimental results
+├── 93_quantum_theory.tex        # Quantum mechanical formulation
+├── 94_quantum_experiments.tex   # Quantum experimental validation
 ├── scripts/
 │   ├── coverage_measure.py     # Core coverage measurement tools
 │   ├── hilbert.py             # Hilbert space experiments
@@ -65,16 +66,18 @@ def geometric_distance(network, dataset):
 ```
 
 ### Key Experiments
-- **Coverage Scaling**: Validation of w^(-α) power law across dimensions
+- **Coverage Scaling**: Validation of w^(-α) power law across dimensions d ∈ {2,3,4,5,8,10}
 - **Activation Pattern Analysis**: Relationship between network width and spatial coverage
 - **Training Dynamics**: Connection between initial geometry and convergence speed
+- **Robustness Analysis**: Testing across initialization schemes, activation functions, and architectures
+- **Statistical Validation**: Hypothesis testing and ANOVA for dimension independence
 - **Quantum Systems**: Extension to quantum mechanical wave functions
 
 ## 📈 Reproducing Results
 
 ### Prerequisites
 ```bash
-pip install numpy matplotlib torch scipy sklearn
+pip install -r requirements.txt
 ```
 
 ### Running Core Experiments
@@ -87,6 +90,9 @@ python scripts/relu_chain.py --max_width 200 --num_trials 50
 
 # Extended analysis with statistical validation
 python scripts/more_effects.py --full_analysis
+
+# Statistical validation experiments
+python scripts/more_effects.py --statistical_tests
 
 # Quantum mechanical validation
 python scripts/quantum.py --energy_levels 10 --dimensions 1,2,3
@@ -137,14 +143,6 @@ where:
 - L₀ = cₐ · n^(1/(d+1)) · σᵧ with dimension-dependent constant cₐ  
 - L∞ is the saturation distance
 
-### Dimension Independence
-The scaling exponent α appears relatively stable:
-- d=2: α = 0.41 ± 0.04
-- d=3: α = 0.43 ± 0.03  
-- d=5: α = 0.42 ± 0.05
-- d=8: α = 0.44 ± 0.06
-- d=10: α = 0.40 ± 0.07
-
 ## 🌌 Quantum Extension
 
 The paper explores extending the conjecture to quantum mechanics, investigating whether higher energy quantum states may provide improved spatial coverage through increased wave function nodes:
@@ -161,7 +159,7 @@ If you use this work in your research, please cite:
 
 ```bibtex
 @article{Nanda2025SquigglyLine,
-  title={The Squiggly Line Conjecture: A Universal Geometric Principle for Neural Network Initialization},
+  title={The Squiggly Line Conjecture: A Geometric Perspective on Neural Network Initialization},
   author={Souradeep Nanda},
   journal={International Conference on Machine Learning},
   year={2025}
@@ -183,11 +181,6 @@ We welcome contributions! Please see our contributing guidelines for:
 - Paper writing and citation format
 - Bug reports and feature requests
 
-## 📧 Contact
-
-**Souradeep Nanda**  
-Email: souradeep.nanda123@gmail.com
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -195,7 +188,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgments
 
 We acknowledge the geometric interpretation of neural networks that enabled this analysis. We recognize the important role of randomness in nature, which may contribute to the coverage properties observed in both squiggly lines and neural networks.
-
----
-
-*"Just as a meandering river covers more ground than a straight canal, complex neural networks may position themselves closer to the data they need to learn."*
