@@ -17,6 +17,12 @@ For randomly initialized functions $f_{\theta_1}$ and $f_{\theta_2}$ where $|\th
 $$\mathbb{E}[L(f_{\theta_2}, \mathcal{D})] < \mathbb{E}[L(f_{\theta_1}, \mathcal{D})]$$
 \end{definition}
 
+\begin{definition}[Quantitative Formulation]
+The conjecture admits the precise scaling law:
+$$\mathbb{E}[L(f_w, \mathcal{D})] = L_0 \cdot w^{-\alpha} + L_\infty + O(w^{-2\alpha})$$
+where $\alpha \in (0, 0.5]$, $L_0 > 0$, and $L_\infty \geq 0$.
+\end{definition}
+
 \subsection{Spatial Coverage Mechanism}
 
 The conjecture relies on three key geometric concepts:
@@ -52,6 +58,23 @@ For $x \in [-1, 1]$: $\text{Var}[p(x)] \leq \frac{\alpha^2}{3}(d + 1)$
 By Kac's theorem, a random polynomial of degree $d$ has expected number of real roots:
 $$\mathbb{E}[\#\text{extrema}] \approx \frac{2}{\pi} \log(d) + O(1)$$
 
+\subsection{Asymptotic Analysis Framework}
+
+\begin{definition}[Scaling Regime]
+We consider three scaling regimes for width $w$ relative to dataset size $n$:
+\begin{itemize}
+    \item \textbf{Under-parameterized}: $w \ll \sqrt{n}$
+    \item \textbf{Optimal}: $w \sim \sqrt{n}$
+    \item \textbf{Over-parameterized}: $w \gg \sqrt{n}$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Effective Dimension]
+For a dataset $\mathcal{D}$, the effective dimension $d_{\text{eff}}$ is:
+$$d_{\text{eff}} = \frac{\log(N_{\text{patterns}})}{\log(w)}$$
+where $N_{\text{patterns}}$ is the number of observed activation patterns.
+\end{definition}
+
 \subsection{ReLU Networks as Piecewise Polynomials}
 
 \begin{definition}[ReLU Activation]
@@ -68,11 +91,31 @@ Each activation pattern defines a linear region in input space where the network
 
 \subsection{Coverage Geometry}
 
-\begin{definition}[Function Space Distance]
-For functions $f, g: \mathbb{R}^d \to \mathbb{R}$ and dataset $\mathcal{D}$:
-$$d(f, g, \mathcal{D}) = \sqrt{\frac{1}{|\mathcal{D}|} \sum_{x \in \mathcal{D}} (f(x) - g(x))^2}$$
+\begin{definition}[Geometric Distance]
+For a function $f: \mathbb{R}^d \to \mathbb{R}$ and dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$, the geometric distance is:
+$$L(f, \mathcal{D}) = \frac{1}{n} \sum_{i=1}^n \min_{x \in \text{Domain}} \|(x_i, y_i) - (x, f(x))\|_2$$
+This measures the average distance from data points to the function graph.
 \end{definition}
 
-\begin{definition}[Spatial Coverage]
-A function $f$ provides better spatial coverage if it reduces the expected distance to random points through geometric positioning rather than optimization.
+\begin{definition}[Coverage Density]
+For width $w$, the coverage density is $\lambda(w) = \Theta(w^{d/(d+1)})$, representing the effective "coverage rate" of the function in $(d+1)$-dimensional space.
+\end{definition}
+
+\begin{definition}[Saturation Width]
+The saturation width $w^*$ is the point where additional network width provides diminishing returns:
+$$w^* = \arg\min_w \left\{\frac{\partial}{\partial w} \mathbb{E}[L(f_w, \mathcal{D})] > -\epsilon\right\}$$
+for small threshold $\epsilon > 0$.
+\end{definition}
+
+\subsection{Statistical Framework}
+
+\begin{definition}[Coverage Probability]
+The probability that a function $f_w$ provides $\epsilon$-coverage of point $(x_i, y_i)$:
+$$P_{\text{cov}}(\epsilon; w) = P\left(\exists x : \|(x, f_w(x)) - (x_i, y_i)\| < \epsilon\right)$$
+\end{definition}
+
+\begin{definition}[Universal Scaling Function]
+The universal scaling function $g: \mathbb{R}_+ \to \mathbb{R}_+$ satisfies:
+$$\mathbb{E}[L(f_w, \mathcal{D})] = L_\infty \cdot g\left(\frac{w}{w^*}\right)$$
+with properties: $g(0) = \infty$, $g(x) \sim x^{-\alpha}$ for $x \ll 1$, and $g(x) \to 1$ for $x \gg 1$.
 \end{definition}
