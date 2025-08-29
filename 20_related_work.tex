@@ -5,46 +5,46 @@ Our work connects several strands of research in deep learning theory, geometric
 
 \subsection{Neural Network Theory}
 
-\textbf{Neural Tangent Kernels.} The Neural Tangent Kernel (NTK) framework \cite{jacot2018neural} analyzes neural networks in the infinite width limit, where the network behaves as a linear model. While NTK theory provides insights into training dynamics, it primarily focuses on the limit behavior rather than the finite-width initialization advantages we study.
+\textbf{Neural Tangent Kernels.} The Neural Tangent Kernel (NTK) framework \cite{Jacot2018NeuralTK} analyzes neural networks in the infinite width limit, where the network behaves as a linear model. While NTK theory provides insights into training dynamics, it primarily focuses on the limit behavior rather than the finite-width initialization advantages we study.
 
-\textbf{Lottery Ticket Hypothesis.} Frankle \& Carbin \cite{frankle2018lottery} demonstrated that dense networks contain sparse subnetworks that can achieve comparable accuracy. Our work provides a geometric explanation for why some initializations are ``luckier'' than others---they have better spatial coverage of the solution space.
+\textbf{Lottery Ticket Hypothesis.} Frankle \& Carbin \cite{Frankle2018TheLT} demonstrated that dense networks contain sparse subnetworks that can achieve comparable accuracy. Our work provides a geometric explanation for why some initializations are ``luckier'' than others---they have better spatial coverage of the solution space.
 
-\textbf{Double Descent and Overparameterization.} The phenomenon where larger models sometimes generalize better has been studied extensively \cite{belkin2019reconciling}. Our geometric perspective complements existing statistical explanations by showing that overparameterized models have initialization advantages.
+\textbf{Double Descent and Overparameterization.} The phenomenon where larger models sometimes generalize better has been studied extensively \cite{Belkin2018ReconcilingMM}. Our geometric perspective complements existing statistical explanations by showing that overparameterized models have initialization advantages.
 
 \subsection{Geometric Analysis}
 
 \textbf{Random Projections and Johnson-Lindenstrauss.} The Johnson-Lindenstrauss lemma shows that high-dimensional data can be embedded into lower dimensions while preserving distances. Our work inverses this perspective: higher-dimensional function spaces provide better coverage of data points.
 
-\textbf{Covering Numbers and VC Dimension.} Classical learning theory uses covering numbers and VC dimension to bound generalization \cite{vapnik1971uniform}. We contribute a new perspective on how function complexity relates to geometric coverage rather than just learning capacity.
+\textbf{Covering Numbers and VC Dimension.} Classical learning theory uses covering numbers and VC dimension to bound generalization \cite{Vapnik1971ChervonenkisOT}. We contribute a new perspective on how function complexity relates to geometric coverage rather than just learning capacity.
 
 \subsection{Random Polynomials}
 
-\textbf{Kac's Theorem.} Classical results on random polynomials, such as Kac's theorem on the expected number of real roots \cite{kac1943average}, provide foundations for understanding random function behavior. Our analysis extends these ideas to spatial coverage properties.
+\textbf{Kac's Theorem.} Classical results on random polynomials, such as Kac's theorem on the expected number of real roots \cite{Kac1943ACT}, provide foundations for understanding random function behavior. Our analysis extends these ideas to spatial coverage properties.
 
-\textbf{Gaussian Processes and Kernel Methods.} Random function priors in Gaussian processes \cite{neal1996priors} offer another lens on function space geometry. While GPs focus on smoothness assumptions, we examine coverage properties without smoothness constraints. The connection between neural networks and GPs in the infinite width limit \cite{matthews2018gaussian} provides another perspective on our finite-width coverage results.
+\textbf{Gaussian Processes and Kernel Methods.} Random function priors in Gaussian processes \cite{Neal1995BayesianLF} offer another lens on function space geometry. While GPs focus on smoothness assumptions, we examine coverage properties without smoothness constraints. The connection between neural networks and GPs in the infinite width limit \cite{Matthews2018GaussianPB} provides another perspective on our finite-width coverage results.
 
-\textbf{Random Matrix Theory.} The spectral properties of random neural networks \cite{pennington2017resurrecting} affect trainability. Our geometric analysis complements these spectral considerations by focusing on spatial rather than spectral properties.
+\textbf{Random Matrix Theory.} The spectral properties of random neural networks \cite{Pennington2017ResurrectingTS} affect trainability. Our geometric analysis complements these spectral considerations by focusing on spatial rather than spectral properties.
 
 \subsection{Physics-Inspired Approaches}
 
-\textbf{Statistical Mechanics of Learning.} The statistical mechanics approach to neural networks \cite{engel2001statistical} analyzes learning through phase transitions. Our coverage principle provides a geometric interpretation of the "retrieval phase" where networks can access stored patterns.
+\textbf{Statistical Mechanics of Learning.} The statistical mechanics approach to neural networks \cite{Engel2001StatisticalMO} analyzes learning through phase transitions. Our coverage principle provides a geometric interpretation of the "retrieval phase" where networks can access stored patterns.
 
-\textbf{Energy Landscapes.} Analysis of loss landscapes \cite{fort2019deep} shows that wider networks have more connected minima. Our initialization advantage provides a geometric explanation for why wider networks find better solutions faster.
+\textbf{Energy Landscapes.} Analysis of loss landscapes \cite{Fort2020DeepLV} shows that wider networks have more connected minima. Our initialization advantage provides a geometric explanation for why wider networks find better solutions faster.
 
 \subsection{Theoretical Analysis of Neural Networks}
 
-\textbf{Universal Approximation Theory.} Classical results show that neural networks can approximate continuous functions \cite{hornik1989multilayer}. Our work complements this by showing that random networks already provide good coverage before any approximation optimization.
+\textbf{Universal Approximation Theory.} Classical results show that neural networks can approximate continuous functions \cite{Hornik1989MultilayerFN}. Our work complements this by showing that random networks already provide good coverage before any approximation optimization.
 
-\textbf{Scaling Laws in Deep Learning.} Recent work has identified various scaling laws in language models \cite{kaplan2020scaling} and computer vision. Our geometric scaling law $L \sim w^{-\alpha}$ provides a fundamental principle underlying these empirical observations.
+\textbf{Scaling Laws in Deep Learning.} Recent work has identified various scaling laws in language models \cite{Kaplan2020ScalingLF} and computer vision. Our geometric scaling law $L \sim w^{-\alpha}$ provides a fundamental principle underlying these empirical observations.
 
-\textbf{Initialization Theory.} The analysis of neural network initialization \cite{glorot2010understanding, he2015delving} focuses on preserving gradient flow. Our geometric perspective shows that initialization also determines spatial coverage, providing a complementary viewpoint.
+\textbf{Initialization Theory.} The analysis of neural network initialization \cite{Glorot2010UnderstandingTD, He2015DelvingDI} focuses on preserving gradient flow. Our geometric perspective shows that initialization also determines spatial coverage, providing a complementary viewpoint.
 
 \subsection{Statistical Learning Theory}
 
 \textbf{Rademacher Complexity and Covering Numbers.} Traditional bounds use Rademacher complexity to control generalization. Our coverage analysis suggests that initialization provides implicit regularization through geometric constraints.
 
-\textbf{PAC-Bayesian Analysis.} Recent PAC-Bayesian bounds for neural networks \cite{neyshabur2017exploring} consider parameter distributions. Our analysis shows that the geometry of the parameter-to-function mapping creates natural coverage properties.
+\textbf{PAC-Bayesian Analysis.} Recent PAC-Bayesian bounds for neural networks \cite{Neyshabur2017ExploringGI} consider parameter distributions. Our analysis shows that the geometry of the parameter-to-function mapping creates natural coverage properties.
 
-\textbf{Interpolation and Generalization.} The phenomenon of benign overfitting \cite{bartlett2020benign} shows that interpolating solutions can generalize well. Our coverage principle suggests that good interpolators naturally provide better spatial coverage.
+\textbf{Interpolation and Generalization.} The phenomenon of benign overfitting \cite{Bartlett2019BenignOI} shows that interpolating solutions can generalize well. Our coverage principle suggests that good interpolators naturally provide better spatial coverage.
 
 Our work is unique in providing a unified geometric framework that explains initialization advantages across different function classes, connecting classical polynomial analysis, statistical physics principles, and modern deep learning phenomena. The quantitative scaling laws we derive provide testable predictions that bridge theory and practice.

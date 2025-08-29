@@ -27,8 +27,8 @@ We conducted comprehensive experiments across multiple dimensions of the paramet
 
 \textbf{Initialization Schemes}:
 \begin{itemize}
-    \item \textbf{Xavier}: $w_{ij} \sim \mathcal{N}(0, 1/\sqrt{\text{fan-in}})$ \cite{glorot2010understanding}
-    \item \textbf{He}: $w_{ij} \sim \mathcal{N}(0, 2/\sqrt{\text{fan-in}})$ \cite{he2015delving}
+    \item \textbf{Xavier}: $w_{ij} \sim \mathcal{N}(0, 1/\sqrt{\text{fan-in}})$ \cite{Glorot2010UnderstandingTD}
+    \item \textbf{He}: $w_{ij} \sim \mathcal{N}(0, 2/\sqrt{\text{fan-in}})$ \cite{He2015DelvingDI}
     \item \textbf{Scaled Uniform}: $w_{ij} \sim \text{Unif}([-a, a])$ with $a = \sqrt{3/\text{fan-in}}$
 \end{itemize}
 
@@ -288,7 +288,7 @@ The effect is strongest for piecewise linear activations, confirming our theoret
 \begin{itemize}
     \item Test statistic: $t = \frac{\hat{\alpha} - 0}{\text{SE}(\hat{\alpha})} = 12.4$
     \item $p$-value: $< 10^{-15}$ (highly significant)
-    \item Effect size: Cohen's $d = 2.3$ (large effect) \cite{cohen1988statistical}
+    \item Effect size: Cohen's $d = 2.3$ (large effect) \cite{Cohen1969StatisticalPA}
 \end{itemize}
 
 \textbf{Dimension Independence}: $H_0:$ scaling varies with dimension

@@ -48,10 +48,10 @@ A depth-$L$ ReLU network can represent piecewise polynomial functions where:
 \textbf{Hyperplane Arrangements}: Each neuron $i$ in layer $l$ defines a hyperplane in the space of layer $l-1$ activations:
 $$H_i^{(l)} = \{h_{l-1} : W_i^{(l)} \cdot h_{l-1} + b_i^{(l)} = 0\}$$
 
-The collection of all hyperplanes forms an arrangement that partitions the input space \cite{stanley2004introduction, orlik1992arrangements}.
+The collection of all hyperplanes forms an arrangement that partitions the input space \cite{Stanley2007AnIT, Orlik1992ArrangementsOH}.
 
 \begin{theorem}[Region Count Upper Bound]
-A ReLU network with $n$ total neurons and input dimension $d$ has at most \cite{montufar2014number}:
+A ReLU network with $n$ total neurons and input dimension $d$ has at most \cite{Montfar2014OnTN}:
 $$R(n,d) = \sum_{j=0}^d \binom{n}{j}$$
 linear regions.
 \end{theorem}
@@ -275,7 +275,7 @@ where $\alpha = (\alpha_1, ..., \alpha_d)$ is a multi-index.
 The number of coefficients is:
 $$N_{\text{poly}}(d,k) = \binom{d+k}{k} = \frac{(d+k)!}{d! \cdot k!}$$
 
-This combinatorial result \cite{abramowitz1964handbook} determines the parameter space dimension for polynomial functions.
+This combinatorial result \cite{Abramowitz1965HandbookOM} determines the parameter space dimension for polynomial functions.
 
 \subsubsection{Neural Network Parameter Counting}
 
@@ -307,7 +307,7 @@ $$TV(f) = \int_{[-1,1]^d} \|\nabla f(x)\| dx$$
 \begin{theorem}[TV Scaling]
 For a random ReLU network with width $w$:
 $$\mathbb{E}[TV(f_w)] = \Theta(w \cdot \sigma_W)$$
-where $\sigma_W$ is the weight initialization scale \cite{glorot2010understanding, he2015delving}. This result connects to classical analysis of piecewise linear function complexity \cite{arora2018understanding}.
+where $\sigma_W$ is the weight initialization scale \cite{Glorot2010UnderstandingTD, He2015DelvingDI}. This result connects to classical analysis of piecewise linear function complexity \cite{Arora2016UnderstandingDN}.
 \end{theorem}
 
 \begin{figure}[ht]
@@ -330,7 +330,7 @@ $$\|\nabla_\theta \mathcal{L}(f_\theta, \mathcal{D})\|_0 \propto L(f_\theta, \ma
 \textbf{Mechanism}: The loss gradient depends on the distance to data points. Closer initialization means larger local gradient signal, accelerating initial learning.
 
 \begin{theorem}[Convergence Acceleration]
-For gradient descent with learning rate $\eta$ \cite{nocedal2006numerical}:
+For gradient descent with learning rate $\eta$ \cite{Nocedal2018NumericalO}:
 $$\mathcal{L}(f_w, \mathcal{D}, t) \leq \mathcal{L}_0 \cdot \exp\left(-\frac{\eta t}{L(f_w, \mathcal{D})^2}\right) + \mathcal{L}_\infty$$
 Networks with smaller initial $L$ converge exponentially faster.
 \end{theorem}
@@ -339,11 +339,11 @@ Networks with smaller initial $L$ converge exponentially faster.
 
 Our geometric framework connects to several established results:
 
-\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage \cite{frankle2018lottery}.
+\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage \cite{Frankle2018TheLT}.
 
-\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space \cite{zhang2016understanding, arora2019fine}.
+\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space \cite{Zhang2016UnderstandingDL, Arora2019FineGrainedAO}.
 
-\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists \cite{telgarsky2016benefits, hanin2019complexity}.
+\textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists \cite{Telgarsky2016BenefitsOD, Hanin2019ComplexityOL}.
 
 \subsection{Summary of Theoretical Results}
 
