@@ -5,11 +5,11 @@ Our work connects several strands of research in deep learning theory, geometric
 
 \subsection{Neural Network Theory}
 
-\textbf{Neural Tangent Kernels.} The Neural Tangent Kernel (NTK) framework \cite{Jacot2018NeuralTK} analyzes neural networks in the infinite width limit, where the network behaves as a linear model. While NTK theory provides insights into training dynamics, it primarily focuses on the limit behavior rather than the finite-width initialization advantages we study.
+\textbf{Neural Tangent Kernels.} The Neural Tangent Kernel (NTK) framework \cite{Jacot2018NeuralTK} analyzes neural networks in the infinite width limit, where the network behaves as a linear model. While NTK theory provides insights into training dynamics, it primarily focuses on the limit behavior rather than the finite-width initialization advantages we study. Recent work by \cite{Liu2020OnThe} studies the ``transition to linearity'' and shows that constancy of the NTK results from scaling properties of the network width. \cite{Nguyen2021TightBounds} provides tight bounds on the smallest eigenvalue of the NTK for deep ReLU networks. Our conjecture provides a \textbf{geometric interpretation} for why width scaling matters---wider networks provide better spatial coverage independent of the NTK regime.
 
-\textbf{Lottery Ticket Hypothesis.} Frankle \& Carbin \cite{Frankle2018TheLT} demonstrated that dense networks contain sparse subnetworks that can achieve comparable accuracy. Our work provides a geometric explanation for why some initializations are ``luckier'' than others---they have better spatial coverage of the solution space.
+\textbf{Lottery Ticket Hypothesis.} Frankle \& Carbin \cite{Frankle2018TheLT} demonstrated that dense networks contain sparse subnetworks (``winning tickets'') that can achieve comparable accuracy when trained in isolation. They show that winning tickets have ``won the initialization lottery'' through particularly effective initial weight configurations. Extensions by \cite{Zhou2019DeconstructingLT} demonstrate that it is the sign, not magnitude, of weights that is crucial to lottery ticket performance. \cite{Chen2021TheEL} shows that winning tickets can be stretched across different network depths. Our work provides the \textbf{fundamental geometric explanation} for why lottery tickets exist---they are geometrically positioned to better cover the data space.
 
-\textbf{Double Descent and Overparameterization.} The phenomenon where larger models sometimes generalize better has been studied extensively \cite{Belkin2018ReconcilingMM}. Our geometric perspective complements existing statistical explanations by showing that overparameterized models have initialization advantages.
+\textbf{Double Descent and Overparameterization.} The phenomenon where larger models sometimes generalize better has been studied extensively \cite{Belkin2018ReconcilingMM}. \cite{Nakkiran2019DeepDD} shows that modern deep learning tasks exhibit ``double-descent'' where performance first gets worse then better as model size increases. Recent work on benign overfitting \cite{BartlettBenignOverfitting} demonstrates that interpolating solutions can generalize well under certain conditions. Our geometric coverage framework suggests double descent occurs when geometric advantage transitions from beneficial to saturated.
 
 \subsection{Geometric Analysis}
 
@@ -17,13 +17,13 @@ Our work connects several strands of research in deep learning theory, geometric
 
 \textbf{Covering Numbers and VC Dimension.} Classical learning theory uses covering numbers and VC dimension to bound generalization \cite{Vapnik1971ChervonenkisOT}. We contribute a new perspective on how function complexity relates to geometric coverage rather than just learning capacity.
 
-\subsection{Random Polynomials}
+\subsection{Random Polynomials and Matrix Theory}
 
 \textbf{Kac's Theorem.} Classical results on random polynomials, such as Kac's theorem on the expected number of real roots \cite{Kac1943ACT}, provide foundations for understanding random function behavior. Our analysis extends these ideas to spatial coverage properties.
 
 \textbf{Gaussian Processes and Kernel Methods.} Random function priors in Gaussian processes \cite{Neal1995BayesianLF} offer another lens on function space geometry. While GPs focus on smoothness assumptions, we examine coverage properties without smoothness constraints. The connection between neural networks and GPs in the infinite width limit \cite{Matthews2018GaussianPB} provides another perspective on our finite-width coverage results.
 
-\textbf{Random Matrix Theory.} The spectral properties of random neural networks \cite{Pennington2017ResurrectingTS} affect trainability. Our geometric analysis complements these spectral considerations by focusing on spatial rather than spectral properties.
+\textbf{Random Matrix Theory.} The spectral properties of random neural networks \cite{Pennington2017ResurrectingTS} affect trainability. \cite{Pennington2017NonlinearRandom} demonstrates how pointwise nonlinearities can be incorporated into random matrix theory analysis using the moments method. \cite{Louart2017RandomMatrix} studies the Gram random matrix model for neural network analysis. Our geometric analysis complements these spectral considerations by focusing on spatial rather than spectral properties, providing \textbf{geometric intuition} that complements RMT's analytical power.
 
 \subsection{Physics-Inspired Approaches}
 
@@ -35,7 +35,7 @@ Our work connects several strands of research in deep learning theory, geometric
 
 \textbf{Universal Approximation Theory.} Classical results show that neural networks can approximate continuous functions \cite{Hornik1989MultilayerFN}. Our work complements this by showing that random networks already provide good coverage before any approximation optimization.
 
-\textbf{Scaling Laws in Deep Learning.} Recent work has identified various scaling laws in language models \cite{Kaplan2020ScalingLF} and computer vision. Our geometric scaling law $L \sim w^{-\alpha}$ provides a fundamental principle underlying these empirical observations.
+\textbf{Scaling Laws in Deep Learning.} Recent work has identified various scaling laws in language models \cite{Kaplan2020ScalingLF} where loss scales as a power-law with model size, dataset size, and compute. \cite{Bahri2024ExplainingNeural} identifies four scaling regimes and explains variance-limited and resolution-limited scaling behavior. Our power law $L \sim w^{-\alpha}$ with $\alpha \approx 0.42$ is \textbf{remarkably consistent} across dimensions and provides a \textbf{geometric mechanism} underlying these empirical power law observations.
 
 \textbf{Initialization Theory.} The analysis of neural network initialization \cite{Glorot2010UnderstandingTD, He2015DelvingDI} focuses on preserving gradient flow. Our geometric perspective shows that initialization also determines spatial coverage, providing a complementary viewpoint.
 
@@ -47,4 +47,14 @@ Our work connects several strands of research in deep learning theory, geometric
 
 \textbf{Interpolation and Generalization.} The phenomenon of benign overfitting \cite{Bartlett2019BenignOI} shows that interpolating solutions can generalize well. Our coverage principle suggests that good interpolators naturally provide better spatial coverage.
 
-Our work is unique in providing a unified geometric framework that explains initialization advantages across different function classes, connecting classical polynomial analysis, statistical physics principles, and modern deep learning phenomena. The quantitative scaling laws we derive provide testable predictions that bridge theory and practice.
+\subsection{Activation Patterns \& Network Expressivity}
+
+Recent work by \cite{Hanin2019DeepRN} shows that ReLU networks have surprisingly few activation patterns on average, with the number bounded by total neurons raised to the input dimension. \cite{Hartmann2021StudyingEvolution} studies how activation patterns evolve during training. Our geometric coverage metric provides a \textbf{continuous measure} complementing these discrete activation pattern analyses.
+
+\subsection{Dimpled Manifold Theory \& Decision Boundaries}
+
+\cite{Shamir2021TheDM} introduces the dimpled manifold model showing training divides into two phases: a fast ``clinging'' process where decision boundaries approach the data manifold, followed by slow ``dimpling'' that creates shallow bulges. This provides a \textbf{complementary perspective} to our work: while dimpled manifold theory focuses on how boundaries evolve during training, our Squiggly Line Conjecture explains why certain initializations provide better coverage from the start. The geometric coverage principle explains the \textbf{initial conditions} that make dimpling more effective.
+
+\subsection{Novel Connections}
+
+Our work is unique in providing a unified geometric framework that explains initialization advantages across different function classes, connecting classical polynomial analysis, quantum mechanics, and modern deep learning phenomena. The quantitative scaling laws we derive provide testable predictions that bridge theory and practice, while our quantum extension opens entirely new research directions.

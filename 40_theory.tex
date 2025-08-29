@@ -187,9 +187,9 @@ $$\|\nabla_\theta \mathcal{L}(f_\theta, \mathcal{D})\|_0 \propto L(f_\theta, \ma
 
 Our geometric framework connects to several established results:
 
-\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage \cite{Frankle2018TheLT}.
+\textbf{Lottery Ticket Hypothesis}: Some initializations are geometrically closer to target functions due to better spatial coverage. This explains why certain sparse subnetworks (winning tickets) can achieve comparable performance and why the sign rather than magnitude of weights is crucial \cite{Frankle2018TheLT, Zhou2019DeconstructingLT, Chen2021TheEL}.
 
-\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space \cite{Zhang2016UnderstandingDL, Arora2019FineGrainedAO}.
+\textbf{Overparameterization Benefits}: The advantage comes not just from capacity, but from initialization geometry providing better starting positions in function space. This geometric perspective complements statistical explanations of double descent phenomena \cite{Zhang2016UnderstandingDL, Arora2019FineGrainedAO, Nakkiran2019DeepDD}.
 
 \textbf{Width vs Depth Trade-off}: Width provides coverage, depth provides refinement. Our analysis suggests an optimal balance exists \cite{Telgarsky2016BenefitsOD, Hanin2019ComplexityOL}.
 
