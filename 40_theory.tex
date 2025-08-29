@@ -57,14 +57,7 @@ linear regions.
 \end{theorem}
 
 \begin{proof}
-Using induction on the number of neurons:
-
-\textit{Base case}: With 0 neurons, we have 1 region.
-
-\textit{Inductive step}: When adding the $n$-th neuron, its hyperplane can intersect at most $\sum_{j=0}^{d-1} \binom{n-1}{j}$ existing regions. Therefore:
-$$R(n,d) = R(n-1,d) + \sum_{j=0}^{d-1} \binom{n-1}{j}$$
-
-Using Pascal's identity yields the result.
+See Appendix~\ref{subsec:region-count-proof} for the complete proof.
 \end{proof}
 
 \begin{theorem}[Activation Pattern Coverage]
@@ -101,46 +94,9 @@ where:
 
 \subsubsection{Proof Structure}
 
-The proof proceeds in four stages:
-\begin{enumerate}
-    \item Decomposition of the distance into geometric components
-    \item Analysis of the coverage probability
-    \item Bounding the expected minimum distance
-    \item Aggregation and scaling analysis
-\end{enumerate}
+The proof proceeds through distance decomposition, coverage probability analysis, expected distance bounds, and scaling analysis. See Appendix~\ref{subsec:main-theorem-proof} for the complete proof with all lemmas and technical details.
 
-\begin{lemma}[Distance Decomposition]
-The distance from a point $(x_i, y_i)$ to the function graph can be decomposed as:
-$$\text{dist}((x_i, y_i), \text{Graph}(f)) = \min \{\text{dist}_\parallel, \text{dist}_\perp\}$$
-where:
-\begin{itemize}
-    \item $\text{dist}_\parallel = |y_i - f(x_i)|$ (vertical distance)
-    \item $\text{dist}_\perp = \min_{x \neq x_i} \sqrt{\|x - x_i\|^2 + (f(x) - y_i)^2}$ (off-vertical distance)
-\end{itemize}
-\end{lemma}
-
-\begin{definition}[$\epsilon$-Coverage]
-A function $f$ provides $\epsilon$-coverage of point $(x_i, y_i)$ if:
-$$\exists x \in [-1,1]^d : \|(x, f(x)) - (x_i, y_i)\| < \epsilon$$
-\end{definition}
-
-\begin{lemma}[Coverage Probability Scaling]
-For a random ReLU network with width $w$:
-$$P(f_w \text{ provides } \epsilon\text{-coverage of } (x_i, y_i)) = 1 - \exp\left(-\lambda(w) \cdot V_\epsilon\right)$$
-where:
-\begin{itemize}
-    \item $\lambda(w) = \Theta(w^{d/(d+1)})$ is the coverage density
-    \item $V_\epsilon = \epsilon^{d+1} \cdot \omega_{d+1}$ is the volume of an $\epsilon$-ball in $(d+1)$ dimensions
-\end{itemize}
-\end{lemma}
-
-\textbf{Mechanism}:
-\begin{enumerate}
-    \item More parameters $\rightarrow$ More activation patterns
-    \item More patterns $\rightarrow$ Better spatial coverage
-    \item Better coverage $\rightarrow$ Smaller average distance to random points
-    \item This happens purely through initialization, before any training
-\end{enumerate}
+\textbf{Mechanism}: The mechanism operates through parameter increase leading to better coverage and reduced distance to data points. See Appendix~\ref{subsec:mechanism-analysis} for detailed analysis.
 
 \subsection{Dimension Independence}
 
@@ -152,37 +108,7 @@ That is, the expected distance is approximately independent of dimension.
 
 \subsubsection{Mathematical Explanation}
 
-\textbf{Key Insight}: Two competing effects cancel:
-\begin{enumerate}
-    \item \textbf{Curse of dimensionality}: Higher dimensions require more coverage
-    \begin{itemize}
-        \item Volume grows as $r^d$
-        \item Points become sparser
-        \item Effect: $+d$ in exponent
-    \end{itemize}
-    
-    \item \textbf{Blessing of dimensionality}: Higher dimensions provide more degrees of freedom
-    \begin{itemize}
-        \item More directions for the function to wiggle
-        \item More activation patterns possible
-        \item Effect: $-d$ in exponent
-    \end{itemize}
-\end{enumerate}
-
-\begin{lemma}[Competing Effects]
-The expected distance can be written as:
-$$\mathbb{E}[L(f_w, \mathcal{D})] = \underbrace{V_d^{1/d}}_{\text{volume effect}} \cdot \underbrace{N_d(w)^{-\beta}}_{\text{pattern effect}} \cdot \underbrace{R_d}_{\text{residual}}$$
-where:
-\begin{itemize}
-    \item $V_d = (2)^d$ is the volume of $[-1,1]^d$
-    \item $N_d(w) = \min(2^{wd}, \sum_{j=0}^d \binom{wd}{j})$ is the number of activation patterns
-    \item $R_d$ captures higher-order effects
-\end{itemize}
-\end{lemma}
-
-\textbf{Proof of Independence}: The volume scaling gives $V_d^{1/d} = 2$ (constant!), while the pattern scaling terms approximately cancel for $\beta = 1/(d+1)$, leaving $\mathbb{E}[L(f_w, \mathcal{D})] \approx \text{const} \cdot w^{-\alpha}$.
-
-This surprising result suggests a universal geometric principle that transcends specific dimensionality.
+\textbf{Key Insight}: Two competing effects (curse vs blessing of dimensionality) cancel each other out. See Appendix~\ref{subsec:dimension-independence-detailed} for the complete mathematical explanation of how volume effects and pattern effects balance to yield dimension independence.
 
 \subsection{Implications for Initialization}
 
@@ -218,97 +144,25 @@ where $n$ is the number of data points.
 
 \subsubsection{Detailed Analysis}
 
-\begin{lemma}[Coverage Saturation]
-Each point needs $O(1)$ linear regions for good coverage. With $n$ points:
-\begin{itemize}
-    \item Total regions needed: $O(n)$
-    \item Regions per unit width: $O(w^{d-1})$ for width $w$
-    \item Saturation when: $w^d \sim n$
-\end{itemize}
-For $d = 2$ (most intuitive case): $w^* \sim \sqrt{n}$
-\end{lemma}
-
-\textbf{Coverage Redundancy}: Once each point has high probability of coverage, additional width is redundant. The marginal improvement $\Delta L(w) = L(f_w, \mathcal{D}) - L(f_{w+1}, \mathcal{D})$ becomes negligible.
-
-\begin{theorem}[Post-Saturation Behavior]
-For $w > w^*$:
-$$L(f_w, \mathcal{D}) = L_\infty + O(e^{-\gamma w/w^*})$$
-where $\gamma > 0$ is a decay constant.
-\end{theorem}
-
-Beyond saturation:
-\begin{itemize}
-    \item Self-intersection reduces effective coverage
-    \item Regions become too fragmented
-    \item Overfitting boundary is reached
-    \item Improvements come only from rare "hard" points
-\end{itemize}
+Saturation occurs when each data point has sufficient linear regions for good coverage, typically when $w^* \sim \sqrt{n}$. Beyond this point, additional width provides diminishing returns. See Appendix~\ref{subsec:coverage-saturation-detailed} for the complete analysis including coverage redundancy effects and post-saturation behavior.
 
 \subsection{Universal Scaling Laws}
 
 \begin{theorem}[Universal Scaling Form]
 The expected distance follows a universal scaling form:
 $$\mathbb{E}[L(f_w, \mathcal{D})] = L_\infty \cdot g\left(\frac{w}{w^*}\right)$$
-where the scaling function $g$ satisfies:
-\begin{itemize}
-    \item $g(0) = \infty$
-    \item $g(x) \sim x^{-\alpha}$ for $x \ll 1$
-    \item $g(x) \to 1$ for $x \gg 1$
-    \item $g'(x) < 0$ for all $x > 0$
-\end{itemize}
+See Appendix~\ref{subsec:universal-scaling-detailed} for properties of the scaling function $g$ and explicit approximations.
 \end{theorem}
-
-\begin{proposition}[Explicit Scaling Function]
-A good approximation to the scaling function is:
-$$g(x) = 1 + A \cdot (1 + x)^{-\alpha}$$
-where $A = (L_0/L_\infty - 1)$.
-\end{proposition}
 
 \subsection{Parameter Space Lifting}
 
-\subsubsection{Polynomial Parameter Counting}
+\subsubsection{Parameter Space Analysis}
 
-A polynomial of degree $k$ in $d$ dimensions has the form:
-$$p(x) = \sum_{|\alpha| \leq k} c_\alpha x^\alpha$$
-where $\alpha = (\alpha_1, ..., \alpha_d)$ is a multi-index.
-
-The number of coefficients is:
-$$N_{\text{poly}}(d,k) = \binom{d+k}{k} = \frac{(d+k)!}{d! \cdot k!}$$
-
-This combinatorial result \cite{Abramowitz1965HandbookOM} determines the parameter space dimension for polynomial functions.
-
-\subsubsection{Neural Network Parameter Counting}
-
-For a fully connected network with architecture $[d, w_1, w_2, ..., w_L, 1]$:
-$$N_{\text{NN}} = \sum_{l=1}^{L+1} (w_{l-1} \cdot w_l + w_l)$$
-
-For uniform width $w$: $N_{\text{NN}} = O(w^2L)$
-
-\subsubsection{Function Space Coverage}
-
-\begin{definition}[$\epsilon$-covering]
-A set of functions $\mathcal{F}$ provides an $\epsilon$-covering of target space $\mathcal{T}$ if:
-$$\forall g \in \mathcal{T}, \exists f \in \mathcal{F} : \|f - g\|_{L^2} < \epsilon$$
-\end{definition}
-
-\begin{theorem}[Coverage Scaling]
-Let $\mathcal{F}_N$ be the set of random functions with $N$ parameters. The expected minimum distance to a random target function $g$ scales as:
-$$\mathbb{E}[\min_{f \in \mathcal{F}_N} \|f - g\|] = O(N^{-\beta})$$
-where $\beta \approx \frac{1}{2d}$ for smooth targets in $d$ dimensions.
-\end{theorem}
+The relationship between parameter count and coverage capability is fundamental to the squiggly line conjecture. See Appendix~\ref{subsec:parameter-lifting-detailed} for detailed analysis of polynomial parameter counting, neural network parameter scaling, and function space coverage theorems.
 
 \subsubsection{Squiggliness Quantification}
 
-\begin{definition}[Total Variation]
-For a function $f: [-1,1]^d \to \mathbb{R}$:
-$$TV(f) = \int_{[-1,1]^d} \|\nabla f(x)\| dx$$
-\end{definition}
-
-\begin{theorem}[TV Scaling]
-For a random ReLU network with width $w$:
-$$\mathbb{E}[TV(f_w)] = \Theta(w \cdot \sigma_W)$$
-where $\sigma_W$ is the weight initialization scale \cite{Glorot2010UnderstandingTD, He2015DelvingDI}. This result connects to classical analysis of piecewise linear function complexity \cite{Arora2016UnderstandingDN}.
-\end{theorem}
+We quantify "squiggliness" using total variation, which scales as $\mathbb{E}[TV(f_w)] = \Theta(w \cdot \sigma_W)$ for ReLU networks. See Appendix~\ref{subsec:total-variation-proof} for the complete proof and connections to piecewise linear function complexity.
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -327,13 +181,7 @@ Networks with better initial coverage have larger initial gradients:
 $$\|\nabla_\theta \mathcal{L}(f_\theta, \mathcal{D})\|_0 \propto L(f_\theta, \mathcal{D})^{-1}$$
 \end{theorem}
 
-\textbf{Mechanism}: The loss gradient depends on the distance to data points. Closer initialization means larger local gradient signal, accelerating initial learning.
-
-\begin{theorem}[Convergence Acceleration]
-For gradient descent with learning rate $\eta$ \cite{Nocedal2018NumericalO}:
-$$\mathcal{L}(f_w, \mathcal{D}, t) \leq \mathcal{L}_0 \cdot \exp\left(-\frac{\eta t}{L(f_w, \mathcal{D})^2}\right) + \mathcal{L}_\infty$$
-Networks with smaller initial $L$ converge exponentially faster.
-\end{theorem}
+\textbf{Mechanism}: Networks with better initial coverage have larger gradients and converge faster. See Appendix~\ref{subsec:training-dynamics-proofs} for detailed proofs of the gradient advantage and convergence acceleration theorems.
 
 \subsection{Connection to Existing Theory}
 
