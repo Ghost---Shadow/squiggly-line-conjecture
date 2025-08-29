@@ -51,3 +51,28 @@ For $x \in [-1, 1]$: $\text{Var}[p(x)] \leq \frac{\alpha^2}{3}(d + 1)$
 \textbf{Expected number of local extrema}:
 By Kac's theorem, a random polynomial of degree $d$ has expected number of real roots:
 $$\mathbb{E}[\#\text{extrema}] \approx \frac{2}{\pi} \log(d) + O(1)$$
+
+\subsection{ReLU Networks as Piecewise Polynomials}
+
+\begin{definition}[ReLU Activation]
+The ReLU function $\text{ReLU}(x) = \max(0, x)$ creates piecewise linear functions.
+\end{definition}
+
+\begin{definition}[Activation Pattern]
+For a neural network with $n$ neurons, an activation pattern $\sigma \in \{0,1\}^n$ indicates which neurons are active (firing) for a given input.
+\end{definition}
+
+\begin{definition}[Linear Region]
+Each activation pattern defines a linear region in input space where the network function is exactly linear.
+\end{definition}
+
+\subsection{Coverage Geometry}
+
+\begin{definition}[Function Space Distance]
+For functions $f, g: \mathbb{R}^d \to \mathbb{R}$ and dataset $\mathcal{D}$:
+$$d(f, g, \mathcal{D}) = \sqrt{\frac{1}{|\mathcal{D}|} \sum_{x \in \mathcal{D}} (f(x) - g(x))^2}$$
+\end{definition}
+
+\begin{definition}[Spatial Coverage]
+A function $f$ provides better spatial coverage if it reduces the expected distance to random points through geometric positioning rather than optimization.
+\end{definition}
