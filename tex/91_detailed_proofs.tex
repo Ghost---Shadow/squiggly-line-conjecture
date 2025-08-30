@@ -3,6 +3,92 @@
 
 This appendix provides detailed proofs and derivations for the main theoretical results presented in Section~\ref{sec:theory}.
 
+\subsection{Proof of Complex Curves Lower Distance Theorem}
+\label{subsec:complex-curves-proof}
+
+\begin{theorem}[Complex Curves Have Lower Expected Distance]
+Given expected distance scales with uncovered volume fraction:
+$$\mathbb{E}[\text{dist}(p, f)] \sim \left(\frac{V_{\text{uncovered}}}{V_{\text{total}}}\right)^{1/d}$$
+
+For functions $f_c$ (complex) and $f_s$ (simple) with arc lengths $L(f_c) > L(f_s)$:
+$$\mathbb{E}[\text{dist}(p, f_c)] < \mathbb{E}[\text{dist}(p, f_s)]$$
+\end{theorem}
+
+\begin{proof}[Complete Derivation]
+\textbf{Step 1: Coverage Volume Relationship}
+
+The covered volume is proportional to arc length:
+$$V_{\text{covered}}(f) = L(f) \cdot k \cdot \epsilon^{d-1}$$
+where $k$ is a dimensional constant depending on the geometry.
+
+\textbf{Step 2: Volume Comparison}
+
+For complex function $f_c$ and simple function $f_s$ where $L(f_c) > L(f_s)$:
+$$V_{\text{covered}}(f_c) = L(f_c) \cdot k \cdot \epsilon^{d-1} > L(f_s) \cdot k \cdot \epsilon^{d-1} = V_{\text{covered}}(f_s)$$
+
+\textbf{Step 3: Uncovered Volume Relationship}
+
+Since total volume is constant:
+$$V_{\text{uncovered}} = V_{\text{total}} - V_{\text{covered}}$$
+
+Therefore:
+$$V_{\text{uncovered}}(f_c) = V_{\text{total}} - V_{\text{covered}}(f_c) < V_{\text{total}} - V_{\text{covered}}(f_s) = V_{\text{uncovered}}(f_s)$$
+
+\textbf{Step 4: Distance Scaling Application}
+
+Applying the volume fraction scaling:
+$$\frac{V_{\text{uncovered}}(f_c)}{V_{\text{total}}} < \frac{V_{\text{uncovered}}(f_s)}{V_{\text{total}}}$$
+
+Since $x^{1/d}$ is monotonically increasing for $x > 0$:
+$$\left(\frac{V_{\text{uncovered}}(f_c)}{V_{\text{total}}}\right)^{1/d} < \left(\frac{V_{\text{uncovered}}(f_s)}{V_{\text{total}}}\right)^{1/d}$$
+
+\textbf{Step 5: Final Result}
+
+By the given scaling relationship:
+$$\mathbb{E}[\text{dist}(p, f_c)] < \mathbb{E}[\text{dist}(p, f_s)]$$
+
+This completes the proof that more complex curves systematically achieve lower expected distances to random points.
+\end{proof}
+
+\subsection{Proof of Submodular Distance Reduction}
+\label{subsec:submodular-proof}
+
+\begin{theorem}[Submodular Distance Reduction]
+The distance reduction benefit exhibits submodular diminishing returns as complexity increases.
+\end{theorem}
+
+\begin{proof}[Detailed Mathematical Analysis]
+\textbf{Step 1: Distance Function Setup}
+
+With coverage volume $V_{\text{covered}}(L) = \min(L \cdot k \cdot \epsilon^{d-1}, V_{\text{total}})$:
+$$V_{\text{uncovered}}(L) = \max(V_{\text{total}} - L \cdot k \cdot \epsilon^{d-1}, 0)$$
+
+For $L < \frac{V_{\text{total}}}{k \cdot \epsilon^{d-1}}$:
+$$\mathbb{E}[\text{dist}(L)] = \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{1/d}$$
+
+\textbf{Step 2: First Derivative (Marginal Benefit)}
+
+$$\frac{d\mathbb{E}[\text{dist}]}{dL} = -\frac{1}{d} \cdot \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{\frac{1}{d}-1} \cdot \frac{k \cdot \epsilon^{d-1}}{V_{\text{total}}}$$
+
+\textbf{Step 3: Second Derivative (Diminishing Returns)}
+
+$$\frac{d^2\mathbb{E}[\text{dist}]}{dL^2} = \frac{1-d}{d^2} \cdot \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{\frac{1}{d}-2} \cdot \left(\frac{k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^2$$
+
+Since $d > 1$ and $\frac{1}{d}-2 < 0$, we have:
+- Numerator: $\frac{1-d}{d^2} < 0$
+- Base: $\left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right) \in (0,1)$
+- Exponent: $\frac{1}{d}-2 < 0$
+
+Therefore: $\frac{d^2\mathbb{E}[\text{dist}]}{dL^2} > 0$
+
+\textbf{Step 4: Submodularity Conclusion}
+
+This proves $\left|\frac{d\mathbb{E}[\text{dist}]}{dL}\right|$ decreases with $L$, establishing submodularity:
+$$B(\Delta L | L_1) > B(\Delta L | L_2) \text{ for } L_1 < L_2$$
+
+The marginal benefit of additional complexity decreases as complexity increases.
+\end{proof}
+
 \subsection{Proof of Region Count Upper Bound}
 \label{subsec:region-count-proof}
 

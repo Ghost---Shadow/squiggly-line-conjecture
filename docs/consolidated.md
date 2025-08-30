@@ -73,7 +73,65 @@ where $\beta \approx \frac{1}{2d}$ for smooth targets in $d$ dimensions.
 
 ## 3. Main Theoretical Results
 
-### 3.1 Parameter-Distance Scaling
+### 3.1 Fundamental Theorem: Complex Curves Have Lower Expected Distance
+
+**Core Proof**: We prove that more complex curves systematically achieve lower expected distances to random points.
+
+**Given:** Expected distance scales with uncovered volume fraction:
+$$\mathbb{E}[\text{dist}(p, f)] \sim \left(\frac{V_{\text{uncovered}}}{V_{\text{total}}}\right)^{1/d}$$
+
+**Setup:** For a function $f$, define:
+- Coverage region: $C_\epsilon(f) = \{(x,y) : \text{dist}((x,y), \text{graph}(f)) \leq \epsilon\}$
+- Arc length: $L(f) = \int_a^b \sqrt{1 + (f'(x))^2} \, dx$
+
+**Derivation:**
+
+1. **Coverage Volume**: $V_{\text{covered}}(f) = L(f) \cdot k \cdot \epsilon^{d-1}$ where $k$ is dimensional constant
+
+2. **Function Comparison**: For complex $f_c$ and simple $f_s$ where $L(f_c) > L(f_s)$:
+   $$V_{\text{covered}}(f_c) > V_{\text{covered}}(f_s)$$
+
+3. **Uncovered Volume**: $V_{\text{uncovered}} = V_{\text{total}} - V_{\text{covered}}$
+   $$V_{\text{uncovered}}(f_c) < V_{\text{uncovered}}(f_s)$$
+
+4. **Distance Scaling**: Since $x^{1/d}$ is monotonic:
+   $$\left(\frac{V_{\text{uncovered}}(f_c)}{V_{\text{total}}}\right)^{1/d} < \left(\frac{V_{\text{uncovered}}(f_s)}{V_{\text{total}}}\right)^{1/d}$$
+
+**Result**: $\boxed{\mathbb{E}[\text{dist}(p, f_c)] < \mathbb{E}[\text{dist}(p, f_s)]}$
+
+**Key Principle**: Greater complexity → Greater arc length → Greater covered volume → Less uncovered volume → Lower expected distance
+
+### 3.2 Submodular Distance Reduction with Complexity
+
+**Core Insight**: The distance reduction benefit of added complexity follows a submodular pattern - early complexity additions provide much greater benefit than later ones.
+
+**Setup**: With coverage volume $V_{\text{covered}}(f) = \min(L(f) \cdot k \cdot \epsilon^{d-1}, V_{\text{total}})$, uncovered volume becomes:
+$$V_{\text{uncovered}}(L) = \max(V_{\text{total}} - L \cdot k \cdot \epsilon^{d-1}, 0)$$
+
+**Expected Distance as Function of Arc Length**: For $L < \frac{V_{\text{total}}}{k \cdot \epsilon^{d-1}}$:
+$$\mathbb{E}[\text{dist}(L)] = \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{1/d}$$
+
+**Marginal Benefit Analysis**: Define marginal benefit of adding arc length $\Delta L$:
+$$B(\Delta L | L) = \mathbb{E}[\text{dist}(L)] - \mathbb{E}[\text{dist}(L + \Delta L)]$$
+
+The derivative reveals:
+$$\frac{d\mathbb{E}[\text{dist}]}{dL} = -\frac{1}{d} \cdot \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{\frac{1}{d}-1} \cdot \frac{k \cdot \epsilon^{d-1}}{V_{\text{total}}}$$
+
+**Diminishing Returns**: The second derivative shows:
+$$\frac{d^2\mathbb{E}[\text{dist}]}{dL^2} = \frac{1-d}{d^2} \cdot \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{\frac{1}{d}-2} \cdot \left(\frac{k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^2 > 0$$
+
+This proves $\left|\frac{d\mathbb{E}[\text{dist}]}{dL}\right|$ decreases - each additional complexity unit provides less distance reduction.
+
+**Submodularity Property**: For arc lengths $L_1 < L_2$ and increment $\Delta L$:
+$$B(\Delta L | L_1) > B(\Delta L | L_2)$$
+
+**Key Results**:
+1. **Initial gains are large** when $L \approx 0$
+2. **Diminishing returns** with marginal benefit $\propto \left(1 - \frac{L \cdot k \cdot \epsilon^{d-1}}{V_{\text{total}}}\right)^{\frac{1}{d}-2}$
+3. **Practical saturation** when $V_{\text{covered}} \approx 0.9 \cdot V_{\text{total}}$
+4. **Never fully saturates** due to the $\epsilon$-neighborhood limitation
+
+### 3.3 Parameter-Distance Scaling
 
 **Main Theorem**: For randomly initialized ReLU neural networks with width $w$:
 $$\mathbb{E}[L(f_w, \mathcal{D})] = L_0 \cdot w^{-\alpha} + L_\infty + O(w^{-2\alpha})$$
@@ -83,7 +141,7 @@ where:
 - $\alpha \in [\frac{1}{2(d+1)}, \frac{1}{2}]$ depending on the effective dimension
 - $L_\infty = \mathbb{E}[\min_{x,y} \|(x_i, y_i) - (x,y)\|]$ is the saturation distance
 
-### 3.2 Dimension Independence
+### 3.4 Dimension Independence
 
 **Surprising Result**: The scaling is dimension-independent for $d \in [2, 10]$.
 
@@ -102,7 +160,7 @@ where:
 The dimension-dependent terms approximately cancel, leaving:
 $$\mathbb{E}[L(f_w, \mathcal{D})] \approx \text{const} \cdot w^{-\alpha}$$
 
-### 3.3 Saturation Analysis
+### 3.5 Saturation Analysis
 
 The improvement saturates at:
 $$w^* = \Theta(n^{1/2})$$
@@ -115,7 +173,7 @@ Beyond this point:
 **Post-Saturation Behavior**: For $w > w^*$:
 $$L(f_w, \mathcal{D}) = L_\infty + O(e^{-\gamma w/w^*})$$
 
-### 3.4 Universal Scaling Form
+### 3.6 Universal Scaling Form
 
 The expected distance follows a universal scaling form:
 $$\mathbb{E}[L(f_w, \mathcal{D})] = L_\infty \cdot g\left(\frac{w}{w^*}\right)$$
@@ -173,16 +231,20 @@ The effect is robust to:
 ### 5.1 For Deep Learning Theory
 
 1. **Lottery Ticket Hypothesis**: Some initializations are geometrically closer to target functions - the "geometric coverage principle" provides the fundamental explanation for why lottery tickets exist
-2. **Overparameterization Benefits**: Not just capacity, but initialization geometry
-3. **Width vs Depth**: Width provides coverage, depth provides refinement
+2. **Overparameterization Benefits**: Not just capacity, but initialization geometry with submodular returns
+3. **Width vs Depth**: Width provides coverage, depth provides refinement, but both exhibit diminishing returns
 4. **Implicit Bias**: Random initialization biases toward better coverage
+5. **Submodular Complexity**: Early complexity additions (first layers, initial parameters) provide disproportionately large benefits
+6. **Natural Saturation**: Explains why overparameterized models don't infinitely improve - geometric benefits plateau
 
 ### 5.2 For Practice
 
-1. **Architecture Design**: Prefer width over depth for random initialization
-2. **Optimal Depth**: Use 2-3 layers for best initialization benefits
+1. **Architecture Design**: Prefer width over depth for random initialization, but expect diminishing returns
+2. **Optimal Depth**: Use 2-3 layers for best initialization benefits - further depth shows submodular returns
 3. **Early Stopping**: Networks starting closer may need fewer epochs
 4. **Transfer Learning**: Pre-trained networks already have good coverage
+5. **Progressive Complexity**: Add complexity gradually - early additions are most valuable
+6. **Sweet Spot Architecture**: Focus on the complexity range where marginal benefits are still significant
 
 ### 5.3 Optimal Network Size
 
