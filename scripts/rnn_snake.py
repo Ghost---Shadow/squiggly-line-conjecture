@@ -610,6 +610,173 @@ def analyze_squiggliness_metrics(
     print("=" * 70)
 
 
+def visualize_3d_pca_with_time(embeddings, hidden_states, sentence_pattern, idx_to_token):
+    """Create 3D visualization with front view (PCA perfect) and side view (using time as 3rd dimension)"""
+    from mpl_toolkits.mplot3d import Axes3D
+    import matplotlib.animation as animation
+    from PIL import Image
+    import io
+    
+    # Apply PCA to hidden states for 2D projection
+    pca = PCA(n_components=2)
+    hidden_2d = pca.fit_transform(hidden_states)
+    
+    # Time dimension (sequence position)
+    time_positions = np.arange(len(sentence_pattern))
+    
+    # Create individual front view figure
+    fig1 = plt.figure(figsize=(10, 10))
+    ax1 = fig1.add_subplot(111, projection='3d')
+    ax1.view_init(elev=0, azim=-90)  # Look from the side to see PC1 vs PC2
+    
+    # Plot trajectory in 3D space (Time, PC1, PC2)
+    ax1.plot(time_positions, hidden_2d[:, 0], hidden_2d[:, 1], 
+             'o-', linewidth=3, markersize=8, color='blue', alpha=0.8)
+    
+    # Add token labels
+    for i, (t, x, y, token) in enumerate(zip(time_positions, hidden_2d[:, 0], hidden_2d[:, 1], sentence_pattern)):
+        ax1.text(t, x, y, f'{i}:{token}', fontsize=10)
+    
+    ax1.set_xlabel('Time (Sequence Position)', fontsize=12)
+    ax1.set_ylabel('PC1', fontsize=12)
+    ax1.set_zlabel('PC2', fontsize=12)
+    ax1.set_title('Front View: PCA Projection (Perfect)\nLooking at PC1 vs PC2 plane', fontsize=14)
+    ax1.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('graphs/rnn_snake_front_view.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    # Create individual side view figure
+    fig2 = plt.figure(figsize=(10, 10))
+    ax2 = fig2.add_subplot(111, projection='3d')
+    ax2.view_init(elev=20, azim=-60)  # Angle to show time progression clearly
+    
+    # Plot trajectory with time on X-axis (left to right)
+    ax2.plot(time_positions, hidden_2d[:, 0], hidden_2d[:, 1],
+             'o-', linewidth=3, markersize=8, color='red', alpha=0.8)
+    
+    # Color gradient based on time
+    colors = plt.cm.viridis(np.linspace(0, 1, len(time_positions)))
+    ax2.scatter(time_positions, hidden_2d[:, 0], hidden_2d[:, 1],
+                c=colors, s=100, edgecolor='black', linewidth=1, zorder=10)
+    
+    # Add vertical lines to show time progression
+    for i in range(len(time_positions)):
+        ax2.plot([time_positions[i], time_positions[i]], 
+                 [hidden_2d[i, 0], hidden_2d[i, 0]], 
+                 [0, hidden_2d[i, 1]], 
+                 'gray', alpha=0.3, linestyle='--')
+    
+    # Add token labels
+    for i, (t, x, y, token) in enumerate(zip(time_positions, hidden_2d[:, 0], hidden_2d[:, 1], sentence_pattern)):
+        ax2.text(t, x, y, f'{token}', fontsize=10, ha='center')
+    
+    ax2.set_xlabel('Time (Sequence Position) →', fontsize=12)
+    ax2.set_ylabel('PC1', fontsize=12)
+    ax2.set_zlabel('PC2', fontsize=12)
+    ax2.set_title('Side View: Time Flowing Left to Right\nShowing temporal evolution', fontsize=14)
+    ax2.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('graphs/rnn_snake_side_view.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    # Create animated GIF showing progression through time
+    fig3 = plt.figure(figsize=(10, 10))
+    ax3 = fig3.add_subplot(111, projection='3d')
+    
+    # Function to update the plot for each time step
+    def animate_timestep(frame):
+        ax3.clear()
+        
+        # Fixed view angle
+        ax3.view_init(elev=20, azim=-60)
+        
+        # Calculate how many points to show (progressive reveal)
+        current_step = min(frame + 1, len(time_positions))
+        
+        # Plot trajectory up to current time step
+        if current_step > 1:
+            ax3.plot(time_positions[:current_step], 
+                    hidden_2d[:current_step, 0], 
+                    hidden_2d[:current_step, 1],
+                    'o-', linewidth=3, markersize=6, color='red', alpha=0.6)
+        
+        # Scatter plot with time-based colors for revealed points
+        if current_step > 0:
+            revealed_colors = plt.cm.viridis(np.linspace(0, 1, current_step))
+            ax3.scatter(time_positions[:current_step], 
+                       hidden_2d[:current_step, 0], 
+                       hidden_2d[:current_step, 1],
+                       c=revealed_colors, s=80, edgecolor='black', linewidth=1, zorder=10)
+        
+        # Highlight current point with larger marker
+        if 0 < current_step <= len(time_positions):
+            ax3.scatter([time_positions[current_step-1]], 
+                       [hidden_2d[current_step-1, 0]], 
+                       [hidden_2d[current_step-1, 1]],
+                       c='yellow', s=200, edgecolor='red', linewidth=3, zorder=20,
+                       marker='*')
+        
+        # Add vertical lines for revealed points
+        for i in range(current_step):
+            ax3.plot([time_positions[i], time_positions[i]], 
+                     [hidden_2d[i, 0], hidden_2d[i, 0]], 
+                     [0, hidden_2d[i, 1]], 
+                     'gray', alpha=0.2, linestyle='--')
+        
+        # Add token labels for revealed points
+        for i in range(current_step):
+            t, x, y, token = time_positions[i], hidden_2d[i, 0], hidden_2d[i, 1], sentence_pattern[i]
+            ax3.text(t, x, y, f'{token}', fontsize=10, ha='center',
+                    fontweight='bold' if i == current_step-1 else 'normal')
+        
+        # Set fixed axis limits to prevent jumping
+        ax3.set_xlim(-0.5, len(time_positions) - 0.5)
+        ax3.set_ylim(hidden_2d[:, 0].min() - 1, hidden_2d[:, 0].max() + 1)
+        ax3.set_zlim(hidden_2d[:, 1].min() - 1, hidden_2d[:, 1].max() + 1)
+        
+        ax3.set_xlabel('Time (Sequence Position) →', fontsize=12)
+        ax3.set_ylabel('PC1', fontsize=12)
+        ax3.set_zlabel('PC2', fontsize=12)
+        
+        # Update title with current token
+        if 0 < current_step <= len(time_positions):
+            current_token = sentence_pattern[current_step-1]
+            ax3.set_title(f'RNN Snake: Time Step {current_step}/{len(time_positions)}\nCurrent Token: "{current_token}"', 
+                         fontsize=14, fontweight='bold')
+        else:
+            ax3.set_title(f'RNN Snake: Initializing...', fontsize=14)
+        
+        ax3.grid(True, alpha=0.3)
+        
+        return ax3,
+    
+    # Create animation with pause at beginning and end
+    total_frames = len(time_positions) + 10  # Add extra frames for pause
+    
+    def frame_generator(f):
+        if f < 5:  # Pause at start
+            return 0
+        elif f < 5 + len(time_positions):  # Animate through time
+            return f - 4
+        else:  # Pause at end
+            return len(time_positions)
+    
+    anim = animation.FuncAnimation(fig3, lambda f: animate_timestep(frame_generator(f)), 
+                                  frames=total_frames, interval=300, blit=False)
+    
+    # Save as GIF
+    anim.save('graphs/rnn_snake_timestep.gif', writer='pillow', fps=3, dpi=100)
+    plt.close()
+    
+    print("\n3D Visualizations saved:")
+    print("- graphs/rnn_snake_front_view.png - Front view (PCA projection)")
+    print("- graphs/rnn_snake_side_view.png - Side view (time flowing left to right)")
+    print("- graphs/rnn_snake_timestep.gif - Animated progression through time steps")
+
+
 def main():
     """Main function for wind-vocab trajectory analysis"""
     print("=" * 70)
@@ -652,6 +819,10 @@ def main():
     analyze_squiggliness_metrics(
         wind_positions, token_ids, sentence_pattern, embeddings, hidden_states, idx_to_token
     )
+    
+    # Create 3D visualization with front and side views
+    print("\nCreating 3D visualization with front (PCA) and side (time) views...")
+    visualize_3d_pca_with_time(embeddings, hidden_states, sentence_pattern, idx_to_token)
 
     print("\n" + "=" * 70)
     print("Analysis complete! Generated files:")
@@ -659,6 +830,7 @@ def main():
         "1. graphs/wind_vocab_trajectory.png - Main trajectory visualization"
     )
     print("2. graphs/squiggliness_metrics.png - Complexity analysis")
+    print("3. graphs/rnn_snake_3d_views.png - 3D views (PCA front, time side)")
     print("=" * 70)
     print("Key insights:")
     print("🌪️ X-axis = Wind position (time through sequence)")
@@ -666,6 +838,7 @@ def main():
     print("🐍 Trajectory = Single long squiggly line through wind-vocab space")
     print("💨 Wind strength = Hidden state dynamics")
     print("🦘 Jump sizes = Vocabulary transition distances")
+    print("📊 3D views = Front (PCA perfect) and Side (time evolution)")
     print("=" * 70)
 
 
