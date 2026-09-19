@@ -38,7 +38,7 @@ mechanism, the two should score alike.
 
 Result
 ------
-    1. Under `euclid`, squiggliness helps enormously (~22x).
+    1. Under `euclid`, squiggliness helps enormously (~30x).
     2. Under `vert`, squiggliness does nothing at all. Flat to <1% across a
        100x change in arc length.
     3. The arc-length-matched straight line does NOT reproduce the effect,
@@ -53,6 +53,10 @@ Run:  python frequency_isolation.py
 
 import numpy as np
 
+from curves import (AMPLITUDE, RESOLUTION, arclen, euclid_distance,
+                    floor_distance, line_distance, matched_length_slope,
+                    phase_pool, sine_curve, sine_grid, vertical_distance)
+
 try:
     import matplotlib
     matplotlib.use("Agg")
@@ -61,46 +65,24 @@ try:
 except ImportError:
     HAVE_PLT = False
 
-GRID = np.linspace(-1, 1, 4000)
-DX = GRID[1] - GRID[0]
-
 TRIALS = 3000
 N_POINTS = 30
-AMPLITUDE = 0.577          # std of Uniform(-1, 1), matching the data
+N_PHASES = 100             # stratified phase pool; trial t uses curve t % N_PHASES
 FREQUENCIES = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64]
+NULL_FREQUENCIES = [4, 16, 64]
 
 
-def arclen(F):
-    """Arc length of each curve in F, shape (n_curves, n_grid)."""
-    return np.sqrt(DX ** 2 + np.diff(F, axis=1) ** 2).sum(axis=1)
-
-
-def euclid_distance(F, px, py):
-    """Mean over points of min 2-D Euclidean distance to the curve."""
-    out = np.empty(len(F))
-    for i in range(len(F)):
-        d2 = (px[i][:, None] - GRID[None, :]) ** 2 + \
-             (py[i][:, None] - F[i][None, :]) ** 2
-        out[i] = np.sqrt(d2.min(axis=1)).mean()
-    return out
-
-
-def vertical_distance(F, px, py):
-    """Mean absolute vertical residual -- what a loss function sees."""
-    idx = np.clip(np.searchsorted(GRID, px), 0, len(GRID) - 1)
-    return np.abs(py - np.take_along_axis(F, idx, axis=1)).mean(axis=1)
-
-
-def sine_curves(freq, n, rng):
-    phi = rng.uniform(0, 2 * np.pi, size=(n, 1))
-    return AMPLITUDE * np.sqrt(2) * np.sin(freq * np.pi * GRID[None, :] + phi)
-
-
-def matched_length_lines(target_length, n, rng):
-    """Straight lines with arc length exactly target_length."""
-    m = np.sqrt((target_length / 2.0) ** 2 - 1.0)
-    b = rng.uniform(-1, 1, size=(n, 1))
-    return m * GRID[None, :] + b
+def measure(freq, phases, px, py):
+    """Mean arc length, Euclidean distance and vertical residual at freq."""
+    x = sine_grid(freq)
+    lengths, euclid, vert = [], np.empty(px.shape), np.empty(px.shape)
+    for k, phi in enumerate(phases):
+        rows = slice(k, None, len(phases))
+        y = sine_curve(freq, phi, x)
+        lengths.append(arclen(x, y))
+        euclid[rows] = euclid_distance(x, y, px[rows], py[rows])
+        vert[rows] = vertical_distance(freq, phi, px[rows], py[rows])
+    return np.mean(lengths), euclid.mean(), vert.mean()
 
 
 def main():
@@ -112,17 +94,14 @@ def main():
     print("FREQUENCY ISOLATION: squiggliness with amplitude held exactly fixed")
     print("=" * 74)
     print(f"amplitude fixed at {AMPLITUDE}  |  {TRIALS} trials  |  "
-          f"{N_POINTS} random points each")
+          f"{N_POINTS} random points each  |  curve resolution {RESOLUTION}")
     print()
     print(f"{'freq':>6} {'arc length':>12} {'euclid dist':>14} {'vert |resid|':>14}")
     print("-" * 50)
 
     lengths, euclids, verts = [], [], []
     for w in FREQUENCIES:
-        F = sine_curves(w, TRIALS, rng)
-        L = arclen(F).mean()
-        e = euclid_distance(F, px, py).mean()
-        v = vertical_distance(F, px, py).mean()
+        L, e, v = measure(w, phase_pool(N_PHASES, rng), px, py)
         lengths.append(L)
         euclids.append(e)
         verts.append(v)
@@ -133,6 +112,8 @@ def main():
           f"({euclids[0] / euclids[-1]:.1f}x improvement)")
     print(f"vert:   {verts[0]:.4f} -> {verts[-1]:.4f}   "
           f"({100 * (verts[0] - verts[-1]) / verts[0]:+.1f}% change)")
+    print(f"euclid limit as freq -> inf: {floor_distance():.4f}  "
+          f"(points outside the band |y| <= A*sqrt(2) are unreachable)")
 
     print()
     print("=" * 74)
@@ -142,13 +123,12 @@ def main():
     print()
     print(f"{'freq':>6} {'arc length':>12} {'wiggly':>10} {'straight':>10}")
     print("-" * 42)
-    for w in [4, 16, 64]:
-        F = sine_curves(w, TRIALS, rng)
-        L = arclen(F).mean()
-        lines = matched_length_lines(L, TRIALS, rng)
-        print(f"{w:>6} {L:>12.2f} "
-              f"{euclid_distance(F, px, py).mean():>10.4f} "
-              f"{euclid_distance(lines, px, py).mean():>10.4f}")
+    b = rng.uniform(-1, 1, size=(TRIALS, 1))
+    for w in NULL_FREQUENCIES:
+        i = FREQUENCIES.index(w)
+        m = matched_length_slope(lengths[i])
+        straight = line_distance(m, b, px, py).mean()
+        print(f"{w:>6} {lengths[i]:>12.2f} {euclids[i]:>10.4f} {straight:>10.4f}")
 
     print()
     print("Arc length is not the mechanism. Spread across the domain is.")
@@ -159,6 +139,8 @@ def main():
                      label="Euclidean min-distance")
         plt.semilogx(FREQUENCIES, verts, "s-", lw=2, ms=8,
                      label="Vertical residual (what loss sees)")
+        plt.axhline(floor_distance(), color="gray", ls=":", lw=1.5,
+                    label="Euclidean limit, freq -> inf")
         plt.xlabel("Frequency (squiggliness), amplitude held fixed")
         plt.ylabel("Mean distance to random points")
         plt.title("Squiggliness helps geometrically, not vertically")
