@@ -1,5 +1,10 @@
 # [The Squiggly Line Conjecture: A Universal Geometric Principle for Neural Network Initialization](https://claude.ai/share/91316488-aa14-432b-93c8-372ad4e668ef)
 
+> **Historical.** Written before the conjecture was resolved. Empirical claims
+> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> how the idea developed. Figures it embeds that plotted the defective metrics
+> have been removed from `graphs/`; they remain in git history.
+
 ## Abstract
 
 We present and validate the Squiggly Line Conjecture, which states that randomly initialized complex functions (polynomials or neural networks) are geometrically closer to random data points than simpler functions, purely due to their increased "spatial coverage" in function space. Through comprehensive theoretical analysis and empirical validation, we demonstrate that this principle is dimension-independent and provides a fundamental geometric explanation for the success of overparameterized models in machine learning. Our experiments reveal that this initial proximity advantage translates directly to faster convergence and better final performance, providing a unified framework for understanding phenomena such as the lottery ticket hypothesis and the benefits of overparameterization.

@@ -1,5 +1,9 @@
 # The Squiggly Line Conjecture: Consolidated Documentation
 
+> **Historical.** Written before the conjecture was resolved. Empirical claims
+> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> how the idea developed.
+
 ## Abstract
 
 The Squiggly Line Conjecture provides a geometric foundation for understanding why overparameterized neural networks often learn faster from initialization. We demonstrate that randomly initialized complex functions (polynomials or neural networks) are geometrically closer to random data points than simpler functions, purely due to their increased "spatial coverage" in function space. This principle is dimension-independent and explains phenomena such as the lottery ticket hypothesis, benefits of overparameterization, and optimal network architectures.

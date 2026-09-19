@@ -1,5 +1,10 @@
 # [Quantum Mechanical Formulation of the Squiggly Line Conjecture](https://claude.ai/share/91316488-aa14-432b-93c8-372ad4e668ef)
 
+> **Historical.** Written before the conjecture was resolved. Empirical claims
+> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> how the idea developed. Figures it embeds that plotted the defective metrics
+> have been removed from `graphs/`; they remain in git history.
+
 ## Abstract
 
 We present a quantum mechanical proof of the Squiggly Line Conjecture, demonstrating that higher energy quantum states provide superior spatial coverage of random points through increased wave function nodes. This quantum formulation reveals that the classical squiggly line phenomenon is a manifestation of a deeper quantum principle: complex wave functions naturally position themselves closer to random perturbations in the Hamiltonian. We prove that the expected coverage scales as √E for energy E, establish the quantum-classical correspondence in the ℏ → 0 limit, and show that quantum superposition provides exponential advantage over classical random initialization.
