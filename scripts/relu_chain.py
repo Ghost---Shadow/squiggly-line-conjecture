@@ -1,3 +1,18 @@
+"""
+DEFECT WARNING -- read docs/RESOLUTION.md §4 before using any number from here.
+
+Two defects in `analyze_squiggly_line_effect`:
+
+1. input_dim > 1 branch measures ||net(x) - x||, the distance from the network's
+   output to its own input. Under Xavier init the output is attenuated as width
+   grows, so the metric converges to ||x|| -- the score of the zero function.
+   The w^(-alpha), alpha ~ 0.42 "scaling law" is this signal attenuation.
+
+2. input_dim == 1 branch uses point[0] for BOTH coordinates of each data point,
+   placing every "random point" on the line y = x.
+
+Metrics deliberately left unfixed as the historical record.
+"""
 import torch
 import torch.nn as nn
 import numpy as np
@@ -383,11 +398,6 @@ if __name__ == "__main__":
     results = plot_squiggly_line_scaling()
 
     print("\n" + "=" * 60)
-    print("KEY FINDINGS:")
-    print("1. Wider networks -> More complex functions -> Closer to random data")
-    print("2. When all ReLUs fire positive, network = linear polynomial")
-    print("3. More parameters create more 'squiggles' in function space")
-    print("4. This validates the Squiggly Line Conjecture for neural networks!")
     print("Individual graphs saved to ./graphs/:")
     print("- relu_complexity_vs_width.png")
     print("- relu_distance_vs_width.png")

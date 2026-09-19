@@ -1,3 +1,17 @@
+"""
+DEFECT WARNING -- read docs/RESOLUTION.md §4 before using any number from here.
+
+The distance metric here is an inline copy of the defect in
+`utils.measure_coverage`:
+
+    dist = np.abs(yi - np.sum(pattern))
+
+`np.sum(pattern)` is the count of active neurons (~ width/2), so the reported
+"distance" tracks width and is independent of the data and of dimension. The
+apparent dimension independence and the depth trend are artifacts of this.
+
+Metrics deliberately left unfixed as the historical record.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -407,11 +421,6 @@ if __name__ == "__main__":
     plt.close()
 
     print("\n" + "=" * 60)
-    print("KEY FINDINGS:")
-    print("1. Higher dimensions show stronger squiggly line effects")
-    print("2. Clustered data shows different coverage patterns than uniform/Gaussian")
-    print("3. Depth has diminishing returns beyond 2-3 layers")
-    print("4. Training reduces distance to test points, confirming the conjecture")
     print("Individual graphs saved to ./graphs/:")
     print("- more_effects_dimension_distance.png")
     print("- more_effects_dimension_patterns.png")

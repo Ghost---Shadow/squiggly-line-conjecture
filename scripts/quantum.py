@@ -1,3 +1,16 @@
+"""
+DEFECT WARNING -- read docs/RESOLUTION.md §4 and §6 before using any number from here.
+
+Written to demonstrate that quantum coverage scales as alpha * sqrt(E). Its own
+coverage-by-energy output contradicts that: coverage is non-monotonic in energy
+and peaks at the GROUND STATE (n=1), across a total spread of ~14%. The reported
+"quantum advantage" is 1.00x at every qubit count and dimension.
+
+The sqrt(E) argument is also circular: for a 1-D box E ~ n^2, so nodes ~ sqrt(E)
+follows from the spectrum by change of variables. See docs/RESOLUTION.md.
+
+Left as-is as the historical record; do not revive.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -449,14 +462,6 @@ if __name__ == "__main__":
     plt.close()
 
     print("\n" + "=" * 60)
-    print("KEY QUANTUM FINDINGS:")
-    print("1. Quantum networks show exponential advantage in pattern exploration")
-    print("2. Higher dimensions amplify quantum advantage further")
-    print("3. Decoherence rapidly degrades quantum advantage")
-    print("4. Entanglement provides additional efficiency gains")
-    print("5. Error correction overhead may negate advantages for near-term devices")
-    print("6. Quantum mechanical coverage varies significantly with energy levels")
-    print("7. Fault-tolerant quantum computers could revolutionize function approximation")
     print("Individual graphs saved to ./graphs/:")
     print("- quantum_advantage_vs_qubits.png")
     print("- quantum_vs_classical_patterns.png")

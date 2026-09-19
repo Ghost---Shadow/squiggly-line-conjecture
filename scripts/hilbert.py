@@ -639,34 +639,6 @@ def main():
         print(f"    Hilbert: {np.mean(hilbert_path):.2f} ± {np.std(hilbert_path):.2f}")
         print(f"    Random:  {np.mean(random_path):.2f} ± {np.std(random_path):.2f}")
 
-    print("\n" + "=" * 60)
-    print("CONCLUSION")
-    print("=" * 60)
-
-    # Determine overall results
-    hilbert_wins_2d = np.mean(
-        [r["avg_min_distance"] for r in all_results["Hilbert_2D"]]
-    ) < np.mean([r["avg_min_distance"] for r in all_results["Random_2D"]])
-    hilbert_wins_3d = np.mean(
-        [r["avg_min_distance"] for r in all_results["Hilbert_3D"]]
-    ) < np.mean([r["avg_min_distance"] for r in all_results["Random_3D"]])
-
-    if hilbert_wins_2d and hilbert_wins_3d:
-        print("\n✓ Hilbert initialization CONFIRMS better spatial coverage!")
-        print("  - Lower average distance to random points in space")
-        print("  - Systematic coverage beats random initialization")
-        print("  - The Squiggly Line Conjecture holds for designed curves!")
-    elif hilbert_wins_2d or hilbert_wins_3d:
-        print("\n⚬ Mixed results: Hilbert wins in some dimensions")
-        print("  - May depend on specific architecture or dimension")
-    else:
-        print("\n✗ Random initialization performs comparably or better")
-        print("  - Designed coverage doesn't guarantee improvement")
-
-    print("\nKey Insight: The experiment directly tests whether systematic")
-    print("space-filling (Hilbert) provides better coverage than random")
-    print("initialization, independent of any specific learning task.")
-
     return all_results
 
 

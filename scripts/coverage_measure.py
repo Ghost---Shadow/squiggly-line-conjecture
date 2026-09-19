@@ -1,3 +1,15 @@
+"""
+DEFECT WARNING -- read docs/RESOLUTION.md §4 before using any number from here.
+
+Sections 1-2 depend on `utils.measure_coverage`, whose "distance" is
+|y - (number of active neurons)| ~ width/2, not a distance to anything. The
+avg_dist column and the coverage_* figures plot that quantity.
+
+Section 3 (`measure_true_geometric_distance`) is a correct Euclidean metric; it
+shows no trend with width.
+
+Metrics deliberately left unfixed as the historical record.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns

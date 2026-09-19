@@ -1,3 +1,18 @@
+"""
+DEFECT WARNING -- read docs/RESOLUTION.md §4 before using any number from here.
+
+`measure_coverage` does not measure a distance. Its inner loop computes
+
+    dist = np.abs(yi - np.sum(pattern))
+
+where `pattern` is the boolean activation vector, so `np.sum(pattern)` is the
+COUNT OF ACTIVE NEURONS (~ width/2). The returned "avg distance" therefore grows
+linearly with width and is independent of the data.
+
+Deliberately left unfixed: this is the historical record the audit depends on,
+and scripts/audit_legacy_metrics.py imports it directly to reproduce the defect.
+`measure_true_geometric_distance` is a genuine Euclidean metric and is unaffected.
+"""
 import numpy as np
 import math
 
