@@ -32,13 +32,15 @@ closer.
 
 `scripts/frequency_isolation.py` holds amplitude exactly fixed and varies only
 oscillation frequency, so the marginal distribution of `f(x)` is identical across
-every curve tested. Euclidean minimum distance to random points falls 22× as
-frequency rises, then saturates once the wavelength drops below the typical
-inter-point spacing.
+every curve tested. Euclidean minimum distance to random points falls 30× as
+frequency rises, approaching a floor set by amplitude: points outside the band
+the curve sweeps can never be reached. The floor does not depend on how many
+points there are; `scripts/saturation_scaling.py` tested the earlier guess that
+point spacing sets it, and rejected it.
 
 The fishing-line mechanism is wrong, though. A *straight line* stretched to the
-same arc length (208 units, a near-vertical ramp) scores 0.501 against the wiggly
-curve's 0.028 — eighteen times worse at identical length. Arc length is close to
+same arc length (209 units, a near-vertical ramp) scores 0.501 against the wiggly
+curve's 0.021 — twenty-four times worse at identical length. Arc length is close to
 irrelevant. What matters is that the length is spread across the domain rather
 than spent in one place.
 
@@ -48,8 +50,9 @@ That would undercut the conjecture only if length were the mechanism. It isn't.
 
 **Squiggliness buys nothing that training can use.**
 
-In the same experiment, the mean vertical residual `|y_i - f(x_i)|` moves from
-0.6686 to 0.6632 — under 1% — across a 100× change in arc length. Flat.
+In the same experiment, the mean vertical residual `|y_i - f(x_i)|` stays
+between 0.6649 and 0.6688 (a 0.6% spread) across a 100× change in arc length.
+Flat.
 
 At every `x`, `f(x)` has the same marginal distribution regardless of frequency.
 Wiggles let a curve pass near a point that is *horizontally displaced* from it.
@@ -91,9 +94,9 @@ Reproduce all three with `python scripts/audit_legacy_metrics.py`.
 
 > For a curve of fixed amplitude and random phase on a bounded domain, expected
 > minimum Euclidean distance to a random point falls with oscillation frequency
-> and saturates once the wavelength drops below the typical inter-point spacing.
-> Arc length is not the controlling variable; the distribution of that length
-> across the domain is.
+> as `D∞ + c/w`, saturating at a floor set by amplitude against the data range,
+> independent of the number of points. Arc length is not the controlling
+> variable; the distribution of that length across the domain is.
 
 Correct, and a nicer statement than the one this started with. It just doesn't
 explain why large networks train fast.
@@ -104,7 +107,8 @@ explain why large networks train fast.
 pip install -r requirements.txt
 cd scripts
 
-python frequency_isolation.py    # the decisive experiment (numpy only, seconds)
+python frequency_isolation.py    # the decisive experiment (~10 s)
+python saturation_scaling.py     # what sets the saturation floor (~4 min)
 python audit_legacy_metrics.py   # reproduces the three measurement defects
 ```
 
@@ -112,12 +116,14 @@ Legacy scripts (`coverage_measure.py`, `relu_chain.py`, `more_effects.py`,
 `quantum.py`, `snake_relu.py`, `rnn_snake.py`, `transformer_snake.py`,
 `hilbert.py`, `wind_tunnel.py`) are retained as a record. Their outputs should
 not be cited — see the defects listed above, and
-[`docs/EXPERIMENT_LOG.md`](docs/EXPERIMENT_LOG.md) for a full re-run.
+[`docs/EXPERIMENT_LOG.md`](docs/EXPERIMENT_LOG.md) for a full re-run. The ones
+with defective metrics carry a warning docstring; their metrics are deliberately
+left unfixed as evidence for the audit.
 
-A warning about those scripts: each ends with a `KEY FINDINGS` block assembled
-from literal `print` statements that are not derived from anything computed
-above them. In three cases they assert the opposite of what the script just
-produced.
+Most of them used to end with a `KEY FINDINGS` block of literal `print`
+statements that were not derived from anything computed. In three cases those
+blocks asserted the opposite of what the script had just produced. The blocks
+have been removed; the numeric output is unchanged.
 
 ## Repository layout
 
@@ -127,9 +133,10 @@ produced.
 | `docs/EXPERIMENT_LOG.md` | full re-run of every script, 19 Sep 2026, with raw output |
 | `docs/` (other) | development notes, kept as history |
 | `scripts/frequency_isolation.py` | isolated-frequency experiment and arc-length null model |
+| `scripts/saturation_scaling.py` | knee location vs number of points; band-edge control |
+| `scripts/curves.py` | shared sine-curve geometry for the two experiments above |
 | `scripts/audit_legacy_metrics.py` | demonstrations of the three measurement defects |
 | `scripts/` (other) | original exploratory code |
-| `main.tex`, `tex/` | draft paper, superseded and not maintained |
 | `graphs/`, `diagrams/` | figures |
 
 ## Postscript
