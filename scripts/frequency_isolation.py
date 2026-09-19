@@ -1,0 +1,176 @@
+"""
+frequency_isolation.py
+
+The decisive experiment for the Squiggly Line Conjecture.
+
+Every earlier experiment in this repository varied "squiggliness" by varying
+polynomial degree or network width. That confounds three things at once:
+oscillation frequency, output amplitude, and arc length. This script varies
+one thing only.
+
+Design
+------
+Curves are sines:  f(x) = A * sqrt(2) * sin(w * pi * x + phi)
+
+    - A is FIXED for every curve, chosen to equal the standard deviation of
+      the data's y values. So the marginal distribution of f(x) at any given
+      x is *identical* for every frequency.
+    - phi is uniform random, so no curve is privileged by alignment.
+    - w (frequency) is the only thing that changes. This is squiggliness,
+      cleanly isolated.
+
+Two distances are measured against the same random point cloud:
+
+    euclid : mean over points of the minimum 2-D Euclidean distance from the
+             point to the curve. This is the metric used throughout the
+             original repo (utils.measure_true_geometric_distance).
+
+    vert   : mean absolute vertical residual |y_i - f(x_i)|. This is what a
+             regression loss actually charges you.
+
+Null model
+----------
+The fishing-line story says the mechanism is arc length: a longer curve has
+more chances to pass near a point. To test that directly we compare each
+wiggly curve against a STRAIGHT LINE stretched to exactly the same arc
+length (y = m*x + b with L = 2*sqrt(1+m^2)). If arc length were the
+mechanism, the two should score alike.
+
+Result
+------
+    1. Under `euclid`, squiggliness helps enormously (~22x).
+    2. Under `vert`, squiggliness does nothing at all. Flat to <1% across a
+       100x change in arc length.
+    3. The arc-length-matched straight line does NOT reproduce the effect,
+       so arc length is not the mechanism. Spread across the domain is.
+
+Conclusion: the conjecture is true, and false in the way that matters. The
+squiggly curve really is closer to the data -- but only in a direction that
+gradient descent does not measure.
+
+Run:  python frequency_isolation.py
+"""
+
+import numpy as np
+
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    HAVE_PLT = True
+except ImportError:
+    HAVE_PLT = False
+
+GRID = np.linspace(-1, 1, 4000)
+DX = GRID[1] - GRID[0]
+
+TRIALS = 3000
+N_POINTS = 30
+AMPLITUDE = 0.577          # std of Uniform(-1, 1), matching the data
+FREQUENCIES = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64]
+
+
+def arclen(F):
+    """Arc length of each curve in F, shape (n_curves, n_grid)."""
+    return np.sqrt(DX ** 2 + np.diff(F, axis=1) ** 2).sum(axis=1)
+
+
+def euclid_distance(F, px, py):
+    """Mean over points of min 2-D Euclidean distance to the curve."""
+    out = np.empty(len(F))
+    for i in range(len(F)):
+        d2 = (px[i][:, None] - GRID[None, :]) ** 2 + \
+             (py[i][:, None] - F[i][None, :]) ** 2
+        out[i] = np.sqrt(d2.min(axis=1)).mean()
+    return out
+
+
+def vertical_distance(F, px, py):
+    """Mean absolute vertical residual -- what a loss function sees."""
+    idx = np.clip(np.searchsorted(GRID, px), 0, len(GRID) - 1)
+    return np.abs(py - np.take_along_axis(F, idx, axis=1)).mean(axis=1)
+
+
+def sine_curves(freq, n, rng):
+    phi = rng.uniform(0, 2 * np.pi, size=(n, 1))
+    return AMPLITUDE * np.sqrt(2) * np.sin(freq * np.pi * GRID[None, :] + phi)
+
+
+def matched_length_lines(target_length, n, rng):
+    """Straight lines with arc length exactly target_length."""
+    m = np.sqrt((target_length / 2.0) ** 2 - 1.0)
+    b = rng.uniform(-1, 1, size=(n, 1))
+    return m * GRID[None, :] + b
+
+
+def main():
+    rng = np.random.default_rng(7)
+    px = rng.uniform(-1, 1, size=(TRIALS, N_POINTS))
+    py = rng.uniform(-1, 1, size=(TRIALS, N_POINTS))
+
+    print("=" * 74)
+    print("FREQUENCY ISOLATION: squiggliness with amplitude held exactly fixed")
+    print("=" * 74)
+    print(f"amplitude fixed at {AMPLITUDE}  |  {TRIALS} trials  |  "
+          f"{N_POINTS} random points each")
+    print()
+    print(f"{'freq':>6} {'arc length':>12} {'euclid dist':>14} {'vert |resid|':>14}")
+    print("-" * 50)
+
+    lengths, euclids, verts = [], [], []
+    for w in FREQUENCIES:
+        F = sine_curves(w, TRIALS, rng)
+        L = arclen(F).mean()
+        e = euclid_distance(F, px, py).mean()
+        v = vertical_distance(F, px, py).mean()
+        lengths.append(L)
+        euclids.append(e)
+        verts.append(v)
+        print(f"{w:>6} {L:>12.2f} {e:>14.4f} {v:>14.4f}")
+
+    print()
+    print(f"euclid: {euclids[0]:.4f} -> {euclids[-1]:.4f}   "
+          f"({euclids[0] / euclids[-1]:.1f}x improvement)")
+    print(f"vert:   {verts[0]:.4f} -> {verts[-1]:.4f}   "
+          f"({100 * (verts[0] - verts[-1]) / verts[0]:+.1f}% change)")
+
+    print()
+    print("=" * 74)
+    print("NULL MODEL: straight line stretched to identical arc length")
+    print("=" * 74)
+    print("If arc length were the mechanism these columns would match.")
+    print()
+    print(f"{'freq':>6} {'arc length':>12} {'wiggly':>10} {'straight':>10}")
+    print("-" * 42)
+    for w in [4, 16, 64]:
+        F = sine_curves(w, TRIALS, rng)
+        L = arclen(F).mean()
+        lines = matched_length_lines(L, TRIALS, rng)
+        print(f"{w:>6} {L:>12.2f} "
+              f"{euclid_distance(F, px, py).mean():>10.4f} "
+              f"{euclid_distance(lines, px, py).mean():>10.4f}")
+
+    print()
+    print("Arc length is not the mechanism. Spread across the domain is.")
+
+    if HAVE_PLT:
+        plt.figure(figsize=(10, 6))
+        plt.semilogx(FREQUENCIES, euclids, "o-", lw=2, ms=8,
+                     label="Euclidean min-distance")
+        plt.semilogx(FREQUENCIES, verts, "s-", lw=2, ms=8,
+                     label="Vertical residual (what loss sees)")
+        plt.xlabel("Frequency (squiggliness), amplitude held fixed")
+        plt.ylabel("Mean distance to random points")
+        plt.title("Squiggliness helps geometrically, not vertically")
+        plt.ylim(0, 0.75)
+        plt.legend()
+        plt.grid(alpha=0.3)
+        plt.tight_layout()
+        plt.savefig("../graphs/frequency_isolation.png", dpi=300,
+                    bbox_inches="tight")
+        plt.close()
+        print("\nSaved ../graphs/frequency_isolation.png")
+
+
+if __name__ == "__main__":
+    main()

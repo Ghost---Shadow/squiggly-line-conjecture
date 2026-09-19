@@ -84,7 +84,7 @@ def quantum_coverage(energy_level, data_points, box_size=1.0):
         x_range = np.linspace(0, box_size, 1000)
         psi_squared = psi(x_range, energy_level) ** 2
         distances = 1 / ((x_range - point) ** 2 + 0.01)
-        coverage += np.trapz(psi_squared * distances, x_range)
+        coverage += np.trapezoid(psi_squared * distances, x_range)
 
     return coverage / len(data_points)
 
