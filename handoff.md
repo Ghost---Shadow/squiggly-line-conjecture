@@ -24,15 +24,12 @@ This work is outside the repository, except for one script.
 | 2026 slide deck (public) | https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing |
 | Original slide deck | https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing |
 | Paper notes, 10 files | `C:\Users\soura\Desktop\Dump\digest\Overparameterization\` |
-| Blog post draft (not published on 10 Nov 2026) | `C:\Users\soura\Desktop\Dump\website\src\blog\squiggly-line-conjecture\index.mdx` |
+| Blog post (published 10 Nov 2026) | https://ad-absurdum.me/blog/squiggly-line-conjecture |
 | Random ReLU length check | [`scripts/random_relu_length.py`](scripts/random_relu_length.py) |
 
-**The session did not know about this repository until the end.** The 2026 deck and the blog draft were written from the slide deck only. They call the idea untested, and they do not contain the results of `RESOLUTION.md`. This repository is private, so its results were not copied into the public deck.
+**The session found this repository late.** The first version of the 2026 deck and of the blog post was written from the slide deck only. After the owner approved it, the results of `RESOLUTION.md` were added to both (deck slide "My experiments: the geometry holds, the learning claim does not", and the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
 
-Known conflicts between the 2026 deck and `RESOLUTION.md`:
-
-- The deck's revision 1 says "state the conjecture on curve length". `RESOLUTION.md` section 2 shows that length is not the controlling variable.
-- The deck lists "the loss is not the training loss" as a possible erratum. `RESOLUTION.md` section 3 already measured it: the effect on the vertical residual is zero.
+The deck still says "2022 deck" and "2022 derivation" in some titles. The idea is from 2022, but the original deck and the first scripts are from August 2025.
 
 ## 3. New findings from the session
 
@@ -124,9 +121,3 @@ Each one states a prediction and a stop rule before any run. This is the standar
 - No hardcoded conclusion blocks. Print only what the script computed.
 - Do not fix the legacy metrics. They are the evidence for `scripts/audit_legacy_metrics.py`.
 - Size the sample grid for the steepest slope, or use `scripts/curves.py`. A fixed grid overestimates distance for steep curves.
-
-## 6. Decisions that wait for the owner
-
-1. Can the results of `RESOLUTION.md` go into the public 2026 deck and the blog post? Without them, both describe the idea as untested, which is not correct.
-2. If yes: change revision 1 of the deck ("length, not parameter count") to the result of this repository ("spread, not length").
-3. Publish the blog draft, or rewrite it around the resolution first.
