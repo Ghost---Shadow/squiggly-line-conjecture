@@ -33,6 +33,7 @@ The squiggly line conjecture, formalised.
 | `Pruning`        | pruning subtracts a kernel: slower, farther; when a ticket wins  | proved    |
 | `SkipAndNorm`    | a skip is a bypass (never dims); a norm is an amplifier          | proved    |
 | `SmallSteps`     | a square-law loss over `N` steps is at most `c D² / N`           | proved    |
+| `DepthSeparation`| one hidden layer needs `2^L` units to follow `L + 1` tent layers | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -65,3 +66,4 @@ import SquigglyLine.SameKernel
 import SquigglyLine.Pruning
 import SquigglyLine.SkipAndNorm
 import SquigglyLine.SmallSteps
+import SquigglyLine.DepthSeparation
