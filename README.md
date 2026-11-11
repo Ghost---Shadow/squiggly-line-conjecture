@@ -24,8 +24,13 @@ machine-checked statements about well-known puzzles of deep learning:
 [neural collapse](docs/neural-collapse.md),
 [the information bottleneck](docs/information-bottleneck.md),
 [the platonic representation hypothesis](docs/same-kernel.md),
-[depth separation](docs/depth-separation.md), and
-[skip connections and normalisation](docs/skip-and-norm.md).
+[depth separation](docs/depth-separation.md),
+[universal approximation](docs/universal-approximation.md),
+[vanishing and exploding gradients](docs/vanishing-gradients.md),
+[skip connections and normalisation](docs/skip-and-norm.md),
+[weight decay](docs/weight-decay.md),
+[bias and variance](docs/bias-variance.md), and
+[the linear scaling rule for batch size](docs/batch-size.md).
 Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
@@ -95,6 +100,10 @@ point to.
 | Go deeper, not only wider. | A layer can double the turns of the curve. A neuron in one hidden layer adds one. | [depth separation](docs/depth-separation.md) |
 | Deep networks need skip connections and normalisation. | A skip keeps any layer from dimming or blocking the signal. A normalisation restores its strength. | [skip and norm](docs/skip-and-norm.md) |
 | Change things gradually: warm up, small steps, easy examples first. | If a step's cost goes as the square of its size, `N` small steps cost `1 / N` of one big one. | [small steps](docs/small-steps.md) |
+| Weight decay, early stopping and a bigger model all fight overfitting. | All three add a floor to the strength of every direction. Stopping after `t` steps cuts at least as hard as weight decay `1 / (step size × t)`. | [weight decay](docs/weight-decay.md) |
+| Regularise more and you underfit, less and you overfit. | Expected squared error is bias² plus variance. Raising the floor raises the first and lowers the second. | [bias and variance](docs/bias-variance.md) |
+| Double the batch size, double the learning rate. | Two small steps equal one big step up to a term of order `step size²`. | [batch size](docs/batch-size.md) |
+| Start the weights so the signal keeps its size from layer to layer. | A per-layer gain below one dies with depth and above one blows up, and the gradient follows the signal. | [vanishing gradients](docs/vanishing-gradients.md) |
 | There is a largest learning rate, and sharper loss means a smaller one. | A direction is stable exactly when the step size is below `2 / sharpness`. | [edge of stability](docs/edge-of-stability.md) |
 | Networks learn the coarse pattern first. Stopping early keeps out noise. | Each direction is learned on its own clock, `1 / (step size × strength)`, strong ones first. | [spectral bias](docs/spectral-bias.md) |
 | Flat minima are good, but sharpness numbers are slippery. | Rescaling the weights changes the flatness and not the model. Flatter always means farther. | [flat minima](docs/flat-minima.md) |
@@ -477,6 +486,18 @@ them proves the phenomenon for real networks.
 | Information bottleneck | After any layer of a network that is right on every input: labels ≤ places occupied ≤ inputs. | [note](docs/information-bottleneck.md) | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) |
 | Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/NeuralCollapse.lean) |
 | Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) |
+
+**Known results that are here under another name**
+
+| Usual name | Where it is |
+|---|---|
+| Neural tangent kernel, lazy training | The fixed-kernel setting of most rows above. [`Kernel`](lean/SquigglyLine/Kernel.lean) is the statement that training sees only the kernel. |
+| Implicit bias of gradient descent | It reaches the nearest fit: `gradientDescent_fit_is_nearest` in [`LeastAction`](lean/SquigglyLine/LeastAction.lean). |
+| Robustness against accuracy | The slope sandwich of [section 3](#3-why-it-is-true), and the [dimpled manifold](docs/dimpled-manifold.md). |
+| Memorising random labels | The travel table of [section 5](#5-where-the-idea-is-right) uses random labels, and [benign overfitting](docs/benign-overfitting.md) says when that is harmless. |
+| Random Fourier features | The model of [section 5](#5-where-the-idea-is-right). |
+| Dying ReLU | "Dead stays dead" in [`MarkovChains`](lean/SquigglyLine/MarkovChains.lean). |
+| Grokking, and double descent over training time | Argued from the clocks in [spectral bias](docs/spectral-bias.md). Not proved. |
 
 Two more notes give the pictures behind these:
 [`docs/fourier-and-relu-bridge.md`](docs/fourier-and-relu-bridge.md) (why the
