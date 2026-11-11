@@ -23,15 +23,14 @@ This work is outside the repository, except for one script.
 
 | Item | Location |
 |---|---|
-| 2026 slide deck (public) | https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing |
-| Original slide deck | https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing |
+| Slide deck (public) | https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing |
 | Paper notes, 10 files | `C:\Users\soura\Desktop\Dump\digest\Overparameterization\` |
 | Blog post (published 10 Nov 2026) | https://ad-absurdum.me/blog/squiggly-line-conjecture |
 | Random ReLU length check | [`scripts/random_relu_length.py`](scripts/random_relu_length.py) |
 
-**The session found this repository late.** The first version of the 2026 deck and of the blog post was written from the slide deck only. After the owner approved it, the results of `RESOLUTION.md` were added to both (deck slide "My experiments: the geometry holds, the learning claim does not", and the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
+**The session found this repository late.** The first version of the slide deck and of the blog post was written from the owner's early notes only. After the owner approved it, the results of `RESOLUTION.md` were added to both (deck slide "My experiments: the geometry holds, the learning claim does not", and the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
 
-The deck still says "2022 deck" and "2022 derivation" in some titles. The idea is from 2022, but the original deck and the first scripts are from August 2025.
+The idea is from 2022. The first scripts are from August 2025. The slide deck was rebuilt from scratch on 12 Nov 2026.
 
 ## 3. New findings from the session
 

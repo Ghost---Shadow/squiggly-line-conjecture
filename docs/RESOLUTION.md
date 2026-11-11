@@ -261,7 +261,7 @@ start. G is true. P is false for width and weak for depth. L is false.
   under He initialisation `E[f(x)²]` is the same at every width, so the
   expected initial MSE is `E[y²] + E[f(x)²]` at every width (§3).
 - **Tube identity.** `E[dist(P, S)] = ∫₀^∞ P(P is outside the tube of radius r) dr`.
-  It replaces the underived `(uncovered fraction)^(1/d)` of the original deck
+  It replaces the earlier estimate `(uncovered fraction)^(1/d)`, which had no derivation,
   and gives the `V/(4l)` lower bound used in §2.
 - **A limit of the test family.** A random-phase sine has one degree of
   freedom and can never fit more than two points at once. The mean per-point

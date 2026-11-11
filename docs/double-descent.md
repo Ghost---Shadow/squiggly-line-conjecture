@@ -1,6 +1,6 @@
 # Double descent, as the travel peak
 
-Notes from 11 Nov 2026. The 2022 deck claimed that the squiggly line picture
+Notes from 11 Nov 2026. The original idea claimed that the squiggly line picture
 ties in with double descent, and derived nothing. This note is what can
 actually be said. Each statement is marked **proved** (in `lean/`),
 **measured** (by `scripts/double_descent.py`), or **open**.

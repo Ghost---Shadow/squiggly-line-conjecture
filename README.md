@@ -13,7 +13,7 @@ turned out to be true.
 - Proofs: [`lean/`](lean), rebuilt on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml)
 - Paper (draft of 11 Nov 2026): [`paper/main.pdf`](paper/main.pdf)
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
-- Slides: [2026 deck](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing), [original deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
+- Slides: [Google Slides](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing)
 - Findings in full: [`docs/RESOLUTION.md`](docs/RESOLUTION.md)
 
 > **Looking for an arXiv endorsement.** I would like to post the paper on arXiv

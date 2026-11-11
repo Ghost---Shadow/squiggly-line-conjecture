@@ -6,7 +6,7 @@ random point to `S` is the uncovered mass, integrated over all radii:
 
     E[dist(P, S)] = ∫₀^∞ P(P is outside the tube of radius r) dr
 
-This replaces the estimate `(uncovered fraction)^(1/d)` of the original deck.
+This replaces the earlier estimate `(uncovered fraction)^(1/d)`, which had no derivation.
 It holds for every set `S` in every metric space, so it covers curves,
 surfaces and hidden-state trajectories alike.
 -/

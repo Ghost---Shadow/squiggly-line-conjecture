@@ -22,7 +22,7 @@ abbrev ModelFamily (ι X : Type*) := ι → RandomFunction X
 def StartsCloser (cost : Cost X) (M : ModelFamily ι X) (μ : Measure (DataPoint X)) : Prop :=
   StrictAnti fun i => (M i).expected cost μ
 
-/-- **The squiggly line conjecture** (Definition 3.1 of the deck): more parameters, smaller
+/-- **The squiggly line conjecture**: more parameters, smaller
 expected distance from the data to the nearest point of the line. -/
 def SquigglyLineConjecture [SeminormedAddCommGroup X] (M : ModelFamily ℕ X)
     (μ : Measure (DataPoint X)) : Prop :=

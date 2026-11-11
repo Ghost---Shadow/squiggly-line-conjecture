@@ -39,7 +39,7 @@ Deliberately **not** in that list, decide separately:
   of the related work, and the Hanin result matters to the resolution. See task 6.
 - `diagrams/` — conceptual illustrations (`core_idea_1..4`, `arc_length`,
   `the_wall`, `diminishing_returns`), not LaTeX figures. Several are still
-  accurate and they are presumably what is in the slide deck.
+  accurate.
 
 ## 3. Neutralize the hardcoded conclusion blocks
 
