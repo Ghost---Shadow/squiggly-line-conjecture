@@ -10,6 +10,32 @@ training never measures.
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
 - Slides: [2026 deck](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing), [original deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
 - Full findings: [`docs/RESOLUTION.md`](docs/RESOLUTION.md)
+- Paper (draft, not reviewed): [`paper/main.pdf`](paper/main.pdf)
+- Proofs: [`lean/`](lean), checked on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-conjecture/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-conjecture/actions/workflows/lean.yml)
+
+> **Looking for an arXiv endorsement.** I would like to post the paper on arXiv
+> and I am not affiliated with an institution, so I need an endorsement for
+> `cs.LG`. If you are an arXiv endorser and are willing to look at it, please
+> open an issue on this repository or write to the address on the first page
+> of the paper.
+
+## The theorem
+
+For a random-phase sine `A·sin(w·x + φ)` and data whose labels lie inside the
+band the sine sweeps:
+
+1. **Squigglier is closer, at a known rate.** At every data point and every
+   phase, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`.
+2. **All the way.** The expected nearest-point distance tends to zero as the
+   frequency grows.
+3. **And it buys nothing.** The expected loss, for every regression loss, is
+   the same at every frequency.
+
+This is `squiggly_line_theorem` in
+[`lean/SquigglyLine/SquigglyLineTheorem.lean`](lean/SquigglyLine/SquigglyLineTheorem.lean),
+machine-checked with no `sorry`. It is a theorem about sines. For neural
+networks the matching claim is still a conjecture, and
+[`docs/open-problems.md`](docs/open-problems.md) says what it reduces to.
 
 ![The same 16 points beside a smooth curve and a squiggly curve. The lines to the nearest point of the curve get much shorter on the squiggly curve. The vertical lines do not.](graphs/readme_two_distances.png)
 
@@ -258,6 +284,7 @@ Lean's three standard axioms.
 | [`Verdict`](lean/SquigglyLine/Verdict.lean) | the learning claim fails for random-phase sines, for every regression loss and every data distribution | proved |
 | [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs | proved |
 | [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
+| [`SquigglyLineTheorem`](lean/SquigglyLine/SquigglyLineTheorem.lean) | the three statements above, collected into one theorem | proved |
 | [`LinearModel`](lean/SquigglyLine/LinearModel.lean) | for models linear in their parameters: on the path to a fit the residual shrinks in proportion, so a movement of `ε` buys the fraction `ε / d` of it; adding parameters never moves the nearest fit further away | proved |
 | [`ExchangeRate`](lean/SquigglyLine/ExchangeRate.lean) | when the features are orthogonal on the data side with squared length `c`: the distance to the nearest fit is exactly `‖residual‖ / √c`; with orthonormal features it equals the residual | proved |
 | [`NarrowChain`](lean/SquigglyLine/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth | proved |
@@ -323,6 +350,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
+| `paper/` | a NeurIPS-format draft of the paper, not reviewed |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
 | `scripts/` (experiments) | the scripts listed above |
 | `scripts/` (other) | the first exploratory code, kept as a record |

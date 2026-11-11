@@ -42,3 +42,4 @@ import SquigglyLine.Bridge
 import SquigglyLine.Kernel
 import SquigglyLine.ThreePolarizers
 import SquigglyLine.MarkovChains
+import SquigglyLine.SquigglyLineTheorem

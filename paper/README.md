@@ -1,5 +1,10 @@
 # Paper
 
+> **Draft of 11 Nov 2026, not reviewed.** Drafted by an AI assistant and stopped
+> before a final pass. The references have not been independently checked. The
+> draft predates several results now in the repository. The README at the top
+> of the repository is the current state.
+
 "The Squiggly Line Conjecture: A Geometric Picture of Overparameterization That
 Training Cannot Use". A preprint in NeurIPS format. It has not been submitted to
 or accepted by NeurIPS; the style is loaded with the `preprint` option, so the
