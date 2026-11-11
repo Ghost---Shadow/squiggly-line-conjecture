@@ -60,6 +60,27 @@ a path on the paper. That path is the squiggly line.
 So the plates are layers, the arrow is the bird, and the path of its tip is
 the bird's route through the wind tunnel.
 
+### The line in three dimensions
+
+Put the distance along the beam on one axis and the arrow's tip on the other
+two. The photon's state then traces one curve through that space. Only its
+position is straight. With the plates smoothed out, the curve is a quarter
+turn of a helix around the beam. In the space that includes its vibration, the
+photon flies a squiggly line.
+
+This is the same kind of line as in the original conjecture. There the line
+was the graph of the output against the input. Here it is the graph of the
+state against depth.
+
+"Smoothed out" is a real limit, not a figure of speech. As plates are added,
+what arrives tends to the full length, so the stepped path converges on the
+helix. A twisted liquid-crystal cell, as in older LCD screens, is this limit
+built as a device: the molecules twist gradually through 90° and the light
+follows (**recalled**).
+
+The real electric field also oscillates as the light travels. So the literal
+field line is a wave drawn on that twisted ribbon, which is squigglier still.
+
 ## More plates, closer to the target
 
 The target is the arrow pointing straight up at full length. Split the 90°
