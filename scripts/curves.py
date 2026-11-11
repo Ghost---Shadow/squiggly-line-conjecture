@@ -17,8 +17,17 @@ overestimated at high frequency, producing a spurious plateau at ~0.028 from
 w ~ 32 onward.
 
 Here the grid is sized per frequency so that consecutive samples are at most
-RESOLUTION apart along the curve, and the nearest-sample distance is refined
-by projecting onto the two polyline segments adjacent to that sample.
+RESOLUTION apart along the curve, and the distance to the polyline is exact
+(see euclid_distance).
+
+Second correction (11 Nov 2026). Until then the nearest-sample distance was
+refined only on the two segments adjacent to the nearest sample. Once the
+spacing between neighbouring strokes of the sine (1/w) drops below RESOLUTION,
+the nearest sample can sit on the wrong stroke, and the refinement then
+returns the distance to that stroke. With the band covering the data this
+overestimated the mean distance by 11% at w = 1000 (0.000324 against 0.000292)
+and by 0.05% at w = 250. With the default amplitude the band-edge floor
+dominates and the error was 0.2% at w = 1000.
 """
 
 import numpy as np
@@ -77,16 +86,30 @@ def _segment_distance(ax, ay, bx, by, px, py):
 def euclid_distance(x, y, px, py):
     """
     Per-point minimum Euclidean distance from (px, py) to the polyline (x, y).
-    Returns an array shaped like px.
+    Exact for the polyline. Returns an array shaped like px.
+
+    Let d0 be the distance to the nearest sample and `step` the longest
+    segment. The nearest point of the polyline is at distance d <= d0 and
+    lies on a segment that has an endpoint within step/2 of it, so that
+    endpoint is within d0 + step/2 of the query point. Projecting onto both
+    segments adjacent to every sample inside that ball therefore finds it.
     """
     shape = np.shape(px)
     px, py = np.ravel(px), np.ravel(py)
-    d, i = cKDTree(np.column_stack([x, y])).query(np.column_stack([px, py]))
+    pts = np.column_stack([px, py])
+    tree = cKDTree(np.column_stack([x, y]))
+    d0, _ = tree.query(pts)
+    step = np.hypot(np.diff(x), np.diff(y)).max()
+    balls = tree.query_ball_point(pts, d0 + step / 2)
+    counts = np.fromiter((len(b) for b in balls), dtype=np.intp, count=len(balls))
+    i = np.concatenate(balls).astype(np.intp)
+    qx, qy = np.repeat(px, counts), np.repeat(py, counts)
     lo = np.maximum(i - 1, 0)
     hi = np.minimum(i + 1, len(x) - 1)
-    d = np.minimum(d, _segment_distance(x[lo], y[lo], x[i], y[i], px, py))
-    d = np.minimum(d, _segment_distance(x[i], y[i], x[hi], y[hi], px, py))
-    return d.reshape(shape)
+    d = np.minimum(_segment_distance(x[lo], y[lo], x[i], y[i], qx, qy),
+                   _segment_distance(x[i], y[i], x[hi], y[hi], qx, qy))
+    starts = np.concatenate([[0], np.cumsum(counts)[:-1]])
+    return np.minimum.reduceat(d, starts).reshape(shape)
 
 
 def vertical_distance(freq, phi, px, py, amplitude=AMPLITUDE):

@@ -1,0 +1,22 @@
+/-
+The squiggly line conjecture, formalised.
+
+| File             | Contents                                                        | Status    |
+|------------------|-----------------------------------------------------------------|-----------|
+| `Defs`           | the line, the data, the two costs                               | —         |
+| `RandomFunction` | a randomly initialised model, its marginals, its expected cost  | —         |
+| `Conjecture`     | the conjecture and the learning claim                           | stated    |
+| `Sandwich`       | `vertical / √(1 + K²) ≤ nearest ≤ vertical`                     | proved    |
+| `Coverage`       | mean distance = uncovered mass integrated over tube radii       | proved    |
+| `Marginal`       | a regression loss sees only one-point marginals                 | proved    |
+| `RandomPhase`    | frequency does not change the marginals of a random-phase wave  | proved    |
+| `Verdict`        | so the learning claim fails for random-phase waves              | proved    |
+-/
+import SquigglyLine.Defs
+import SquigglyLine.RandomFunction
+import SquigglyLine.Conjecture
+import SquigglyLine.Sandwich
+import SquigglyLine.Coverage
+import SquigglyLine.Marginal
+import SquigglyLine.RandomPhase
+import SquigglyLine.Verdict

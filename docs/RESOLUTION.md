@@ -74,6 +74,19 @@ frequency 1000. The straight-line column is now computed exactly. Every
 conclusion stands and the effect is larger than first reported, but the
 apparent plateau from frequency 32 onward was an artifact — see §5 and §6.
 
+*Second numerical correction (11 Nov 2026).* The 0.1% agreement above holds
+only at the default amplitude, where the band-edge floor dominates the mean.
+`curves.py` refined the nearest-sample distance on the two segments next to the
+nearest sample. Once the gap between neighbouring strokes of the sine (`1/w`)
+drops below the sample spacing (0.002), the nearest sample can sit on the wrong
+stroke. In the band-covers-data control of §6 this overestimated the mean
+distance by 11% at `w = 1000` (0.000324 against 0.000292 on a fixed test set).
+`euclid_distance` now projects onto every segment that can contain the nearest
+point and is exact for the polyline; it matches an independent brute-force
+reference to better than 1e-6 at every frequency from 0.25 to 1000, at both
+amplitudes. The tables in this section are unchanged to the digits shown. The
+tail fits in §6 moved slightly and are updated there.
+
 ## 3. The learning claim is false
 
 The same table already contains the refutation. The **vertical residual** — the
@@ -96,6 +109,11 @@ Direct confirmation on the object of interest — random ReLU networks, 10 input
 |---|---|---|---|---|---|
 | He init | 2.97 | 2.98 | 3.00 | 3.13 | 2.99 |
 | unscaled | 20 | 83 | 312 | 1348 | 4884 |
+
+(The script that produced this table was not kept. `scripts/initial_mse.py`,
+added 11 Nov 2026, repeats the comparison with a stated setup and checks it
+against the closed form `E[y²] + E[f(x)²]`; its absolute numbers differ because
+its data and layer counts are its own.)
 
 Flat under standard initialization. Under unscaled initialization width makes
 initial loss dramatically *worse*, which is the amplitude confound that inflated
@@ -172,13 +190,24 @@ theorem true is not the metric that training minimizes.
   spacing never enters.
 
   What sets the knee is the band edge. Fitting `D − D∞ = c·w^(−β)` for `w ≥ 20`
-  gives `β = 0.978` and `c = 0.236`. For `D = D∞ + c/w` the 10%-per-doubling
-  knee is `c(1−2r)/(2r·D∞) = 55.7`, against 59–62 measured. As a control,
+  gives `β = 0.990` and `c = 0.248`. For `D = D∞ + c/w` the 10%-per-doubling
+  knee is `c(1−2r)/(2r·D∞) = 58.6`, against 59–62 measured. As a control,
   widening the band to cover the data (`A√2 = 1`, so `D∞ = 0`) removes the
-  saturation entirely. Distance falls as `0.285·w^(−0.989)` all the way to
-  `w = 1000`, reaching 0.00033, and the 10% criterion never triggers. (The
-  two-segment fit still reports a breakpoint, at 546, because it always
+  saturation entirely. Distance falls as `0.301·w^(−1.002)` all the way to
+  `w = 1000`, reaching 0.00030, and the 10% criterion never triggers. (The
+  two-segment fit still reports a breakpoint, at 1.8, because it always
   returns one. The marginal criterion is the one that can say "no knee".)
+
+  The control has a closed form. At high frequency the strokes are nearly
+  vertical, and at height `y` they cross at two interleaved lattices of period
+  `2/w`. Averaging the distance to the nearest crossing over `y` gives
+  `D·w → (2 − 8/π²)/4 = 0.2974`. A direct measurement gives `D·w = 0.2965` at
+  `w = 256`. Arc length tends to `4w`, so `D × length → 2 − 8/π² = 1.19`,
+  not the 1.0 of an evenly spread curve.
+
+  (Numbers in the last two paragraphs are from the 11 Nov 2026 re-run with the
+  exact distance routine. Before it the fits read `β = 0.978`, `c = 0.236`,
+  knee 55.7, and `0.285·w^(−0.989)` reaching 0.00033 for the control.)
 
   The "knee at `w ≈ 32` for `n = 30`" that suggested this test was the
   grid-resolution artifact described in §2.
