@@ -41,11 +41,15 @@ background is in the other files of this folder.
 ## Resolving power
 
 5. **A target that turns too often cannot be matched.**
-   (**known, not formalised**)
+   (**proved** for one hidden layer, 12 Nov 2026; otherwise **known, not
+   formalised**)
    If the truth crosses a band of height `2ε` more times than the network has
-   straight pieces, the network misses it by more than `ε` somewhere. This
-   would connect `Depth.lean` to difficulty. It is the shortest useful proof
-   on this list.
+   straight pieces, the network misses it by more than `ε` somewhere. For a
+   network with one hidden layer this is now `card_ge_of_zigzag` and
+   `depth_separation` in `DepthSeparation.lean`: a unit per up-and-down, so
+   fewer than `2^L` units cannot stay within one half of `L + 1` tent layers.
+   See `depth-separation.md`. For deeper networks it needs the bound on
+   pieces in the next item.
 
 6. **The general bound on pieces.** (**known, not formalised**)
    A ReLU network with `L` layers of `n` neurons and one input draws at most
@@ -145,7 +149,14 @@ background is in the other files of this folder.
 
 ## Ideas noted on 11 Nov 2026, not yet thought through
 
-21. **What is batch norm, in the polarizer picture?** (**open**)
+21. **What is batch norm, in the polarizer picture?** (**proved** for one
+    example at a time, 12 Nov 2026; across a batch still **open**)
+    Rescaling one example after each plate is an amplifier: the light arrives
+    at full strength after any turn short of a right angle, and a blocked
+    beam stays blocked (`renorm_plate`, `throughNormedPlates_eq`,
+    `renorm_plate_of_crossed` in `SkipAndNorm.lean`; see `skip-and-norm.md`).
+    That is closest to layer normalisation. What follows is the earlier note,
+    which is about the batch.
     A first reading: gain control. Batch norm rescales and recentres the flock
     after a layer, which undoes the `cos θ` loss and moves the flock back to
     the middle of the wedge. For one photon the matching step is to
@@ -154,7 +165,12 @@ background is in the other files of this folder.
     single bird's path depends on the other birds. It cannot separate birds
     that have merged, and it cannot revive a blocked one.
 
-22. **What is a residual layer, in the polarizer picture?** (**open**)
+22. **What is a residual layer, in the polarizer picture?** (**proved** for
+    plates, 12 Nov 2026; for ReLU layers still **open**)
+    A plate with a bypass never dims the light, does nothing when crossed, and
+    turns the light only part of the way (`norm_le_norm_skipPlate`,
+    `skipPlate_of_crossed`, `inner_skipPlate` in `SkipAndNorm.lean`; see
+    `skip-and-norm.md`). What follows is the earlier note.
     A first reading: a bypass. Split the beam, send one part through the plate
     and one part around it, and add them. The result keeps the part the plate
     would have removed, so nothing is ever fully blocked and nothing merges.
