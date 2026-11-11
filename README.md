@@ -460,6 +460,7 @@ them proves the phenomenon for real networks.
 |---|---|---|---|
 | Same kernel, same predictions | Two models with the same kernel give the same answer at a test point after every step, whatever their weights. | [note](docs/same-kernel.md) | [`SameKernel`](lean/SquigglyLine/SameKernel.lean) |
 | Benign overfitting | The nearest fit swallows the noise. With junk features of strength `c'` the damage at a new input is capped by `1 / c'`. | [note](docs/benign-overfitting.md) | [`BenignOverfitting`](lean/SquigglyLine/BenignOverfitting.lean) |
+| Bias and variance | With noise that is zero on average, the expected squared error at a new input is bias² plus variance. A floor `μ` on every direction raises the first and lowers the second. | [note](docs/bias-variance.md) | [`BiasVariance`](lean/SquigglyLine/BiasVariance.lean) |
 | Catastrophic forgetting | A step on a new task changes the old errors through the cross kernel only, and by at most the new task's travel. | [note](docs/forgetting.md) | [`Forgetting`](lean/SquigglyLine/Forgetting.lean) |
 | Lottery tickets | Pruning subtracts a kernel: slower and farther. It costs nothing where the dropped weights had no strength. | [note](docs/lottery-ticket.md) | [`Pruning`](lean/SquigglyLine/Pruning.lean) |
 | Dimpled manifold | A function can keep its loss on real data and still be one small step from any label, straight off the data manifold. | [note](docs/dimpled-manifold.md) | [`Dimple`](lean/SquigglyLine/Dimple.lean) |
