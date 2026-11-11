@@ -1,7 +1,8 @@
 # A chain of Markov chains
 
-Notes from 11 Nov 2026, written before the proofs. Each statement is marked
-**proved** (in `lean/`), **to prove**, or **recalled** (not derived here).
+Notes from 11 Nov 2026. Written before the proofs, then updated once they were
+done. Each statement is marked **proved** (in `lean/MarkovChains.lean` unless
+another file is named) or **recalled** (not derived here).
 
 ## What a Markov chain is
 
@@ -31,7 +32,7 @@ states: **alive** or **absorbed**. At a plate turned by `θ` from the last:
 - an absorbed photon stays absorbed.
 
 So after `n` plates the probability of still being alive is `cⁿ`
-(**to prove**). This is the square of the length we proved earlier,
+(**proved**: `plateMatrix_pow`). This is the square of the length we proved earlier,
 `cos(θ)ⁿ`: brightness is length squared.
 
 "Absorbed" is a state the chain never leaves. That is the photon's version of
@@ -43,12 +44,13 @@ A chain with no memory can lose information and can never get it back. Three
 facts we met separately are all this one fact.
 
 - **Merged stays merged.** If two birds are at the same place after some
-  layer, they are at the same place after every later layer (**to prove**).
+  layer, they are at the same place after every later layer (**proved**:
+  `merged_stays_merged`).
 - **The flock never spreads over more places.** Count the distinct places the
   flock occupies. That count can fall from layer to layer. It can never rise
-  (**to prove**).
+  (**proved**: `card_image_runLayers_append_le`).
 - **Dead stays dead.** If every layer leaves the dead state where it is, a
-  bird that reaches it stays there (**to prove**). A blocked photon stays
+  bird that reaches it stays there (**proved**: `dead_stays_dead`). A blocked photon stays
   blocked, and a bird at the origin stays at the origin under any fan with no
   bias.
 
@@ -74,10 +76,11 @@ multiplies by `c`, and the chain can be solved in closed form:
 error after t steps = (1 − η·c)ᵗ × error at the start
 ```
 
-(**to prove**.) Three things follow at once.
+(**proved**: `TightFeatures.residual_iterate_gradientStep`.) Three things
+follow at once.
 
 - With the step size `η = 1/c`, the factor is zero. **One step lands on a
-  fit** (**to prove**). This is why the 513-parameter Fourier model trained in
+  fit** (**proved**: `TightFeatures.residual_gradientStep_inv`). This is why the 513-parameter Fourier model trained in
   3 steps: its features are nearly orthogonal.
 - With a smaller step the error shrinks by the same factor every step.
 - With a step larger than `2/c` the factor is bigger than 1 in size and the
@@ -108,7 +111,7 @@ So the whole of training is a chain whose every link is itself a chain.
 - A full network trained in every layer does not obey the simple rule
   `error ← error − η·K·error`, because `K` itself changes as the weights move.
 
-## What to prove
+## What was to prove (all five now proved)
 
 1. Merged stays merged, for any stack of layers.
 2. The number of occupied places never rises.

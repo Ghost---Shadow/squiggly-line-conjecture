@@ -21,6 +21,7 @@ The squiggly line conjecture, formalised.
 | `Bridge`         | `L` folds are one Fourier term of frequency `2 ^ L`             | proved    |
 | `Kernel`         | same kernel: same gradient-descent path and same travel         | proved    |
 | `ThreePolarizers`| Malus's law, the plate chain, and more plates arriving closer   | proved    |
+| `MarkovChains`   | merged stays merged; the photon's chain; training solved        | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -40,3 +41,4 @@ import SquigglyLine.Depth
 import SquigglyLine.Bridge
 import SquigglyLine.Kernel
 import SquigglyLine.ThreePolarizers
+import SquigglyLine.MarkovChains

@@ -266,6 +266,7 @@ Lean's three standard axioms.
 | [`Bridge`](lean/SquigglyLine/Bridge.lean) | one fold doubles a frequency: `sin²(π/2 · tent^L(x)) = sin²(2^L · π/2 · x)` on `[0, 1]`, so `L` folds seen through a fixed lens are one Fourier term of frequency `2^L` | proved |
 | [`Kernel`](lean/SquigglyLine/Kernel.lean) | for models linear in their weights: a gradient step sends the error `r` to `r − η·K·r`; the travel is the length of `A†K⁻¹r`; two models with the same kernel have the same training path and the same travel | proved |
 | [`ThreePolarizers`](lean/SquigglyLine/ThreePolarizers.lean) | Malus's law for a polarizer as a projection; crossed plates block; after `k` plates each turned by `θ` the light has length `cos(θ)^k` and angle `k·θ`; a 45° plate between crossed ones passes half the length; a quarter turn in `N ≥ 2` plates delivers at least `1 − π²/(8N)` | proved |
+| [`MarkovChains`](lean/SquigglyLine/MarkovChains.lean) | through the layers: merged stays merged, the flock never occupies more places, dead stays dead; the photon as a two-state chain, alive after `n` plates with probability `cⁿ`; through training with orthogonal features: the error after `t` steps is `(1 − η·c)ᵗ` times the start, and a step of size `1/c` fits at once | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
