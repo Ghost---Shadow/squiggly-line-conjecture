@@ -234,3 +234,72 @@ $\E\max(0,|y|-p)=(1-p)^2/2$. Raising the frequency removes the rest at rate
 $O(1/w)$. The floor depends on the amplitude relative to the range of the data.
 It does not depend on the number of data points: $D_p(w)$ is the mean of a
 per-point quantity, so its expectation is the same for a sample of any size.
+
+\subsection{The covering bound and the theorem for sines}
+\label{sec:cover}
+
+The upper bound in \cref{prop:floor} is an instance of a general fact, which
+says what a function must do to be near the data.
+
+\begin{definition}[Covering]\label[definition]{def:cover}
+A function $f:X\to\R$ \emph{covers} a set of labels $S\subset\R$ \emph{within}
+$\rho$ if for every $x\in X$ and every $y\in S$ there is an $x'\in X$ with
+$d(x,x')\le\rho$ and $f(x')=y$.
+\end{definition}
+
+The smallest such $\rho$ is an oscillation scale: how far one must move in the
+input to see every label.
+
+\begin{theorem}[Covering bound]\label{thm:cover}
+If $f$ covers $S$ within $\rho$, then $\nd_f(x,y)\le\rho$ for every data point
+with $y\in S$. If in addition $f$ is $K$-Lipschitz, then
+$\vd_f(x,y)\le\sqrt{1+K^2}\,\rho$ for every such point.
+\end{theorem}
+
+\begin{proof}
+Take $x'$ as in \cref{def:cover}. The point $(x',y)=(x',f(x'))$ lies on
+$\Gamma_f$ at distance $d(x,x')\le\rho$ from $(x,y)$. The second statement
+follows from \cref{thm:sandwich}.
+\end{proof}
+
+So a small oscillation scale is sufficient for a small nearest-point distance,
+and by the second statement it has a price: a function that covers labels at
+vertical distance $\vd$ within $\rho$ has slope at least
+$\sqrt{(\vd/\rho)^2-1}$. Claims (G) and (P) for a family of models therefore
+come down to how its oscillation scale and its slope depend on its size. For
+sines both are explicit.
+
+\begin{theorem}[The squiggly line theorem, for sines]\label{thm:sine}
+Let $X=\R$, $p>0$ and $w>0$, and let $f_{w,\varphi}(x)=p\sin(w\pi x+\varphi)$.
+\begin{enumerate}\setlength{\itemsep}{0pt}
+\item[(i)] For every phase $\varphi$ and every data point $(x,y)$ with
+$|y|\le p$,
+\[
+  \frac{\vd_{f_{w,\varphi}}(x,y)}{\sqrt{1+(p\,w\pi)^2}}\;\le\;\nd_{f_{w,\varphi}}(x,y)\;\le\;\frac1w .
+\]
+\item[(ii)] If $\mu$ is a probability measure on data points with $|y|\le p$
+almost surely and $\varphi$ is uniform on $[0,2\pi)$, the expected
+nearest-point distance is at most $1/w$, and tends to $0$ as $w\to\infty$.
+\item[(iii)] For every measurable loss $\ell\ge0$ and every $\mu$, the expected
+loss $\E_{(x,y)\sim\mu}\E_\varphi\,\ell\bigl(y-f_{w,\varphi}(x)\bigr)$ is the
+same for every $w$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) The function is $p\,w\pi$-Lipschitz, which gives the lower bound by
+\cref{thm:sandwich}. For the upper bound we show that it covers $[-p,p]$ within
+$1/w$. Given $x$ and $y$ with $|y|\le p$, put $t=\arcsin(y/p)$ and
+$\theta_0=w\pi x+\varphi$, let $k$ be an integer nearest to
+$(\theta_0-t)/(2\pi)$, and put $\theta=t+2\pi k$. Then $|\theta-\theta_0|\le\pi$.
+The input $x'=(\theta-\varphi)/(w\pi)$ satisfies $|x-x'|=|\theta-\theta_0|/(w\pi)\le1/w$
+and $f_{w,\varphi}(x')=p\sin t=y$. Apply \cref{thm:cover}.
+(ii) The bound in (i) holds for every phase and almost every data point, and
+$\nd\ge0$. (iii) is \cref{cor:phase}.
+\end{proof}
+
+Parts (i) and (ii) are claim (G), with a rate: both ends of the sandwich fall
+like $1/w$. Part (iii) is the failure of claim (L). On the bounded domain
+$[-1,1]$ of the experiments the same argument gives $2/w$ in place of $1/w$,
+which is the upper bound of \cref{prop:floor}; the exact constant is the one in
+\cref{prop:sine}.

@@ -8,7 +8,9 @@ network stays close to its linearisation around the initial weights
 \citep{jacot2018ntk,chizat2019lazy}; and test risk can fall again past the
 interpolation threshold \citep{belkin2019reconciling,nakkiran2020double}. This
 paper examines a simpler geometric picture, which we call the \emph{squiggly
-line conjecture}, and reports that it does not work.
+line conjecture}. Part of it is a theorem, part of it is false, and what is
+true of the rest lives in a different space from the one the picture is drawn
+in.
 
 The picture is as follows. Scatter random points on a plane and draw two curves
 without looking at the points, one smooth and one squiggly. The squiggly curve
@@ -36,9 +38,23 @@ loss at initialisation.
   \label{fig:two}
 \end{figure}
 
-\paragraph{Results.} (G) is true, (P) is false for width and holds weakly for
-depth, and (L) is false.
+\paragraph{Results.} (G) is true and is proved for sines, (P) is false for width
+and holds weakly for depth, and (L) is false. The idea survives in parameter
+space.
 \begin{itemize}\setlength{\itemsep}{0pt}
+\item \emph{The theorem for sines} (\cref{thm:sine}). For a random-phase sine of
+frequency $w$ and labels in its band, the nearest-point distance lies between
+the vertical error divided by $\sqrt{1+K^2}$ and $1/w$, its expectation tends
+to zero, and the expected loss is the same at every frequency. The upper bound
+is an instance of a covering bound (\cref{thm:cover}), which reduces (G) for any
+family to the oscillation scale of its functions.
+\item \emph{Parameter space} (\cref{sec:param}). For a model that is linear in
+its parameters, gradient descent and the distance to the nearest fit depend on
+the model only through its kernel (\cref{thm:kernel}); with orthogonal features
+of squared length $c$ that distance is the size of the residual divided by
+$\sqrt c$ (\cref{cor:rate}); and adding parameters never increases it
+(\cref{prop:more}). In a Fourier-series experiment the initial loss is flat in
+the number of parameters while the distance to a fit falls by a factor of 2000.
 \item \emph{Slope sandwich} (\cref{thm:sandwich}). For a $K$-Lipschitz function
 and any data point, $\text{vertical}/\sqrt{1+K^2}\le\text{nearest}\le\text{vertical}$.
 The curve can be much nearer than its vertical error only where it is steep.
@@ -64,11 +80,15 @@ predicted, width-independent initial squared error, and their curves are not
 longer at larger width.
 \end{itemize}
 
-\paragraph{Scope.} This is a negative result about one intuitive picture. An
-earlier draft of this paper claimed empirical support for the conjecture; that
-support came from faulty measurement code, and the draft was withdrawn
-(\cref{app:wrong}). The individual statements here are elementary, and we make
-no claim of priority for any of them; \cref{sec:related} lists the work we are
-aware of. \Cref{thm:sandwich,thm:marginal,thm:tube} and \cref{cor:phase} are
-formalised in Lean~4 (\cref{sec:lean}). Code, the Lean project and the
-development notes are at \repo.
+\paragraph{Scope.} The theorem is about sines. For neural networks claim (G)
+remains a conjecture, which \cref{thm:cover} reduces to a question about the
+oscillation scale of a random network. An earlier draft of this paper claimed
+empirical support for the conjecture; that support came from faulty measurement
+code, and the draft was withdrawn (\cref{app:wrong}). The individual statements
+here are elementary, and we make no claim of priority for any of them; the
+parameter-space results in particular are the lazy-training picture in its
+simplest case. \Cref{sec:related} lists the work we are aware of.
+\Cref{thm:sandwich,thm:marginal,thm:tube,thm:cover,thm:sine,thm:kernel},
+\cref{cor:phase,cor:rate} and \cref{prop:path,prop:more} are formalised in
+Lean~4 (\cref{sec:lean}). Code, the Lean project and the development notes are
+at \repo.

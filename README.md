@@ -1,4 +1,4 @@
-# The Squiggly Line Conjecture
+# The Squiggly Line Theorem
 
 An idea from 2022 about why large neural networks learn fast, the experiments
 that tested it, and a Lean formalisation of what turned out to be provable.
@@ -10,8 +10,8 @@ training never measures.
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
 - Slides: [2026 deck](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing), [original deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
 - Full findings: [`docs/RESOLUTION.md`](docs/RESOLUTION.md)
-- Paper (draft, not reviewed): [`paper/main.pdf`](paper/main.pdf)
-- Proofs: [`lean/`](lean), checked on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-conjecture/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-conjecture/actions/workflows/lean.yml)
+- Paper (draft of 11 Nov 2026): [`paper/main.pdf`](paper/main.pdf)
+- Proofs: [`lean/`](lean), checked on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml)
 
 > **Looking for an arXiv endorsement.** I would like to post the paper on arXiv
 > and I am not affiliated with an institution, so I need an endorsement for
@@ -350,7 +350,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
-| `paper/` | a NeurIPS-format draft of the paper, not reviewed |
+| `paper/` | a NeurIPS-format draft of the paper |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
 | `scripts/` (experiments) | the scripts listed above |
 | `scripts/` (other) | the first exploratory code, kept as a record |

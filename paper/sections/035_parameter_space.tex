@@ -1,0 +1,162 @@
+\section{Where ``starts closer'' is true: parameter space}
+\label{sec:param}
+
+\Cref{thm:marginal} shows that a larger random model does not start with a
+smaller loss. It can still start nearer to a fit, if nearness is measured in the
+space of parameters. For models that are linear in their parameters this is
+elementary, and it is the lazy-training picture of
+\citet{jacot2018ntk,chizat2019lazy} in its simplest case. We state it because it
+is the form in which the original idea holds.
+
+\subsection{Setting}
+
+Let $\Theta$ and $Y$ be real Hilbert spaces and $A:\Theta\to Y$ a bounded linear
+map. We read $\theta\in\Theta$ as the parameters, $A\theta$ as the outputs of
+the model on the data, and $y\in Y$ as the labels. The \emph{residual} is
+$r(\theta)=y-A\theta$, a \emph{fit} is a $\theta$ with $A\theta=y$, and the
+\emph{travel} from $\theta_0$ is the distance to the nearest fit,
+\[
+  \tau(\theta_0)=\inf\{\|\theta-\theta_0\|:A\theta=y\}.
+\]
+A Fourier series is such a model in its coefficients, and so is a neural
+network in the weights of its last layer when the earlier layers are held
+fixed. The \emph{kernel} is $K=AA^*$.
+
+\subsection{Results}
+
+\begin{proposition}[One loss curve]\label[proposition]{prop:path}
+If $A\theta_1=y$, then $r\bigl(\theta_0+t(\theta_1-\theta_0)\bigr)=(1-t)\,r(\theta_0)$
+for every $t\in\R$. Consequently, if $d=\|\theta_1-\theta_0\|>0$ and
+$0\le\varepsilon\le d$, there is a $\theta$ with $\|\theta-\theta_0\|=\varepsilon$
+and $\|r(\theta)\|=(1-\varepsilon/d)\,\|r(\theta_0)\|$.
+\end{proposition}
+
+\begin{proof}
+$y-A\theta_0-t(A\theta_1-A\theta_0)=(1-t)(y-A\theta_0)$. For the second
+statement take $t=\varepsilon/d$.
+\end{proof}
+
+Every model walks the same loss curve from its start to a fit; what differs is
+the length of the walk. A fit at distance $d$ means that a movement of
+$\varepsilon$ removes the fraction $\varepsilon/d$ of the residual.
+
+\begin{theorem}[A model is its kernel]\label{thm:kernel}
+\emph{(a)} One step of gradient descent on $\tfrac12\|y-A\theta\|^2$ with step
+size $\eta$, $\theta^+=\theta+\eta A^*r(\theta)$, gives
+$r(\theta^+)=(I-\eta K)\,r(\theta)$.
+\emph{(b)} If $K$ is invertible, then
+$\tau(\theta_0)=\|A^*K^{-1}r(\theta_0)\|=\sqrt{\langle K^{-1}r(\theta_0),r(\theta_0)\rangle}$.
+Hence two models with the same kernel and the same initial residual have the
+same residual after every gradient step, and the same travel.
+\end{theorem}
+
+\begin{proof}
+(a) $y-A\theta-\eta AA^*r(\theta)=r(\theta)-\eta Kr(\theta)$.
+(b) Write $r_0=r(\theta_0)$ and $\delta^\ast=A^*K^{-1}r_0$. Then
+$A\delta^\ast=r_0$, so $\theta_0+\delta^\ast$ is a fit. If $\theta_0+\delta$ is
+any fit, then $A\delta=r_0$ and
+\[
+  \|\delta^\ast\|^2=\langle K^{-1}r_0,AA^*K^{-1}r_0\rangle
+  =\langle K^{-1}r_0,r_0\rangle=\langle K^{-1}r_0,A\delta\rangle
+  =\langle\delta^\ast,\delta\rangle\le\|\delta^\ast\|\,\|\delta\|,
+\]
+so $\|\delta^\ast\|\le\|\delta\|$. The second and third expressions show that
+$\|\delta^\ast\|^2=\langle K^{-1}r_0,r_0\rangle$, which involves only $K$ and
+$r_0$.
+\end{proof}
+
+\begin{corollary}[The exchange rate]\label[corollary]{cor:rate}
+If $K=c\,I$ with $c>0$, that is, if the features are orthogonal on the data side
+with squared length $c$, then
+\[
+  \tau(\theta_0)=\frac{\|r(\theta_0)\|}{\sqrt c},
+\]
+the residual after $t$ gradient steps is $(1-\eta c)^t\,r(\theta_0)$, and with
+$\eta=1/c$ a single step reaches a fit. For $c=1$ the travel equals the size of
+the residual.
+\end{corollary}
+
+Loss and travel are then one quantity in two units, and the number of
+parameters enters only through the rate $\sqrt c$ between them.
+
+\begin{proposition}[More parameters never move the fit away]\label[proposition]{prop:more}
+Let $B:\Theta'\to Y$ be a second bounded linear map and consider the larger
+model $(\theta,\theta')\mapsto A\theta+B\theta'$. If the smaller model has a
+fit, the travel of the larger model from $(\theta_0,0)$ is at most the travel
+of the smaller model from $\theta_0$.
+\end{proposition}
+
+\begin{proof}
+If $A\theta=y$ then $(\theta,0)$ is a fit of the larger model at the same
+distance from $(\theta_0,0)$.
+\end{proof}
+
+Together with \cref{thm:marginal} this gives the corrected form of the
+conjecture, for models linear in their parameters: with no movement allowed, a
+larger random model is no closer to the data; with any positive amount of
+movement allowed, it is at least as close. \Cref{prop:more} starts the new
+parameters at zero. The experiment below starts them at random.
+
+\subsection{A family in which the number of parameters is the only dial}
+\label{sec:fourier}
+
+The sine family has one random number, so it cannot test a statement about the
+number of parameters. We therefore take a Fourier series with $m$ terms,
+\[
+  f_\theta(x)=a_0+\sum_{k=1}^{m}\bigl(a_k\cos(k\pi x)+b_k\sin(k\pi x)\bigr),
+\]
+with $P=2m+1$ parameters drawn independently from $N(0,V/(m+1))$, $V=1/3$. The
+output then has variance $V$ at every $x$ and every $m$, so the one-point
+marginals do not depend on $m$. The data are $n=20$ points with $x$ and $y$
+uniform on $[-1,1]$; a fit exists once $P\ge n$. For each $m$ we use 20 data
+sets and 20 random starts, and measure the initial squared error, the
+nearest-point distance, the travel $\tau$, and the number of gradient steps
+needed to reach a mean squared error of $10^{-3}$ with the step size
+$1/\lambda_{\max}(K)$.
+
+\begin{table}[t]
+  \caption{A random Fourier series with $P$ parameters on 20 points with random
+  labels. Initial squared error and nearest-point distance are means; travel
+  and steps are medians. The last column is $\sqrt{n\cdot\mathrm{MSE}/(m+1)}$,
+  the travel that \cref{cor:rate} gives if the features were exactly orthogonal
+  with $c=m+1$. The nearest-point distance was not measured above $P=129$.}
+  \label{tab:fourier}
+  \centering
+  \begin{tabular}{rccccc}
+    \toprule
+    $P$ & initial MSE & nearest-point & travel & gradient steps & $\sqrt{n\,\mathrm{MSE}/(m+1)}$ \\
+    \midrule
+      9 & 0.65 & 0.229 & no fit & never & -- \\
+     17 & 0.71 & 0.157 & no fit & never & -- \\
+     21 & 0.65 & 0.128 & 448    & $1.9\times10^{8}$ & -- \\
+     25 & 0.64 & 0.110 & 35.5   & $7.9\times10^{4}$ & -- \\
+     33 & 0.66 & 0.090 & 16.0   & $3.3\times10^{4}$ & 0.88 \\
+     65 & 0.71 & 0.056 & 1.61   & 166 & 0.66 \\
+    129 & 0.66 & 0.027 & 0.48   & 13  & 0.45 \\
+    257 & 0.66 & --    & 0.34   & 3   & 0.32 \\
+    513 & 0.63 & --    & 0.23   & 3   & 0.22 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\Cref{tab:fourier} shows three things. The initial squared error does not move:
+it scatters around $\E y^2+V=2/3$, as \cref{thm:marginal} requires. The travel
+and the number of steps fall steeply: from 21 to 513 parameters the travel falls
+by a factor of about 2000, and training goes from $1.9\times10^{8}$ steps to 3.
+And the worst case is at the threshold $P\approx n$, where a fit exists but is
+far away; this is where double descent has its peak
+\citep{belkin2019reconciling,nakkiran2020double}.
+
+Far above the threshold the measured travel agrees with \cref{cor:rate}. The
+kernel of these features has diagonal entries $m+1$ and, for scattered points
+and $m\gg n$, comparatively small off-diagonal entries, so it is close to
+$(m+1)I$. The last column of \cref{tab:fourier} is within $7\%$ of the measured
+travel from $P=129$ upwards, and travel falls like $1/\sqrt P$. Near the
+threshold the features are far from orthogonal and the formula fails by a wide
+margin. That the kernel is close to $(m+1)I$ is an observation here, not a
+proved statement.
+
+The nearest-point distance also falls, roughly like $1/P$. This is
+\cref{thm:sandwich} again: a random series with more terms of this scaling is
+steeper. So in this family claims (G) and (P) both hold, and (L) still fails.
+A larger random model is not nearly right. It is nearly adjustable.

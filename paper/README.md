@@ -1,14 +1,13 @@
 # Paper
 
-> **Draft of 11 Nov 2026, not reviewed.** Drafted by an AI assistant and stopped
-> before a final pass. The references have not been independently checked. The
-> draft predates several results now in the repository. The README at the top
-> of the repository is the current state.
+"The Squiggly Line Theorem: Squigglier Curves Are Closer to the Data, in a
+Direction Training Cannot Use". A preprint in NeurIPS format, draft of 11 Nov
+2026. It has not been submitted to or accepted by NeurIPS; the style is loaded
+with the `preprint` option, so the footer reads "Preprint."
 
-"The Squiggly Line Conjecture: A Geometric Picture of Overparameterization That
-Training Cannot Use". A preprint in NeurIPS format. It has not been submitted to
-or accepted by NeurIPS; the style is loaded with the `preprint` option, so the
-footer reads "Preprint."
+Status: the text was drafted with an AI assistant. Its references were checked
+against arXiv and the publishers on 11 Nov 2026, and the statements marked as
+formalised are proved in `../lean`. The author has not yet done a final read.
 
 ## Build
 

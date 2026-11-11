@@ -129,6 +129,60 @@ $\sqrt{(y_0-p)^2+(2/w)^2}\le(y_0-p)+2/w$. The case $y_0<-p$ is the same with
 the minima. In every case the distance is at most $\max(0,|y_0|-p)+2/w$, for
 every phase. Taking expectations gives the upper bound. \qed
 
+\section{ReLU chains and polarizers}
+\label[appendix]{app:chains}
+
+The statements in this appendix are proved in Lean. The main results do not use
+them. They concern claim (P) for the simplest ReLU networks, and an analogy
+with polarizers that explains why a turn needs more than one neuron.
+
+\paragraph{One neuron per layer.} The network
+$\relu\bigl(w_1\relu(w_2\cdots\relu(w_Lx+b_L)\cdots)+b_1\bigr)$ is monotone, for
+every depth and all weights and biases: each layer is a non-decreasing or
+non-increasing function of its input, and a composition of such functions is
+again one. Such a network never turns.
+
+\paragraph{Two neurons per layer.} Let $T(x)=2\relu(x)-4\relu(x-\tfrac12)$, one
+layer with two neurons, which folds $[0,1]$ in half. For every $L$ and every
+integer $0\le k\le2^L$, the $L$-fold composition satisfies $T^L(k/2^L)=0$ if
+$k$ is even and $1$ if $k$ is odd. So $L$ layers of two neurons draw a curve
+that turns $2^L-1$ times. Moreover, for $x\in[0,1]$,
+\[
+  \sin^2\!\bigl(\tfrac{\pi}{2}\,T^L(x)\bigr)=\sin^2\!\bigl(2^{L}\cdot\tfrac{\pi}{2}\,x\bigr),
+\]
+so that, seen through the fixed function $\sin^2(\tfrac\pi2\,\cdot)$, $L$ folds
+are a single Fourier mode of frequency $2^L$. Depth in such a network plays
+the role of the logarithm of frequency in \cref{sec:fourier}.
+
+\paragraph{ReLU as a projection.} In the plane, the coordinatewise ReLU sends a
+point to the nearest point of the positive quadrant. Let $R_\theta$ be the
+rotation by $\theta$ and $r\ge0$. A layer that rotates and then applies the
+ReLU acts on a point on the edge of the quadrant by
+\[
+  \relu\bigl(R_{-\theta}(r,0)\bigr)=
+  \begin{cases}(r\cos\theta,\,0)&0\le\theta\le\pi/2,\\(0,0)&\pi/2\le\theta\le\pi,\end{cases}
+\]
+so $N$ such layers with $\theta\le\pi/2$ keep the length $r\cos^N\theta$.
+
+\paragraph{Polarizers.} A linear polarizer with axis at angle $\phi$ is the
+orthogonal projection $P_\phi$ onto that direction. Writing $u_\psi$ for the
+unit vector at angle $\psi$, we have $P_\phi(a\,u_\psi)=a\cos(\phi-\psi)\,u_\phi$
+(Malus's law for the amplitude). After $k$ plates at angles
+$\theta,2\theta,\dots,k\theta$ the vector $a\,u_0$ has become
+$a\cos^k\theta\;u_{k\theta}$. A single plate at $90^\circ$ delivers nothing, a
+plate at $45^\circ$ followed by one at $90^\circ$ delivers half the length, and
+a quarter turn made in $N\ge2$ equal steps delivers
+$\cos^N(\pi/2N)\ge1-\pi^2/(8N)$. A turn made in many small steps loses little,
+and a turn made in one step loses everything. The rotate-then-ReLU layer above
+obeys the same rule, and a network with one neuron per layer has no
+intermediate direction to turn through. The comparison stops there: a stack of
+projections onto lines is a linear map, and a stack of ReLU layers is not.
+
+\paragraph{Chains without memory.} For any stack of maps applied in turn, two
+inputs that reach the same state stay together, the number of distinct states
+of a finite set of inputs never increases, and a state that every layer fixes
+is never left.
+
 \section{What went wrong in the first version}
 \label[appendix]{app:wrong}
 
@@ -199,6 +253,9 @@ frequencies logarithmically spaced in $[1,1000]$, 300 bootstrap resamples; the
 control uses $n=100$. Several minutes.
 \item \texttt{initial\_mse.py}: \cref{tab:mse}.
 \item \texttt{random\_relu\_length.py}: \cref{tab:relu-full}.
+\item \texttt{fourier\_params.py}: \cref{tab:fourier}. 20 data sets and 20
+random starts for each number of terms; the number of gradient steps is
+computed exactly in the eigenbasis of the kernel.
 \item \texttt{curves.py}: the sine geometry and the exact point-to-polyline
 distance shared by the first two scripts.
 \item \texttt{audit\_legacy\_metrics.py}: reproduces the three defects of
@@ -259,3 +316,48 @@ distance is $-0.76$.
     \bottomrule
   \end{tabular}
 \end{table}
+
+\section{Lean names}
+\label[appendix]{app:lean}
+
+\begingroup\raggedright
+The Lean project is in the folder \texttt{lean/} of the repository, built with
+Lean 4.36.0-rc1 and the Mathlib commit recorded in
+\texttt{lean/lake-manifest.json}. Each file is \texttt{lean/SquigglyLine/<name>.lean}.
+
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \cref{thm:sandwich}: \texttt{Sandwich}, \lean{nearestDist\_le\_verticalDist},
+\lean{verticalDist\_le\_of\_lipschitz}.
+\item \cref{thm:marginal} and \cref{cor:phase}: \texttt{Marginal},
+\lean{expected\_residualLoss\_congr}; \texttt{RandomPhase},
+\lean{marginal\_randomPhaseWave\_eq}; \texttt{Verdict},
+\lean{not\_learningClaim\_sineWave}.
+\item \cref{thm:tube}: \texttt{Coverage},
+\lean{integral\_infDist\_eq\_integral\_uncovered}.
+\item \cref{thm:cover}: \texttt{Oscillation},
+\lean{nearestDist\_le\_of\_coversWithin},
+\lean{verticalDist\_le\_of\_lipschitz\_of\_coversWithin},
+\lean{expected\_nearestDist\_le}.
+\item \cref{thm:sine}: \texttt{SineCloser},
+\lean{sineWave\_nearestDist\_bounds},
+\lean{tendsto\_expected\_nearestDist\_sineWave}; collected in
+\texttt{SquigglyLineTheorem}, \lean{squiggly\_line\_theorem}.
+\item \cref{prop:path,prop:more}: \texttt{LinearModel}, \lean{residual\_along},
+\lean{exists\_within\_budget}, \lean{travel\_coprod\_le}.
+\item \cref{thm:kernel}: \texttt{Kernel}, \lean{residual\_gradientStep},
+\lean{travel\_eq\_norm\_of\_kernelInverse}, \lean{travel\_eq\_of\_kernel\_eq},
+\lean{residual\_iterate\_gradientStep\_eq}.
+\item \cref{cor:rate}: \texttt{ExchangeRate}, \lean{TightFeatures.travel\_eq};
+\texttt{MarkovChains}, \lean{TightFeatures.residual\_iterate\_gradientStep},
+\lean{TightFeatures.residual\_gradientStep\_inv}.
+\item \cref{app:chains}: \texttt{NarrowChain}, \lean{narrowChain\_neverTurns};
+\texttt{Depth}, \lean{iterate\_tent\_dyadic}; \texttt{Bridge},
+\lean{sin\_sq\_iterate\_tent}; \texttt{Polarizer}, \lean{relu2\_nearest},
+\lean{fan\_of\_le\_pi\_div\_two}, \lean{fan\_of\_pi\_div\_two\_le},
+\lean{iterate\_fan}; \texttt{ThreePolarizers}, \lean{malus},
+\lean{throughPlates\_light}, \lean{three\_polarizers},
+\lean{quarter\_turn\_arrives}; \texttt{MarkovChains},
+\lean{merged\_stays\_merged}, \lean{card\_image\_runLayers\_append\_le},
+\lean{dead\_stays\_dead}.
+\end{itemize}
+\endgroup

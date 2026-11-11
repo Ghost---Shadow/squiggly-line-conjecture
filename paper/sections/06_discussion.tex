@@ -18,24 +18,37 @@ width is not addressed.
 \emph{Own scripts.} The experiments are small computations written for this
 question, not an established benchmark, and the code has needed correction more
 than once (\cref{app:wrong}).
+\emph{Linear models only.} \Cref{sec:param} is for models that are linear in
+their parameters. A network trained in every layer is not, and its kernel moves
+during training; nothing here bounds by how much.
+\emph{Networks.} For random networks claim (G) is measured in one dimension
+only, and the oscillation scale of \cref{thm:cover} is not computed for them.
 \emph{Proof status.} The constant in \cref{prop:sine} rests on a leading-order
-argument and a numerical check.
+argument and a numerical check, and the near-orthogonality used in
+\cref{sec:fourier} is an observation.
 
 \section{Discussion}
 \label{sec:discussion}
 
 The conjecture joined two facts that are each true: a squigglier curve is
-nearer to random points, and larger networks learn faster. The link fails at
-both ends. Width does not make a random network's curve longer, and the
-nearness that squiggliness buys is nearness to points displaced in the input
-direction, which a regression loss does not reward and which
+nearer to random points, and larger networks learn faster. The link between
+them fails at both ends. Width does not make a random network's curve longer,
+and the nearness that squiggliness buys is nearness to points displaced in the
+input direction, which a regression loss does not reward and which
 \cref{thm:sandwich} shows is paid for in slope.
 
-\paragraph{Where ``starts closer'' might still hold.} The claim could be moved
-to weight space: a larger network may need to travel a shorter relative distance
-from its initial weights to a fit. The repository's notes predict from the
-lazy-training results of \cref{sec:related} that it does, in which case an
-experiment would be a replication. We have not run it.
+\paragraph{What replaces the link.} A larger model starts nearer to a fit in
+parameter space, not in loss (\cref{sec:param}). The two are related by
+\cref{prop:path}: the loss to be removed is the same at every size, and the
+distance over which it is removed shrinks. For models linear in their
+parameters this is exact and is governed by the kernel.
+
+\paragraph{What remains a conjecture.} For neural networks, claim (G) asks how
+the oscillation scale of a random network depends on its width, its depth and
+the scale of its weights. \Cref{thm:cover} and \cref{thm:sandwich} bound the
+nearest-point distance between the slope and the oscillation scale, and the
+results cited in \cref{sec:related} suggest that neither improves with width at
+standard initialisation. We do not prove this.
 
 \paragraph{An untested proposal: joint fit.} The nearest-point distance scores
 each point alone. A cost that sees all points at once is $y^\top K^{-1}y$, where
@@ -53,6 +66,8 @@ smoothly with the input we expect the order to reverse. This is a direction
 only. Beyond the inequality it is untested here: we have not measured this cost
 for networks and do not know whether it predicts anything about training.
 
-\paragraph{Conclusion.} The squiggly line picture is correct as geometry and
-does not explain why overparameterized networks learn. The distance it uses is
-not the one that training measures.
+\paragraph{Conclusion.} The squiggly line picture is correct as geometry, and
+for sines it is a theorem. It does not explain why overparameterized networks
+learn, because the distance it uses is not the one that training measures. The
+statement that does hold, that a larger model starts nearer to a fit, is a
+statement about parameters.

@@ -2,19 +2,30 @@
 \label{sec:lean}
 
 The repository contains a Lean~4 project \citep{demoura2021lean4} on Mathlib
-\citep{mathlib2020} that states the conjecture and proves the results that
-refute claim (L). A randomly initialised model is a parameter type with a
+\citep{mathlib2020}. A randomly initialised model is a parameter type with a
 probability measure and an evaluation map, and one definition says that the
 expected cost is strictly decreasing in the size of the model; the conjecture
 and the learning claim are that definition for the nearest-point distance and
-for a loss of the residual. Proved: \cref{thm:sandwich}, for inputs in any
-seminormed group; \cref{thm:tube}, for an integrable distance in any
-pseudo-metric space; \cref{thm:marginal}; and \cref{cor:phase}, from the
-translation invariance of Haar measure on the circle. The last two combine into
-the statement that the learning claim fails for sines of any amplitude, any
-sequence of frequencies, any measurable loss and any measure on data points.
-The project contains no \lean{sorry}, and the repository reports that every
-theorem depends only on Lean's three standard axioms. Not formalised: claim (G)
-itself, which is measured and not proved; \cref{lem:tube-area},
-\cref{prop:length,prop:sine,prop:floor}; and \cref{cor:he}, so width enters the
-formal development nowhere. \Cref{app:lean} lists the Lean names and versions.
+for a loss of the residual.
+
+Proved: \cref{thm:sandwich}, for inputs in any seminormed group; \cref{thm:tube},
+for an integrable distance in any pseudo-metric space; \cref{thm:marginal};
+\cref{cor:phase}, from the translation invariance of Haar measure on the
+circle; \cref{thm:cover}, pointwise and in expectation; \cref{thm:sine}, stated
+for $A\sin(wx+\varphi)$ with the bound $\pi/w$, which is the statement above
+after replacing $w$ by $w\pi$; and \cref{prop:path,thm:kernel,cor:rate,prop:more},
+for bounded linear maps between complete real inner-product spaces, with
+``$K$ invertible'' taken as the existence of a right inverse. The statements of
+\cref{app:chains} about ReLU chains and polarizers are proved as well.
+
+Not formalised: \cref{lem:tube-area} and \cref{prop:length,prop:sine,prop:floor};
+\cref{cor:he}, so the width of a network enters the formal development nowhere;
+and the observation of \cref{sec:fourier} that the kernel of random Fourier
+features is close to a multiple of the identity.
+
+The project contains no \lean{sorry}, every theorem depends only on Lean's three
+standard axioms, and a workflow in the repository rebuilds the project on every
+change. A proof assistant checks that the proofs follow from the definitions.
+It does not check that the definitions say what the prose says, and we have
+tried to keep them short enough to be read. \Cref{app:lean} lists the Lean
+names.

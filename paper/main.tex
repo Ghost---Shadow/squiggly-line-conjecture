@@ -42,9 +42,9 @@
 \newcommand{\relu}{\sigma}
 \newcommand{\tr}{\operatorname{tr}}
 \newcommand{\lean}[1]{\texttt{#1}}
-\newcommand{\repo}{\url{https://github.com/Ghost---Shadow/squiggly-line-conjecture}}
+\newcommand{\repo}{\url{https://github.com/Ghost---Shadow/squiggly-line-theorem}}
 
-\title{The Squiggly Line Conjecture: A Geometric Picture of Overparameterization That Training Cannot Use}
+\title{The Squiggly Line Theorem: Squigglier Curves Are Closer to the Data, in a Direction Training Cannot Use}
 
 \author{%
   Souradeep Nanda \\
@@ -57,42 +57,47 @@
 \maketitle
 
 \begin{center}
-\fbox{\parbox{0.92\linewidth}{\small\textbf{Draft of 11 November 2026, not reviewed.}
-The text was drafted by an AI assistant and stopped before a final pass. The
-references have not been independently checked, and the paper predates several
-results now in the repository (the proof of the geometric claim for sines, the
-parameter-space results, and the ReLU and polarizer results). See the
-repository README for the current state.}}
+\small Draft of 11 November 2026.
 \end{center}
 
 \begin{abstract}
 The squiggly line conjecture is a geometric account of why larger networks learn
 faster: a network with more parameters is a squigglier random curve at
 initialisation, a squigglier curve passes nearer to the data, and so a larger
-network starts closer to a fit. We split it into three claims and test each.
-The geometric claim holds. For random-phase sines of fixed amplitude, the mean
-Euclidean distance from a random point to the nearest point of the curve falls
-by a factor of 30 as the frequency rises from 0.25 to 64. The other two claims
-fail. The distance that falls is not the one a regression loss charges: for a
-$K$-Lipschitz function the nearest-point distance lies between the vertical
-error divided by $\sqrt{1+K^2}$ and the vertical error, so a curve can be much
-nearer than its vertical error only where it is steep. The expected loss of a
-random function depends only on its one-point marginals, and for random-phase
-waves these do not depend on the frequency; in the same experiment the mean
-vertical error stays at $0.67$. For random ReLU networks under He initialisation
-the expected initial squared error is the same at every width, and the curves
-of random networks do not get longer with width. We also prove a lower bound on
-the mean distance in terms of curve length, derive the constant for the sine,
-and identify what sets the saturation floor. The main statements are checked in
-Lean~4. The picture is correct as geometry and does not explain learning.
+network starts closer to a fit. We split it into three claims and settle each
+as far as we can. The geometric claim is a theorem for sines. For a random-phase
+sine of frequency $w$ and data whose labels lie in its band, the distance from
+a data point to the nearest point of the curve lies between the vertical error
+divided by $\sqrt{1+K^2}$, with $K$ the slope of the sine, and $1/w$; its
+expectation tends to zero as $w$ grows. The learning claim is false for the same
+family: the expected loss of a random function depends only on its one-point
+marginals, and these do not depend on the frequency, so the expected loss is
+the same at every frequency for every regression loss. The claim about
+parameters fails for width: under He initialisation the expected initial squared
+error of a ReLU network is the same at every width, and the curves of random
+networks do not get longer with width. The idea is true in parameter space. For
+a model that is linear in its parameters, the distance from the initial
+parameters to the nearest fit is determined by the kernel, equals the size of
+the residual divided by $\sqrt c$ when the features are orthogonal with squared
+length $c$, and never grows when parameters are added; a Fourier-series
+experiment shows the initial loss flat and the distance to a fit falling
+steeply with the number of terms. The main statements are checked in Lean~4.
+For neural networks the geometric claim remains a conjecture, which we reduce
+to a question about the oscillation scale of a random network.
 \end{abstract}
 
 \input{sections/01_introduction}
 \input{sections/02_theory}
 \input{sections/03_experiments}
+\input{sections/035_parameter_space}
 \input{sections/04_formalisation}
 \input{sections/05_related_work}
 \input{sections/06_discussion}
+
+\section*{Acknowledgements}
+This paper was drafted with the assistance of Claude, an AI system made by
+Anthropic, which also wrote the Lean proofs and the experiment scripts under the
+author's direction. The author is responsible for the content.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
