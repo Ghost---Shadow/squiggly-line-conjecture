@@ -124,6 +124,25 @@ to reach a fit, `‖θ_final − θ_start‖`, since that is the quantity model 
 changes. And read sharpness against the step size, as the product
 `step size × sharpness`, since that is the number rescaling leaves alone.
 
+**A rule of thumb for size.** To be clear of the double-descent peak, use at
+least
+
+```
+3 × samples × (classes − 1)
+```
+
+trainable parameters, or keep weight decay on and stop worrying. The peak
+sits where the model can just barely fit its training labels. That takes one
+parameter for each number to be fitted (**proved** for a model linear in its
+weights: [capacity](docs/capacity.md)), and a sample with `k` classes has
+`k − 1` free numbers. The factor of 3 comes from one experiment here: with 20
+points the error was still bad at 1.65 times the threshold and had settled by
+3.25 times ([double descent](docs/double-descent.md)). So the rule is a
+guide and not a theorem. It counts samples, not megabytes. With clean labels
+the peak is small anyway, and the rule matters most when the labels are
+noisy. It applies to the part of the model you train: a single layer on top
+of a frozen network has only that layer's parameters.
+
 ### If you study learning
 
 **What you can take away**
