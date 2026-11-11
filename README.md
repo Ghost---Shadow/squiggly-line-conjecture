@@ -263,6 +263,8 @@ Lean's three standard axioms.
 | [`NarrowChain`](lean/SquigglyLine/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth | proved |
 | [`Polarizer`](lean/SquigglyLine/Polarizer.lean) | in the plane ReLU sends a point to the nearest point of the positive quadrant; a rotate-then-ReLU layer keeps `cos θ` of a bird on the edge for a turn up to 90° and blocks it beyond; `N` small turns keep `cos θ ^ N`, and a half turn in `N ≥ 3` steps keeps at least `1 − π²/(2N)` | proved |
 | [`Depth`](lean/SquigglyLine/Depth.lean) | `L` layers of two neurons make a curve that alternates 0, 1, 0, 1 on `2^L + 1` evenly spaced inputs: `2^L − 1` turns | proved |
+| [`Bridge`](lean/SquigglyLine/Bridge.lean) | one fold doubles a frequency: `sin²(π/2 · tent^L(x)) = sin²(2^L · π/2 · x)` on `[0, 1]`, so `L` folds seen through a fixed lens are one Fourier term of frequency `2^L` | proved |
+| [`Kernel`](lean/SquigglyLine/Kernel.lean) | for models linear in their weights: a gradient step sends the error `r` to `r − η·K·r`; the travel is the length of `A†K⁻¹r`; two models with the same kernel have the same training path and the same travel | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the

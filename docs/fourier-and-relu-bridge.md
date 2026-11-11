@@ -1,8 +1,8 @@
 # The bridge between the Fourier model and the ReLU wind tunnel
 
-Notes from 11 Nov 2026, written before the proofs. Each statement is marked
-**proved** (in `lean/`), **checked** (by a calculation here), **to prove**, or
-**recalled** (from the literature).
+Notes from 11 Nov 2026. Written before the proofs, then updated once they were
+done. Each statement is marked **proved** (in `lean/`), **checked** (by a
+calculation here), or **recalled** (from the literature).
 
 ## The short answer
 
@@ -32,7 +32,8 @@ The layer has doubled the angle inside the sine. Stack `L` layers:
 sin²(π/2 · tent^L(x)) = sin²(2^(L−1) · π · x)
 ```
 
-(**checked** to machine precision for `L` up to 10; **to prove**.)
+(**proved**: `sin_sq_iterate_tent` in `Bridge.lean`; also **checked** to machine
+precision for `L` up to 10.)
 
 The right side is a single Fourier term: `sin²(a) = (1 − cos(2a)) / 2`, so it
 is one cosine of frequency `2^L`. So:
@@ -80,13 +81,13 @@ kernel is `K = A·Aᵀ`: it records how alike the features make two data points
 look. Then:
 
 - A gradient step changes the error by `error ← error − η · K · error`. The
-  weights do not appear (**to prove**).
+  weights do not appear (**proved**: `residual_gradientStep` in `Kernel.lean`).
 - The travel to the nearest fit is `√(errorᵀ · K⁻¹ · error)`. The weights do
-  not appear (**to prove**).
+  not appear (**proved**: `travel_eq_norm_of_kernelInverse`).
 
 So two models with the same kernel on the data are the same learner. They have
 the same travel, and gradient descent takes them through the same sequence of
-outputs. That is the exact sense in which a Fourier model and a ReLU model can
+outputs (**proved**: `travel_eq_of_kernel_eq`, `residual_iterate_gradientStep_eq`). That is the exact sense in which a Fourier model and a ReLU model can
 be equivalent: when their kernels agree.
 
 ## Where they differ: the exchange rate
@@ -117,7 +118,7 @@ weight moves a kink, which is not a linear change. The skeleton above holds
 exactly for last-layer training, and approximately for a very wide network
 (**recalled**: the lazy-training results).
 
-## What to prove
+## What was to prove (all three now proved)
 
 1. **The fold identity.** `sin²(π/2 · tent^L(x)) = sin²(2^(L−1) · π · x)` on
    `[0, 1]`.
