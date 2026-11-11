@@ -112,6 +112,40 @@ scale? A family whose slope stays bounded cannot get closer than
 length does not grow at He initialisation) points to "no" for width. That step
 is not formalised here.
 
+## Where "more parameters" does help
+
+The sine family has one random number, so it cannot test a claim about
+parameter count. [`scripts/fourier_params.py`](scripts/fourier_params.py) uses
+a family where the count is the only dial: a Fourier series with `m` terms and
+random coefficients, scaled so that the output has the same variance at every
+`m`. 20 points with random labels; a fit of all points exists once there are
+20 parameters.
+
+| parameters | initial MSE | nearest-point distance | travel to a fit | gradient-descent steps |
+|---|---|---|---|---|
+| 9 | 0.65 | 0.229 | no fit | never |
+| 21 | 0.65 | 0.128 | 448 | 188 000 000 |
+| 25 | 0.64 | 0.110 | 35.5 | 79 300 |
+| 65 | 0.71 | 0.056 | 1.61 | 166 |
+| 129 | 0.66 | 0.027 | 0.48 | 13 |
+| 513 | 0.63 | – | 0.23 | 3 |
+
+"Travel" is the distance in parameter space from the random start to the
+nearest parameter vector that fits every point. "Steps" is plain gradient
+descent to an MSE of 0.001 with the largest stable step size.
+
+So a larger random model does start closer to a trained one, and it trains in
+far fewer steps. But the closeness is in parameter space. The initial loss is
+the same at every size (0.63 to 0.71, sampling noise around 2/3), as the
+marginal lemma requires. The nearest-point distance also falls, like
+`1/parameters`, because these random series get steeper as terms are added.
+The worst case is right at the threshold, 21 parameters for 20 points, which
+is where double descent has its peak.
+
+This is the form in which the original idea is true: more parameters put a
+solution nearer to the random start. It is the known lazy-training picture,
+not a new result.
+
 ## The evidence
 
 ### Frequency, with everything else held fixed
@@ -232,6 +266,7 @@ cd scripts
 python frequency_isolation.py    # the main experiment, ~10 s
 python saturation_scaling.py     # what sets the floor, several minutes
 python initial_mse.py            # random networks at five widths, ~1 min
+python fourier_params.py         # what adding parameters changes, ~1 min
 python random_relu_length.py     # arc length of random ReLU curves
 python audit_legacy_metrics.py   # reproduces the defects listed below
 python readme_figures.py         # redraws the figures on this page, ~2 min
