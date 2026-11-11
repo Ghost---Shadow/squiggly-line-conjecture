@@ -22,11 +22,18 @@ turned out to be true.
 > open an issue on this repository or write to the address on the first page
 > of the paper.
 
+> **A side idea: a neural network made of polarizers.** A layer of a network
+> turns its input and keeps part of it. A polarizer plate does the same to
+> light. So a stack of printed plates, with the angle of each plate as a
+> weight, would be a network that computes as the light passes through. It is
+> an idea and not a device. See [a network made of polarizers](#a-network-made-of-polarizers).
+
 Start with [how this helps you](#how-does-this-help-me), or read the argument
 in order: [the idea](#1-the-idea), [the theorem](#2-the-theorem),
 [why it is true](#3-why-it-is-true), [what it does to the idea](#4-what-it-does-to-the-idea),
 [where the idea is right](#5-where-the-idea-is-right), [the evidence](#6-the-evidence),
-[the proofs](#7-the-proofs). Everything after that is
+[the proofs](#7-the-proofs). After that come
+[a network made of polarizers](#a-network-made-of-polarizers) and the
 [supporting material](#8-supporting-material).
 
 ## How does this help me?
@@ -356,6 +363,56 @@ lake build
 
 `lake build` passes with Lean 4.36.0-rc1 and the Mathlib commit pinned in
 [`lean/lake-manifest.json`](lean/lake-manifest.json).
+
+## A network made of polarizers
+
+This idea fell out of the picture used for networks. It is not part of the
+theorem, and nothing has been built or simulated.
+
+**The picture.** A dense layer does two things: it turns its input, then it
+keeps part of it. A polarizer plate turns nothing itself, but it keeps only
+the part of the light that lines up with its axis, and the angle of the axis
+decides which part. Light after a plate at angle `θ` to it keeps `cos θ` of
+its length. That is a layer whose weight is an angle. A stack of plates is a
+stack of layers, and the light computes the answer on its way through, at the
+speed of light and with no power spent on the plates.
+
+**What is proved here.** Only the arithmetic, not the hardware.
+
+- A plate is a projection, and Malus's law follows (`malus` in
+  [`ThreePolarizers`](lean/SquigglyLine/ThreePolarizers.lean)). In the plane,
+  ReLU is also a projection, onto a quadrant where the plate's is onto a line
+  (`relu2_nearest` in [`Polarizer`](lean/SquigglyLine/Polarizer.lean)).
+- Depth is affordable. A quarter turn spread over `N` plates loses at most
+  `π² / (8N)` of the light (`quarter_turn_arrives`), and any turn `φ` loses at
+  most `φ² / (2N)` (`turn_in_steps_keeps`).
+- The two tricks of deep networks have optical parts. A skip connection is a
+  beam that goes around the plate and rejoins. A normalisation is an amplifier
+  after it ([`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean)).
+
+**What is missing.** The nonlinearity. A stack of polarizers is one linear
+map, however many plates it has, so on its own it is a network with no
+activation function. Two partial ways around it:
+
+- A detector reads brightness, which is the square of the length. That is one
+  nonlinear step, at the end only.
+- Store a value as the angle of the light. What passes a plate then goes as
+  `cos²` of the stored value, which is nonlinear in it. One layer works.
+  Chaining layers needs something that turns brightness back into an angle.
+
+Also, polarization has two dimensions, so one beam is a layer of width two.
+More width needs more beams.
+
+**What already exists.** Optical neural networks are not new. Layers have been
+built from printed diffracting plates and from meshes of interferometers
+(recalled: Lin et al. 2018; Shen et al. 2017). What this adds is the reading
+of a weight as the angle of a plate, with the loss worked out. I have not
+checked whether that reading is in the literature.
+
+More in [`docs/wind-tunnel-and-polarizers.md`](docs/wind-tunnel-and-polarizers.md)
+and [`docs/three-polarizers.md`](docs/three-polarizers.md). The open question
+is item 18 of [`docs/open-problems.md`](docs/open-problems.md): what can a
+network whose activation is a polarizer compute?
 
 ## 8. Supporting material
 
