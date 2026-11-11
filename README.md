@@ -54,33 +54,37 @@ built for checking proofs, not only argued in words.
 
 ### If you train models
 
-Nothing here was tested on a production model. These are things the theorem
-says to check, each with a cheap way to check it.
+You already know most of this. It is the working knowledge of the field,
+learned by trial and passed on by word of mouth. What this repository adds is
+a short proof behind each habit, so a suspicion becomes something you can
+point to.
 
-- **Do not judge a setup by its loss at step zero.** The loss at the start
-  cannot see what matters ([section 3](#3-why-it-is-true)). Compare setups by
-  how far the weights move to reach a fit, `‖θ_final − θ_start‖`, or by steps
-  to a target loss ([section 5](#5-where-the-idea-is-right)).
-- **Stay away from "just enough parameters".** Use clearly fewer than it
-  takes to fit the noise, or many more. The distance to a fit and the test
-  error both peak in between.
-- **If you want a model that can bend more, spend on depth before width.**
-  Each layer can double the number of turns. Each neuron in a single layer
-  adds one ([depth separation](docs/depth-separation.md)). This is about what
-  the model can draw, not how easy it is to train.
-- **Closeness and robustness pull against each other.** A function that sits
-  very near its data is steep, and a steep function is easy to tip over
-  ([section 3](#3-why-it-is-true), [dimpled manifold](docs/dimpled-manifold.md)).
-  If robustness matters, track the slope as well as the loss.
-- **Read sharpness against the step size, never alone.** The largest stable
-  step is `2 / sharpness`, and rescaling the weights changes the sharpness
-  without changing the model ([edge of stability](docs/edge-of-stability.md),
-  [flat minima](docs/flat-minima.md)). The product `step size × sharpness` is
-  the number that means something.
-- **When fine-tuning, forgetting is bounded by how far you move.** A new task
-  can change the old outputs by at most the distance travelled, and only
-  through inputs the model treats as alike ([forgetting](docs/forgetting.md)).
-  Lower the travel, or keep the tasks' features apart.
+| What practitioners do or suspect | What is proved here | Where |
+|---|---|---|
+| The loss at step zero is a sanity check and tells you nothing else. | The expected loss at the start depends only on the outputs one input at a time. It cannot see structure. | [section 3](#3-why-it-is-true) |
+| Bigger models are easier to train. | The loss at the start is the same, but the nearest fit is closer, by `‖residual‖ / √c`. | [section 5](#5-where-the-idea-is-right) |
+| Do not size the model to just fit the data. Go much bigger. | The distance to a fit is largest with just enough parameters, and so is the test error. | [double descent](docs/double-descent.md) |
+| Fitting noisy labels exactly is often harmless in a big model. | Spare features take over the noise and cap what it does to new inputs. | [benign overfitting](docs/benign-overfitting.md) |
+| Go deeper, not only wider. | A layer can double the turns of the curve. A neuron in one hidden layer adds one. | [depth separation](docs/depth-separation.md) |
+| Deep networks need skip connections and normalisation. | A skip keeps any layer from dimming or blocking the signal. A normalisation restores its strength. | [skip and norm](docs/skip-and-norm.md) |
+| Change things gradually: warm up, small steps, easy examples first. | If a step's cost goes as the square of its size, `N` small steps cost `1 / N` of one big one. | [small steps](docs/small-steps.md) |
+| There is a largest learning rate, and sharper loss means a smaller one. | A direction is stable exactly when the step size is below `2 / sharpness`. | [edge of stability](docs/edge-of-stability.md) |
+| Networks learn the coarse pattern first. Stopping early keeps out noise. | Each direction is learned on its own clock, `1 / (step size × strength)`, strong ones first. | [spectral bias](docs/spectral-bias.md) |
+| Flat minima are good, but sharpness numbers are slippery. | Rescaling the weights changes the flatness and not the model. Flatter always means farther. | [flat minima](docs/flat-minima.md) |
+| Most weights can be pruned. | Pruning costs nothing along directions where the dropped weights had no strength. | [lottery tickets](docs/lottery-ticket.md) |
+| Fine-tune gently, or the model forgets. | What is forgotten is at most the distance moved, and it goes through inputs the model treats as alike. | [forgetting](docs/forgetting.md) |
+| Tiny changes to an input can fool a model, and robustness costs accuracy. | Nearness to the data is bought with slope and with nothing else. | [section 3](#3-why-it-is-true), [dimpled manifold](docs/dimpled-manifold.md) |
+| Well-trained models of different designs end up alike. | Two models with the same kernel make the same predictions at every step, whatever their weights. | [same kernel](docs/same-kernel.md) |
+
+**How far to trust it.** Each proof is for a simplified model, most often one
+whose features do not change during training. So it confirms the direction of
+each habit. It does not give numbers for your model, and nothing here was
+tested on a production system.
+
+**Two habits it suggests adding.** Compare setups by how far the weights move
+to reach a fit, `‖θ_final − θ_start‖`, since that is the quantity model size
+changes. And read sharpness against the step size, as the product
+`step size × sharpness`, since that is the number rescaling leaves alone.
 
 ### If you study learning
 
