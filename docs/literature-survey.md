@@ -12,7 +12,7 @@
 
 - **Hanin, Jeong & Rolnick (2022) - "Deep ReLU Networks Preserve Expected Length" (ICLR 2022)** - Shows that, at standard initialization, deep ReLU networks preserve the expected length of an input curve: depth and width do not make the output curve longer in expectation.
 
-**Relation to this project:** This was taken to undercut the conjecture, since the original intuition was "longer curve, more chances to pass near a point". It does not undercut the resolved result, because arc length turned out not to be the mechanism: a straight line stretched to the same arc length as a squiggly curve does not reproduce the distance reduction. What matters is how the length is spread across the domain ([`RESOLUTION.md §2`](RESOLUTION.md)).
+**Relation to this project:** This was taken to undercut the conjecture, since the original intuition was "longer curve, more chances to pass near a point". An earlier note here said it does not, because a straight line of the same length does not reproduce the distance reduction. That reading was too strong (revised 11 Nov 2026): about 99% of that line lies outside the data, and the tube bound `V/(4l)` makes length inside the data region necessary. So this result does undercut the parameter claim: a random network whose curve does not get longer cannot get much closer ([`RESOLUTION.md §2`](RESOLUTION.md)).
 
 ## 1. Lottery Ticket Hypothesis & Initialization
 

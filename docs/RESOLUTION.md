@@ -1,6 +1,12 @@
 # Resolution of the Squiggly Line Conjecture
 
-**Status: settled. The conjecture is true, and true in a direction that training cannot use.**
+**Status: settled. The geometry is true, the parameter claim is false for width, and the learning claim is false.**
+
+*Revised 11 Nov 2026.* The first status line read "the conjecture is true, and
+true in a direction that training cannot use". That was too generous: the
+conjecture as defined (more parameters, smaller expected nearest-point distance
+at initialisation) fails for width. §2 also read the straight-line test too
+strongly. Both are corrected in place below, and §7 lists what the review added.
 
 This document supersedes the empirical claims in `docs/day-1.md`,
 `docs/day-2.md`, `docs/consolidated.md`, and the paper draft (`main.tex`, since
@@ -21,7 +27,7 @@ Two separable parts: a **geometric claim** about curves and points, and a
 
 ---
 
-## 2. The geometric claim is correct — and the stated mechanism is wrong
+## 2. The geometric claim is correct — and length alone does not explain it
 
 Earlier experiments varied squiggliness by raising polynomial degree or network
 width. That confounds oscillation frequency with output amplitude and with arc
@@ -44,9 +50,9 @@ Euclidean distance falls by a factor of 30. The effect is real, it is large, and
 it is not an artifact of amplitude. **The squiggly curve is genuinely closer to
 the data.**
 
-But the fishing-line mechanism — more length, more chances to pass near a fish —
-is not what produces it. Stretch a *straight line* to exactly the arc length of
-each wiggly curve and it does not reproduce the effect:
+The fishing-line picture — more length, more chances to pass near a fish — is
+incomplete. Stretch a *straight line* to exactly the arc length of each wiggly
+curve and it does not reproduce the effect:
 
 | frequency | arc length | wiggly | straight, same length |
 |---|---|---|---|
@@ -54,14 +60,20 @@ each wiggly curve and it does not reproduce the effect:
 | 16 | 52.31 | 0.0338 | 0.5007 |
 | 64 | 208.92 | 0.0207 | 0.5006 |
 
-At 209 units of arc length the straight line is 24× worse. Length is nearly
-irrelevant; what matters is that the length is **spread across the domain**
-rather than spent climbing in one place.
+At 209 units of arc length the straight line is 24× worse. Read this with care.
+That line has slope ≈104 over `x ∈ [−1, 1]`, so about 99% of it lies above or
+below the data. The test shows that length outside the data region is worth
+nothing. It does not show that length is irrelevant. By the tube identity (§7),
+a curve of length `l` inside a region of area `V` has mean distance at least
+about `V/(4l)`, with equality only when it is **spread evenly**. Length inside
+the region is necessary. Spread decides how much that length buys.
 
-This is worth stating plainly because it dissolves the strongest objection on the
-table. Hanin, Jeong & Rolnick (ICLR 2022) show that deep ReLU networks preserve
-expected curve length at initialization, which was taken to undercut the
-conjecture. It doesn't, because length was never the operative variable.
+This changes the reading of Hanin, Jeong & Rolnick (ICLR 2022), who show that
+deep ReLU networks preserve expected curve length at initialization. An earlier
+version of this section said their result does not undercut the conjecture
+"because length was never the operative variable". With the bound above it does
+undercut the parameter claim: a random network whose curve does not get longer
+cannot get much closer.
 
 *Numerical correction (19 Sep 2026).* The first version of these tables sampled
 every curve on a fixed 4000-point grid. At frequency 64 the sine's steepest
@@ -157,8 +169,8 @@ A correct and modestly pretty result about random curves:
 > minimum Euclidean distance to a random point falls with oscillation frequency
 > as `D(w) ≈ D∞ + c/w`, saturating at a floor `D∞` set by amplitude: points
 > outside the band the curve sweeps can never be reached. The floor and the knee
-> do not depend on how many points there are. Arc length is not the controlling
-> variable; distribution of that length across the domain is.
+> do not depend on how many points there are. Arc length inside the data region
+> is necessary and not sufficient; how evenly it is spread decides the rest.
 
 For the amplitude used here the band is `|y| ≤ 0.816` and the floor is
 `(1 − 0.816)²/2 = 0.0169`. The original write-up anticipated saturation from the
@@ -225,6 +237,32 @@ theorem true is not the metric that training minimizes.
   probably circular: for a 1-D box `E ∝ n²`, so `nodes ∝ √E` follows from the
   spectrum by change of variables, and "coverage ∝ √E" follows from that. Worth
   checking before it is repeated anywhere.
+
+## 7. What the review of 11 Nov 2026 added
+
+The conjecture is three claims in a chain: (G) a squigglier curve has a smaller
+nearest-point distance; (P) more parameters give a squigglier random function;
+(L) a smaller nearest-point distance means a smaller training loss at the
+start. G is true. P is false for width and weak for depth. L is false.
+
+- **Slope sandwich.** For a `K`-Lipschitz `f`, at every data point,
+  `vertical / √(1 + K²) ≤ nearest ≤ vertical`. The curve can be much nearer
+  than its vertical error only if it is steep.
+- **Marginal lemma.** The expected loss of a random function depends only on
+  the distribution of `f(x)` at each single `x`. So the flat vertical column of
+  §2 is forced by the design, and its spread is sampling noise. For networks
+  under He initialisation `E[f(x)²]` is the same at every width, so the
+  expected initial MSE is `E[y²] + E[f(x)²]` at every width (§3).
+- **Tube identity.** `E[dist(P, S)] = ∫₀^∞ P(P is outside the tube of radius r) dr`.
+  It replaces the underived `(uncovered fraction)^(1/d)` of the original deck
+  and gives the `V/(4l)` lower bound used in §2.
+- **A limit of the test family.** A random-phase sine has one degree of
+  freedom and can never fit more than two points at once. The mean per-point
+  distance cannot see this, which is why `n` dropped out in §6.
+- **Formalisation.** `lean/` states the conjecture and the learning claim and
+  proves the sandwich, the tube identity, the marginal lemma, and that the
+  learning claim fails for random-phase sines. Not formalised: claim G, the
+  `V/(4l)` bound, and anything about network width.
 
 ---
 

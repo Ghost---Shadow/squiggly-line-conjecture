@@ -33,8 +33,13 @@ Null model
 The fishing-line story says the mechanism is arc length: a longer curve has
 more chances to pass near a point. To test that directly we compare each
 wiggly curve against a STRAIGHT LINE stretched to exactly the same arc
-length (y = m*x + b with L = 2*sqrt(1+m^2)). If arc length were the
+length (y = m*x + b with L = 2*sqrt(1+m^2)). If arc length alone were the
 mechanism, the two should score alike.
+
+Caveat (11 Nov 2026): at the lengths tested the line is nearly vertical and
+about 99% of it lies outside the data box. So the comparison shows that length
+outside the data region buys nothing. It does not show that length is
+irrelevant: length inside the region is necessary (docs/RESOLUTION.md, sec. 2).
 
 Result
 ------
@@ -42,9 +47,10 @@ Result
     2. Under `vert`, squiggliness does nothing at all. Flat to <1% across a
        100x change in arc length.
     3. The arc-length-matched straight line does NOT reproduce the effect,
-       so arc length is not the mechanism. Spread across the domain is.
+       so arc length alone is not the mechanism. The length has to be spread
+       across the data region.
 
-Conclusion: the conjecture is true, and false in the way that matters. The
+Conclusion: the geometric claim holds and the learning claim does not. The
 squiggly curve really is closer to the data -- but only in a direction that
 gradient descent does not measure.
 
@@ -125,7 +131,7 @@ def main():
     print("=" * 74)
     print("NULL MODEL: straight line stretched to identical arc length")
     print("=" * 74)
-    print("If arc length were the mechanism these columns would match.")
+    print("If arc length alone were the mechanism these columns would match.")
     print()
     print(f"{'freq':>6} {'arc length':>12} {'wiggly':>10} {'straight':>10}")
     print("-" * 42)
@@ -137,7 +143,7 @@ def main():
         print(f"{w:>6} {lengths[i]:>12.2f} {euclids[i]:>10.4f} {straight:>10.4f}")
 
     print()
-    print("Arc length is not the mechanism. Spread across the domain is.")
+    print("Length outside the data region buys nothing: the straight line leaves the box.")
 
     if HAVE_PLT:
         plt.figure(figsize=(10, 6))

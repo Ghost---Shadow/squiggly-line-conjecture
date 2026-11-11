@@ -8,7 +8,7 @@ For the person (or agent) who starts the next experiments in this repository.
 
 - The geometric claim holds. A squigglier curve is nearer to random points in the Euclidean nearest-point distance.
 - The learning claim is false. The vertical residual `|y - f(x)|`, which a regression loss charges, does not change with squiggliness. Initial MSE of random ReLU networks is flat in width under He initialisation.
-- Arc length is not the controlling variable. A straight line of the same length is 24 times worse. The spread of the length across the domain is what matters.
+- Arc length inside the data region is necessary and not sufficient. A straight line of the same length is 24 times worse, but about 99% of that line lies outside the data. How evenly the length is spread decides how much it buys.
 - The saturation floor comes from amplitude against the data range, not from point spacing.
 
 So "start the experiments" does not mean "test the conjecture". That is done. It means the open threads in section 4.
