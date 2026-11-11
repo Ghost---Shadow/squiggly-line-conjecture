@@ -375,6 +375,7 @@ Lean's three standard axioms.
 | [`TentCloser`](lean/SquigglyLine/TentCloser.lean) | `L` two-neuron ReLU layers pass within `1 / 2^L` of every point of the unit square | proved |
 | [`DoubleDescent`](lean/SquigglyLine/DoubleDescent.lean) | a fit near the start is tame everywhere; the travel is at most `‖residual‖ / √c` when the kernel is at least `c` in every direction; along a direction of strength `λ` no fit exists if `λ = 0` and the travel is exactly `‖residual‖ / √λ` if `λ > 0`; for one training point the kernel is the squared length of the feature vector | proved |
 | [`Dimple`](lean/SquigglyLine/Dimple.lean) | the dimpled manifold: a function that is `g` along the data manifold and has slope `K` across it has the loss of `g` on real data for every `K`, reaches any label by a step of `error / K` straight off the manifold, and has nearest-point distance between `vertical / √(1 + (L + K)²)` and `vertical / K` | proved |
+| [`LeastAction`](lean/SquigglyLine/LeastAction.lean) | least action: gradient descent moves only along the features, so any fit it arrives at is the nearest one to the start; and two turns `a`, `b` never keep more than two turns of their average, so the evenest path through the layers loses least | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -434,6 +435,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/least-action.md` | the trained path as a path of least action: the nearest fit, and the evenest route through the layers |
 | `docs/dimpled-manifold.md` | the dimpled manifold hypothesis in this picture: the price of nearness is slope, and it can be paid off the data manifold |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
