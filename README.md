@@ -308,6 +308,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/RESOLUTION.md` | the findings in full |
 | `docs/EXPERIMENT_LOG.md` | a re-run of every script, 19 Sep 2026, with raw output |
 | `docs/literature-survey.md` | related work |
+| `docs/wind-tunnel-and-polarizers.md` | the ReLU picture in plain words: resolving power, the tunnel that cannot turn, ReLU as a polarizer |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
