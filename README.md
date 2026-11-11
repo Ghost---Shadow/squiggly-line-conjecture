@@ -31,8 +31,9 @@ machine-checked statements about well-known puzzles of deep learning:
 [weight decay](docs/weight-decay.md),
 [bias and variance](docs/bias-variance.md),
 [the linear scaling rule for batch size](docs/batch-size.md),
-[storage capacity](docs/capacity.md), and
-[compression and code length](docs/code-length.md).
+[storage capacity](docs/capacity.md),
+[compression and code length](docs/code-length.md), and
+[the Chinchilla scaling rule](docs/compute-budget.md).
 Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
@@ -104,6 +105,7 @@ point to.
 | Change things gradually: warm up, small steps, easy examples first. | If a step's cost goes as the square of its size, `N` small steps cost `1 / N` of one big one. | [small steps](docs/small-steps.md) |
 | Weight decay, early stopping and a bigger model all fight overfitting. | All three add a floor to the strength of every direction. Stopping after `t` steps cuts at least as hard as weight decay `1 / (step size × t)`. | [weight decay](docs/weight-decay.md) |
 | Regularise more and you underfit, less and you overfit. | Expected squared error is bias² plus variance. Raising the floor raises the first and lowers the second. | [bias and variance](docs/bias-variance.md) |
+| With a compute budget and data to spare, grow the model and the data together. | If the loss above its floor is `A / parameters + B / data`, the best split of a fixed budget has the two terms equal. | [compute budget](docs/compute-budget.md) |
 | Double the batch size, double the learning rate. | Two small steps equal one big step up to a term of order `step size²`. | [batch size](docs/batch-size.md) |
 | Start the weights so the signal keeps its size from layer to layer. | A per-layer gain below one dies with depth and above one blows up, and the gradient follows the signal. | [vanishing gradients](docs/vanishing-gradients.md) |
 | There is a largest learning rate, and sharper loss means a smaller one. | A direction is stable exactly when the step size is below `2 / sharpness`. | [edge of stability](docs/edge-of-stability.md) |
@@ -142,6 +144,11 @@ guide and not a theorem. It counts samples, not megabytes. With clean labels
 the peak is small anyway, and the rule matters most when the labels are
 noisy. It applies to the part of the model you train: a single layer on top
 of a frozen network has only that layer's parameters.
+
+This rule is for a fixed set of data. If you can always get more data and
+are limited by compute, the rule is different: grow the model and the data
+together ([compute budget](docs/compute-budget.md)). The two rules agree in
+staying away from the peak, one from above and one from below.
 
 ### If you study learning
 
@@ -484,6 +491,7 @@ them proves the phenomenon for real networks.
 | Many small steps | A square-law loss over `N` steps is at most `c·D² / N`. A loss in proportion to the step gains nothing. | [note](docs/small-steps.md) | [`SmallSteps`](lean/SquigglyLine/SmallSteps.lean) |
 | Weight decay and early stopping | Weight decay `μ` leaves the share `μ / (λ + μ)` of the error. Stopping after `t` steps cuts at least as hard as `μ = 1 / (ηt)`. Spare features act the same way. | [note](docs/weight-decay.md) | [`WeightDecay`](lean/SquigglyLine/WeightDecay.lean) |
 | Batch size and learning rate | Two steps on two batches equal one step on both, minus `η²` times a term through the kernel between the batches. With averaged gradients that is the linear scaling rule. | [note](docs/batch-size.md) | [`BatchSize`](lean/SquigglyLine/BatchSize.lean) |
+| Chinchilla scaling | If the loss above its floor is `A / N + B / D` and compute fixes `N × D`, the best split has the two terms equal, so parameters and data grow together in the ratio `A / B`. The form itself is a measurement. | [note](docs/compute-budget.md) | [`ComputeBudget`](lean/SquigglyLine/ComputeBudget.lean) |
 
 **What a fit does to new inputs**
 

@@ -65,6 +65,7 @@ theorem.
 | `BatchSize`         | two small steps = one big step minus an `η²` cross-kernel term     |
 | `Capacity`          | storing arbitrary labels costs a parameter, or a bit, for each     |
 | `CodeLength`        | a fold loses one bit; loss ≥ entropy; travel² is description length |
+| `ComputeBudget`     | `A / N + B / D` with `N D` fixed is least when the terms balance    |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -114,3 +115,4 @@ import SquigglyLine.UniversalApproximation
 import SquigglyLine.BatchSize
 import SquigglyLine.Capacity
 import SquigglyLine.CodeLength
+import SquigglyLine.ComputeBudget
