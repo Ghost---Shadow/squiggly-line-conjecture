@@ -156,6 +156,58 @@ threshold the features are far from orthogonal and the formula fails by a wide
 margin. That the kernel is close to $(m+1)I$ is an observation here, not a
 proved statement.
 
+\subsection{Double descent}
+\label{sec:dd}
+
+The peak at the threshold in \cref{tab:fourier} is the peak of double descent,
+seen in the distance to the fit. To check this we fit the same model to
+$n=20$ noisy points of a smooth target, by least squares for $P<n$ and by the
+fit nearest to a zero start for $P\ge n$, and score it on fresh points
+(\texttt{double\_descent.py}; 300 data sets per size, medians). The test error
+is $0.094$ at $P=5$, rises to $8.4\times10^{4}$ at $P=21$, and is $0.31$ at
+$P=65$ and beyond; the travel is $0.75$, $409$ and $0.56$ at the same sizes.
+Both peak at $P=21$. Three statements connect them.
+
+\begin{proposition}\label[proposition]{prop:dd}
+Let $K=AA^*$ be invertible and write $r_0=r(\theta_0)$.
+\emph{(a)} There is a fit $\theta$ such that
+$|\langle\phi,\theta\rangle-\langle\phi,\theta_0\rangle|\le\|\phi\|\,\tau(\theta_0)$
+for every $\phi\in\Theta$.
+\emph{(b)} If $\langle Kv,v\rangle\ge c\|v\|^2$ for all $v$, with $c>0$, then
+$\tau(\theta_0)\le\|r_0\|/\sqrt c$.
+\emph{(c)} If $Kr_0=\lambda r_0$ with $\lambda>0$, then
+$\tau(\theta_0)=\|r_0\|/\sqrt\lambda$.
+Moreover, for any bounded linear $A$, if $r\ne0$ and $AA^*r=0$ then no $\delta$
+satisfies $A\delta=r$.
+\end{proposition}
+
+\begin{proof}
+(a) Take the nearest fit and apply the Cauchy--Schwarz inequality.
+(b) and (c) follow from $\tau(\theta_0)^2=\langle K^{-1}r_0,r_0\rangle$
+(\cref{thm:kernel}). For the last statement, $\|A^*r\|^2=\langle AA^*r,r\rangle=0$,
+so $\|r\|^2=\langle r,A\delta\rangle=\langle A^*r,\delta\rangle=0$.
+\end{proof}
+
+Here $\langle\phi,\theta\rangle$ is the output of the model at a new input
+with feature vector $\phi$. By (a), a fit that is near the start gives a
+function that is near the starting function everywhere, so the fitted function
+can be wild between the data points only if the travel is large. By (b) and
+(c), the travel is large exactly when the kernel has a weak direction that
+the labels excite. Follow one direction of the labels as the model grows. When
+the kernel annihilates it, no fit exists and the model leaves that part of the
+labels alone. When the kernel stretches it by a small $\lambda$, a fit exists
+at distance $\|r_0\|/\sqrt\lambda$. When $\lambda$ is large the fit is near.
+In the experiment the smallest eigenvalue of $K$ is $7\times10^{-8}$ at $P=21$
+and $202$ at $P=513$. Being unable to fit the noise is harmless, being barely
+able to is the worst case, and being easily able to is harmless again. That the
+test error itself peaks at the threshold is measured here, not proved.
+
+How low the second descent ends depends on which directions are cheap. With
+every term at the same scale the test error ends at $0.31$, the error of
+predicting zero ($0.32$): the nearest fit is a spike at each training point.
+With term $k$ scaled by $1/k$ it ends at $0.073$, below the first minimum of
+$0.099$.
+
 The nearest-point distance also falls, roughly like $1/P$. This is
 \cref{thm:sandwich} again: a random series with more terms of this scaling is
 steeper. So in this family claims (G) and (P) both hold, and (L) still fails.

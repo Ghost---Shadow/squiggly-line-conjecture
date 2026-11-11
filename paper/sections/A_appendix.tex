@@ -154,6 +154,15 @@ so that, seen through the fixed function $\sin^2(\tfrac\pi2\,\cdot)$, $L$ folds
 are a single Fourier mode of frequency $2^L$. Depth in such a network plays
 the role of the logarithm of frequency in \cref{sec:fourier}.
 
+\paragraph{A network for which claims (G) and (P) hold.} For every $L$ and
+every $x,y\in[0,1]$ there is an $x'\in[0,1]$ with $|x-x'|\le2^{-L}$ and
+$T^L(x')=y$. Hence $\nd_{T^L}(x,y)\le2^{-L}$ for every data point of the unit
+square: the curve drawn by $L$ layers of two neurons passes within $2^{-L}$ of
+every point. The proof is an induction in which each layer halves the
+distance. For this family more layers give a squigglier and a closer curve, at
+an exponential rate. Its weights are chosen, not random, and its slope is
+$2^L$, so by \cref{thm:sandwich} its vertical error is not thereby smaller.
+
 \paragraph{ReLU as a projection.} In the plane, the coordinatewise ReLU sends a
 point to the nearest point of the positive quadrant. Let $R_\theta$ be the
 rotation by $\theta$ and $r\ge0$. A layer that rotates and then applies the
@@ -253,6 +262,9 @@ frequencies logarithmically spaced in $[1,1000]$, 300 bootstrap resamples; the
 control uses $n=100$. Several minutes.
 \item \texttt{initial\_mse.py}: \cref{tab:mse}.
 \item \texttt{random\_relu\_length.py}: \cref{tab:relu-full}.
+\item \texttt{double\_descent.py}: the numbers of \cref{sec:dd}. 20 training points
+with noise of standard deviation $0.2$ on the target $0.8\sin(1.5\pi x)$, 300 data
+sets for each number of parameters, 2000 test points.
 \item \texttt{fourier\_params.py}: \cref{tab:fourier}. 20 data sets and 20
 random starts for each number of terms; the number of gradient steps is
 computed exactly in the eigenbasis of the kernel.
@@ -340,6 +352,9 @@ Lean 4.36.0-rc1 and the Mathlib commit recorded in
 \lean{expected\_nearestDist\_le}; \cref{cor:warp}:
 \lean{exists\_warp\_of\_coversWithin}, \lean{sineWave\_exists\_warp},
 \lean{sin\_exists\_phaseShift}.
+\item \cref{thm:general}: \texttt{Compression}, \lean{CoversWithin.compress},
+\lean{lipschitzWith\_compress}, \lean{marginal\_compress\_eq},
+\lean{squiggly\_line\_theorem\_general}.
 \item \cref{thm:sine}: \texttt{SineCloser},
 \lean{sineWave\_nearestDist\_bounds},
 \lean{tendsto\_expected\_nearestDist\_sineWave}; collected in
@@ -349,11 +364,16 @@ Lean 4.36.0-rc1 and the Mathlib commit recorded in
 \item \cref{thm:kernel}: \texttt{Kernel}, \lean{residual\_gradientStep},
 \lean{travel\_eq\_norm\_of\_kernelInverse}, \lean{travel\_eq\_of\_kernel\_eq},
 \lean{residual\_iterate\_gradientStep\_eq}.
+\item \cref{prop:dd}: \texttt{DoubleDescent}, \lean{exists\_fit\_near\_start},
+\lean{travel\_le\_of\_le\_kernel}, \lean{travel\_eq\_of\_eigen},
+\lean{le\_travel\_of\_eigen\_le}, \lean{not\_exists\_fit\_of\_kernel\_eq\_zero},
+\lean{travel\_one\_point}.
 \item \cref{cor:rate}: \texttt{ExchangeRate}, \lean{TightFeatures.travel\_eq};
 \texttt{MarkovChains}, \lean{TightFeatures.residual\_iterate\_gradientStep},
 \lean{TightFeatures.residual\_gradientStep\_inv}.
 \item \cref{app:chains}: \texttt{NarrowChain}, \lean{narrowChain\_neverTurns};
-\texttt{Depth}, \lean{iterate\_tent\_dyadic}; \texttt{Bridge},
+\texttt{Depth}, \lean{iterate\_tent\_dyadic}; \texttt{TentCloser},
+\lean{iterate\_tent\_covers}, \lean{nearestDist\_iterate\_tent\_le}; \texttt{Bridge},
 \lean{sin\_sq\_iterate\_tent}; \texttt{Polarizer}, \lean{relu2\_nearest},
 \lean{fan\_of\_le\_pi\_div\_two}, \lean{fan\_of\_pi\_div\_two\_le},
 \lean{iterate\_fan}; \texttt{ThreePolarizers}, \lean{malus},

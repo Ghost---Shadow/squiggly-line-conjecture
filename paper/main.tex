@@ -44,7 +44,7 @@
 \newcommand{\lean}[1]{\texttt{#1}}
 \newcommand{\repo}{\url{https://github.com/Ghost---Shadow/squiggly-line-theorem}}
 
-\title{The Squiggly Line Theorem: Squigglier Curves Are Closer to the Data, in a Direction the Initial Loss Cannot See}
+\title{The Squiggly Line Theorem: Closer, Steeper, and No Better at the Start}
 
 \author{%
   Souradeep Nanda \\
@@ -85,8 +85,14 @@ the residual divided by $\sqrt c$ when the features are orthogonal with squared
 length $c$, and never grows when parameters are added; a Fourier-series
 experiment shows the initial loss flat and the distance to a fit falling
 steeply with the number of terms. The main statements are checked in Lean~4.
-For neural networks the geometric claim remains a conjecture, which we reduce
-to a question about the oscillation scale of a random network.
+The theorem does not depend on the sine: squeezing any function sideways by a
+factor $w$ brings it $w$ times closer, makes it $w$ times steeper, and leaves
+the expected loss unchanged. For networks, the geometric claim holds for a
+constructed ReLU family, whose curve passes within $2^{-L}$ of every point of
+the unit square after $L$ layers, and remains open for networks with random
+weights. Double descent appears in the same picture: the test error and the
+distance to the fit peak together, where one direction of the labels has just
+become reachable.
 \end{abstract}
 
 \input{sections/01_introduction}

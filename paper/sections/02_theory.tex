@@ -288,6 +288,41 @@ $\sqrt{(\vd/\rho)^2-1}$. Claims (G) and (P) for a family of models therefore
 come down to how its oscillation scale and its slope depend on its size. For
 sines both are explicit.
 
+The sine is one case of a statement about any function. For a function $f$ on
+a normed space $X$ and $w>0$, write $f_w(x)=f(wx)$ for $f$ squeezed sideways by
+the factor $w$.
+
+\begin{theorem}[The squiggly line theorem]\label{thm:general}
+Let $F$ be a random function on a normed space $X$ such that every draw
+$f_\theta$ covers $S$ within $\rho$ and is $K$-Lipschitz, and such that the
+one-point marginal $\nu^F_x$ is the same at every $x$. Let $F_w$ be $F$ with
+every draw squeezed by $w>0$.
+\begin{enumerate}\setlength{\itemsep}{0pt}
+\item[(i)] \emph{Closer and steeper.} For every draw and every data point with
+$y\in S$,
+$\vd/\sqrt{1+(wK)^2}\le\nd\le\rho/w$.
+\item[(ii)] For a probability measure $\mu$ on data points with $y\in S$ almost
+surely, the expected nearest-point distance of $F_w$ is at most $\rho/w$ and
+tends to $0$ as $w\to\infty$.
+\item[(iii)] \emph{No better at the start.} For every measurable loss
+$\ell\ge0$, the expected loss of $F_w$ is the same for every $w$.
+\item[(iv)] For every target $g:X\to S$ and every draw there is a map $h$ with
+$d(x,h(x))\le\rho/w$ and $f_{\theta,w}\circ h=g$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+If $f$ covers $S$ within $\rho$ then $f_w$ covers $S$ within $\rho/w$: given
+$x$ and $y$, take $z$ with $\|wx-z\|\le\rho$ and $f(z)=y$, and put $x'=z/w$.
+If $f$ is $K$-Lipschitz then $f_w$ is $wK$-Lipschitz. So (i) is
+\cref{thm:sandwich,thm:cover}, (ii) follows from (i), and (iv) is
+\cref{cor:warp}. For (iii), the marginal of $F_w$ at $x$ is $\nu^F_{wx}$, which
+does not depend on $w$ or $x$; apply \cref{thm:marginal}.
+\end{proof}
+
+No part of the statement uses the dimension of $X$ or a period. For the sine
+the constants are explicit.
+
 \begin{theorem}[The squiggly line theorem, for sines]\label{thm:sine}
 Let $X=\R$, $p>0$ and $w>0$, and let $f_{w,\varphi}(x)=p\sin(w\pi x+\varphi)$.
 \begin{enumerate}\setlength{\itemsep}{0pt}
