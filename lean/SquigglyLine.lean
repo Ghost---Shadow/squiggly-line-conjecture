@@ -62,6 +62,7 @@ theorem.
 | `BiasVariance`      | expected squared error = bias² + variance; the floor is the dial   |
 | `VanishingGradients`| a gain below one dies, above one blows up; gradients likewise      |
 | `UniversalApproximation` | `2n` ReLU units in one layer are within `2K / n` of `f`      |
+| `BatchSize`         | two small steps = one big step minus an `η²` cross-kernel term     |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -108,3 +109,4 @@ import SquigglyLine.WeightDecay
 import SquigglyLine.BiasVariance
 import SquigglyLine.VanishingGradients
 import SquigglyLine.UniversalApproximation
+import SquigglyLine.BatchSize

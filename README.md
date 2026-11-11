@@ -453,6 +453,7 @@ them proves the phenomenon for real networks.
 | Flat minima | Rescaling the parameters by `c` keeps every output, makes the loss flatter by `c²` and the fit farther by `\|c\|`. | [note](docs/flat-minima.md) | [`Reparam`](lean/SquigglyLine/Reparam.lean) |
 | Many small steps | A square-law loss over `N` steps is at most `c·D² / N`. A loss in proportion to the step gains nothing. | [note](docs/small-steps.md) | [`SmallSteps`](lean/SquigglyLine/SmallSteps.lean) |
 | Weight decay and early stopping | Weight decay `μ` leaves the share `μ / (λ + μ)` of the error. Stopping after `t` steps cuts at least as hard as `μ = 1 / (ηt)`. Spare features act the same way. | [note](docs/weight-decay.md) | [`WeightDecay`](lean/SquigglyLine/WeightDecay.lean) |
+| Batch size and learning rate | Two steps on two batches equal one step on both, minus `η²` times a term through the kernel between the batches. With averaged gradients that is the linear scaling rule. | [note](docs/batch-size.md) | [`BatchSize`](lean/SquigglyLine/BatchSize.lean) |
 
 **What a fit does to new inputs**
 
