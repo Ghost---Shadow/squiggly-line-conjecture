@@ -15,7 +15,7 @@ vector of labels, `residual A y θ = y - A θ` what is left to fit.
 
 Together with `Marginal.lean`: at budget zero a bigger random model is no
 closer to the data, and at every positive budget it is at least as close.
-How much closer (the measured `1 / parameters` rate) is not proved here.
+How much closer (measured: travel falls like `1 / √parameters`) is not proved here.
 -/
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.LinearAlgebra.Prod

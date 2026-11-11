@@ -152,7 +152,23 @@ times steepness. On the straight path from the start to a fit, the loss is
 same curve over a shorter path. So at a movement budget of zero it is no
 closer to the data, and at any positive budget it is. The path identity and
 "more parameters never move the fit away" are proved in Lean
-(`LinearModel.lean`). The `1/parameters` rate is measured only.
+(`LinearModel.lean`).
+
+Far above the threshold the two kinds of "close" are the same quantity at an
+exchange rate. With `m` terms and `n` points the features are nearly
+orthogonal, each with squared length `m + 1`, so
+
+```
+travel ≈ √(n × initial MSE / (m + 1))
+```
+
+This gives 0.45, 0.32 and 0.22 for 129, 257 and 513 parameters, against 0.48,
+0.34 and 0.23 measured. Parameter distance is the root of the loss, divided by
+a factor that grows like the root of the parameter count. At exactly `n`
+orthonormal features the factor is 1 and the two are equal. Near the threshold
+the features are far from orthogonal and the travel is much larger than this.
+The formula is a calculation checked against the experiment, not a Lean
+theorem.
 
 ## The evidence
 
@@ -253,8 +269,8 @@ theorem not_learningClaim_sineWave (A : ℝ) (hℓ : Measurable ℓ) (frequency 
 ```
 
 Not formalised: the exact constant `0.2974` for sines, the bound `V / (4·l)`,
-the rate at which travel falls with parameter count, and the statements about
-network width.
+the rate at which travel falls with parameter count (about `1/√parameters`),
+and the statements about network width.
 
 To build (the first build downloads Mathlib):
 
