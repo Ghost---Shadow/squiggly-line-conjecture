@@ -87,10 +87,11 @@ to see every label. Then, at every data point with a label in range:
 vertical / √(1 + K²)  ≤  nearest  ≤  ρ
 ```
 
-So the nearest-point distance is small exactly when the oscillation scale is
-small, and a small oscillation scale forces a large slope `K`. The conjecture
-holds for a family of models if and only if its oscillation scale shrinks as
-the model grows. Parameter count does not enter except through that.
+So a shrinking oscillation scale is enough to bring the function close to the
+data, and a growing slope `K` is required for it. Parameter count does not
+enter except through these two quantities. (The first is sufficient and the
+second is necessary. That a small distance forces a small oscillation scale is
+not proved.)
 
 **Sines: settled.** A sine of frequency `w` covers its band within `π / w`, so
 
@@ -106,8 +107,8 @@ not change at all.
 
 **Networks: reduced, not settled.** The open question is now precise: how does
 the oscillation scale of a random network depend on width, depth and weight
-scale? A family whose slope stays bounded cannot have a shrinking oscillation
-scale, so it cannot get closer. Hanin, Jeong and Rolnick's result (expected
+scale? A family whose slope stays bounded cannot get closer than
+`vertical / √(1 + K²)`, however many parameters it has. Hanin, Jeong and Rolnick's result (expected
 length does not grow at He initialisation) points to "no" for width. That step
 is not formalised here.
 

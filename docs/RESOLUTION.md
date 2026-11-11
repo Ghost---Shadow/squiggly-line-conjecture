@@ -265,9 +265,9 @@ start. G is true. P is false for width and weak for depth. L is false.
   at every data point and phase. So the expected nearest-point distance tends
   to zero as the frequency grows while every regression loss stays fixed.
 - **What the conjecture reduces to.** The nearest-point distance is controlled
-  by the oscillation scale `ρ` of the function, and a small `ρ` forces a large
-  slope. The conjecture holds for a model family exactly when its oscillation
-  scale shrinks with size. For random networks that question is open.
+  from above by the oscillation scale `ρ` of the function and from below by
+  the slope. A shrinking `ρ` is sufficient for the conjecture and a growing
+  slope is necessary. For random networks, how `ρ` depends on size is open.
 - **Formalisation.** `lean/` states the conjecture and the learning claim and
   proves the sandwich, the tube identity, the marginal lemma, the covering
   bound, the two-sided bound for sines, and that the learning claim fails for
