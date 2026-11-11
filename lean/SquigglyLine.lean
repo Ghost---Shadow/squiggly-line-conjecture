@@ -1,81 +1,102 @@
 /-
-The squiggly line conjecture, formalised.
+The Squiggly Line Theorem, formalised.
 
-| File             | Contents                                                        | Status    |
-|------------------|-----------------------------------------------------------------|-----------|
-| `Defs`           | the line, the data, the two costs                               | —         |
-| `RandomFunction` | a randomly initialised model, its marginals, its expected cost  | —         |
-| `Conjecture`     | the conjecture and the learning claim                           | stated    |
-| `Sandwich`       | `vertical / √(1 + K²) ≤ nearest ≤ vertical`                     | proved    |
-| `Coverage`       | mean distance = uncovered mass integrated over tube radii       | proved    |
-| `Marginal`       | a regression loss sees only one-point marginals                 | proved    |
-| `RandomPhase`    | frequency does not change the marginals of a random-phase wave  | proved    |
-| `Verdict`        | so the learning claim fails for random-phase waves              | proved    |
-| `Oscillation`    | `nearest ≤ ρ` when `f` covers the labels within `ρ`; slope tax  | proved    |
-| `SineCloser`     | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`; limit zero | proved    |
-| `LinearModel`    | parameter space: a budget of movement buys `ε / d` of the loss  | proved    |
-| `ExchangeRate`   | tight features: `travel = ‖residual‖ / √c`                      | proved    |
-| `NarrowChain`    | one neuron per layer: the network never turns                   | proved    |
-| `Polarizer`      | ReLU is a projection; a turn keeps `cos θ`; small turns survive | proved    |
-| `Depth`          | `L` two-neuron layers turn `2 ^ L - 1` times                    | proved    |
-| `Bridge`         | `L` folds are one Fourier term of frequency `2 ^ L`             | proved    |
-| `Kernel`         | same kernel: same gradient-descent path and same travel         | proved    |
-| `ThreePolarizers`| Malus's law, the plate chain, and more plates arriving closer   | proved    |
-| `MarkovChains`   | merged stays merged; the photon's chain; training solved        | proved    |
-| `Compression`    | any function squeezed by `w`: closer, steeper, no better        | proved    |
-| `TentCloser`     | `L` two-neuron layers pass within `1 / 2 ^ L` of the unit square | proved    |
-| `DoubleDescent`  | a near fit is tame; travel is large only where the kernel is weak | proved  |
-| `Dimple`         | gentle on the data manifold, steep off it: loss blind, fragile   | proved    |
-| `LeastAction`    | gradient descent reaches the nearest fit; even steps lose least  | proved    |
-| `SpectralBias`   | each kernel direction shrinks by `(1 - η lam)^t`; strong first   | proved    |
-| `Reparam`        | rescaling: same function, flatter by `c²`, farther by `|c|`      | proved    |
-| `SameKernel`     | same kernel and test row: same prediction at every step          | proved    |
-| `Pruning`        | pruning subtracts a kernel: slower, farther; when a ticket wins  | proved    |
-| `SkipAndNorm`    | a skip is a bypass (never dims); a norm is an amplifier          | proved    |
-| `SmallSteps`     | a square-law loss over `N` steps is at most `c D² / N`           | proved    |
-| `DepthSeparation`| one hidden layer needs `2^L` units to follow `L + 1` tent layers | proved    |
-| `Bottleneck`     | labels ≤ places after any layer ≤ inputs; full compression       | proved    |
-| `EdgeOfStability`| error along a direction shrinks iff `η lam < 2`, grows past it   | proved    |
-| `ModeConnectivity`| linear in weights: no hill between fits; `a * b`: the hill       | proved    |
-| `Forgetting`     | a new task changes old errors through the cross kernel only      | proved    |
-| `BenignOverfitting`| the nearest fit swallows noise; junk features cap the damage   | proved    |
-| `NeuralCollapse` | `K` unit arrows: every pair ≤ `c` forces `(K - 1) c ≥ -1`        | proved    |
+The files come in three groups. The first proves the theorem. The second
+carries it to networks and to parameter space. The third is supporting
+material: the same tools pointed at known puzzles, none of it needed for the
+theorem.
+
+## 1. The theorem
+
+| File                  | Contents                                                         |
+|-----------------------|------------------------------------------------------------------|
+| `Defs`                | the curve, the data, the two costs                               |
+| `RandomFunction`      | a randomly initialised model, its marginals, its expected cost   |
+| `Conjecture`          | the 2022 conjecture and the learning claim, as statements        |
+| `Sandwich`            | `vertical / √(1 + K²) ≤ nearest ≤ vertical`                      |
+| `Coverage`            | mean distance = uncovered mass integrated over tube radii        |
+| `Marginal`            | a regression loss sees only one-point marginals                  |
+| `Oscillation`         | `nearest ≤ ρ` when `f` covers the labels within `ρ`; the warp    |
+| `RandomPhase`         | frequency does not change the marginals of a random-phase wave   |
+| `SineCloser`          | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`              |
+| `Verdict`             | so the learning claim fails for random-phase waves               |
+| `SquigglyLineTheorem` | the four statements for sines, as one theorem                    |
+| `Compression`         | any function squeezed by `w`: closer, steeper, no better         |
+
+## 2. Networks and parameter space
+
+| File              | Contents                                                             |
+|-------------------|----------------------------------------------------------------------|
+| `NarrowChain`     | one neuron per layer: the network never turns                        |
+| `Depth`           | `L` two-neuron layers turn `2 ^ L - 1` times                         |
+| `TentCloser`      | and pass within `1 / 2 ^ L` of every point of the unit square        |
+| `Bridge`          | `L` folds are one Fourier term of frequency `2 ^ L`                  |
+| `Polarizer`       | ReLU is a projection; a turn keeps `cos θ`; small turns survive      |
+| `ThreePolarizers` | Malus's law, the plate chain, and more plates arriving closer        |
+| `MarkovChains`    | merged stays merged; the photon's chain; training with tight features|
+| `LinearModel`     | parameter space: a budget of movement buys `ε / d` of the loss       |
+| `ExchangeRate`    | tight features: `travel = ‖residual‖ / √c`                           |
+| `Kernel`          | same kernel: same gradient-descent path and same travel              |
+| `DoubleDescent`   | a near fit is tame; travel is large only where the kernel is weak    |
+
+## 3. Supporting material
+
+| File                | Contents                                                           |
+|---------------------|--------------------------------------------------------------------|
+| `LeastAction`       | gradient descent reaches the nearest fit; even steps lose least    |
+| `SpectralBias`      | each kernel direction shrinks by `(1 - η lam)^t`; strong first     |
+| `EdgeOfStability`   | that error shrinks iff `η lam < 2`, and grows past it              |
+| `Reparam`           | rescaling: same function, flatter by `c²`, farther by `|c|`        |
+| `SmallSteps`        | a square-law loss over `N` steps is at most `c D² / N`             |
+| `SameKernel`        | same kernel and test row: same prediction at every step            |
+| `BenignOverfitting` | the nearest fit swallows noise; junk features cap the damage       |
+| `Forgetting`        | a new task changes old errors through the cross kernel only        |
+| `Pruning`           | pruning subtracts a kernel: slower, farther; when a ticket wins    |
+| `Dimple`            | gentle on the data manifold, steep off it: loss blind, fragile     |
+| `DepthSeparation`   | one hidden layer needs `2^L` units to follow `L + 1` tent layers   |
+| `SkipAndNorm`       | a skip is a bypass (never dims); a norm is an amplifier            |
+| `Bottleneck`        | labels ≤ places after any layer ≤ inputs; full compression         |
+| `NeuralCollapse`    | `K` unit arrows: every pair ≤ `c` forces `(K - 1) c ≥ -1`          |
+| `ModeConnectivity`  | linear in weights: no hill between fits; `a * b`: the hill         |
 -/
+-- 1. The theorem
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
 import SquigglyLine.Conjecture
 import SquigglyLine.Sandwich
 import SquigglyLine.Coverage
 import SquigglyLine.Marginal
-import SquigglyLine.RandomPhase
-import SquigglyLine.Verdict
 import SquigglyLine.Oscillation
+import SquigglyLine.RandomPhase
 import SquigglyLine.SineCloser
-import SquigglyLine.LinearModel
-import SquigglyLine.ExchangeRate
-import SquigglyLine.NarrowChain
-import SquigglyLine.Polarizer
-import SquigglyLine.Depth
-import SquigglyLine.Bridge
-import SquigglyLine.Kernel
-import SquigglyLine.ThreePolarizers
-import SquigglyLine.MarkovChains
+import SquigglyLine.Verdict
 import SquigglyLine.SquigglyLineTheorem
 import SquigglyLine.Compression
+-- 2. Networks and parameter space
+import SquigglyLine.NarrowChain
+import SquigglyLine.Depth
 import SquigglyLine.TentCloser
+import SquigglyLine.Bridge
+import SquigglyLine.Polarizer
+import SquigglyLine.ThreePolarizers
+import SquigglyLine.MarkovChains
+import SquigglyLine.LinearModel
+import SquigglyLine.ExchangeRate
+import SquigglyLine.Kernel
 import SquigglyLine.DoubleDescent
-import SquigglyLine.Dimple
+-- 3. Supporting material
 import SquigglyLine.LeastAction
 import SquigglyLine.SpectralBias
-import SquigglyLine.Reparam
-import SquigglyLine.SameKernel
-import SquigglyLine.Pruning
-import SquigglyLine.SkipAndNorm
-import SquigglyLine.SmallSteps
-import SquigglyLine.DepthSeparation
-import SquigglyLine.Bottleneck
 import SquigglyLine.EdgeOfStability
-import SquigglyLine.ModeConnectivity
-import SquigglyLine.Forgetting
+import SquigglyLine.Reparam
+import SquigglyLine.SmallSteps
+import SquigglyLine.SameKernel
 import SquigglyLine.BenignOverfitting
+import SquigglyLine.Forgetting
+import SquigglyLine.Pruning
+import SquigglyLine.Dimple
+import SquigglyLine.DepthSeparation
+import SquigglyLine.SkipAndNorm
+import SquigglyLine.Bottleneck
 import SquigglyLine.NeuralCollapse
+import SquigglyLine.ModeConnectivity
