@@ -313,6 +313,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/literature-survey.md` | related work |
 | `docs/wind-tunnel-and-polarizers.md` | the ReLU picture in plain words: resolving power, the tunnel that cannot turn, ReLU as a polarizer |
 | `docs/fourier-parameters.md` | what adding parameters changes, in plain words: the Fourier-series family, travel, and the exchange rate |
+| `docs/fourier-and-relu-bridge.md` | how the Fourier model and the ReLU wind tunnel relate: a fold doubles a frequency, a model is its kernel, and where the two differ |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
