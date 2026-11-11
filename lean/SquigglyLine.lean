@@ -31,6 +31,7 @@ The squiggly line conjecture, formalised.
 | `Reparam`        | rescaling: same function, flatter by `c²`, farther by `|c|`      | proved    |
 | `SameKernel`     | same kernel and test row: same prediction at every step          | proved    |
 | `Pruning`        | pruning subtracts a kernel: slower, farther; when a ticket wins  | proved    |
+| `SkipAndNorm`    | a skip is a bypass (never dims); a norm is an amplifier          | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -61,3 +62,4 @@ import SquigglyLine.SpectralBias
 import SquigglyLine.Reparam
 import SquigglyLine.SameKernel
 import SquigglyLine.Pruning
+import SquigglyLine.SkipAndNorm
