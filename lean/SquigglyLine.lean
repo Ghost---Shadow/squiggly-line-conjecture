@@ -61,6 +61,7 @@ theorem.
 | `WeightDecay`       | weight decay leaves `mu / (lam + mu)`; early stopping matches it   |
 | `BiasVariance`      | expected squared error = bias² + variance; the floor is the dial   |
 | `VanishingGradients`| a gain below one dies, above one blows up; gradients likewise      |
+| `UniversalApproximation` | `2n` ReLU units in one layer are within `2K / n` of `f`      |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -106,3 +107,4 @@ import SquigglyLine.ModeConnectivity
 import SquigglyLine.WeightDecay
 import SquigglyLine.BiasVariance
 import SquigglyLine.VanishingGradients
+import SquigglyLine.UniversalApproximation
