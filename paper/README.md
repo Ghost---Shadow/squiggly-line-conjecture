@@ -1,6 +1,6 @@
 # Paper
 
-"The Squiggly Line Theorem: Closer, Steeper, and No Better at the Start".
+"The Squiggly Line Theorem".
 A preprint in NeurIPS format, draft of 11 Nov
 2026. It has not been submitted to or accepted by NeurIPS; the style is loaded
 with the `preprint` option, so the footer reads "Preprint."
