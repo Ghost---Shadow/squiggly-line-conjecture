@@ -25,6 +25,7 @@ The squiggly line conjecture, formalised.
 | `Compression`    | any function squeezed by `w`: closer, steeper, no better        | proved    |
 | `TentCloser`     | `L` two-neuron layers pass within `1 / 2 ^ L` of the unit square | proved    |
 | `DoubleDescent`  | a near fit is tame; travel is large only where the kernel is weak | proved  |
+| `Dimple`         | gentle on the data manifold, steep off it: loss blind, fragile   | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -49,3 +50,4 @@ import SquigglyLine.SquigglyLineTheorem
 import SquigglyLine.Compression
 import SquigglyLine.TentCloser
 import SquigglyLine.DoubleDescent
+import SquigglyLine.Dimple

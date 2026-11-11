@@ -374,6 +374,7 @@ Lean's three standard axioms.
 | [`Compression`](lean/SquigglyLine/Compression.lean) | the theorem for any function: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the marginals of a random function with homogeneous marginals unchanged | proved |
 | [`TentCloser`](lean/SquigglyLine/TentCloser.lean) | `L` two-neuron ReLU layers pass within `1 / 2^L` of every point of the unit square | proved |
 | [`DoubleDescent`](lean/SquigglyLine/DoubleDescent.lean) | a fit near the start is tame everywhere; the travel is at most `‖residual‖ / √c` when the kernel is at least `c` in every direction; along a direction of strength `λ` no fit exists if `λ = 0` and the travel is exactly `‖residual‖ / √λ` if `λ > 0`; for one training point the kernel is the squared length of the feature vector | proved |
+| [`Dimple`](lean/SquigglyLine/Dimple.lean) | the dimpled manifold: a function that is `g` along the data manifold and has slope `K` across it has the loss of `g` on real data for every `K`, reaches any label by a step of `error / K` straight off the manifold, and has nearest-point distance between `vertical / √(1 + (L + K)²)` and `vertical / K` | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -433,6 +434,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/dimpled-manifold.md` | the dimpled manifold hypothesis in this picture: the price of nearness is slope, and it can be paid off the data manifold |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `paper/` | a NeurIPS-format draft of the paper |
