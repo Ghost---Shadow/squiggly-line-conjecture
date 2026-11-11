@@ -146,6 +146,14 @@ This is the form in which the original idea is true: more parameters put a
 solution nearer to the random start. It is the known lazy-training picture,
 not a new result.
 
+The link between the two kinds of "close" is that the loss gap equals distance
+times steepness. On the straight path from the start to a fit, the loss is
+`(1 − t)²` times the initial loss at every model size. A bigger model walks the
+same curve over a shorter path. So at a movement budget of zero it is no
+closer to the data, and at any positive budget it is. The path identity and
+"more parameters never move the fit away" are proved in Lean
+(`LinearModel.lean`). The `1/parameters` rate is measured only.
+
 ## The evidence
 
 ### Frequency, with everything else held fixed
@@ -232,6 +240,7 @@ Lean's three standard axioms.
 | [`Verdict`](lean/SquigglyLine/Verdict.lean) | the learning claim fails for random-phase sines, for every regression loss and every data distribution | proved |
 | [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs | proved |
 | [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
+| [`LinearModel`](lean/SquigglyLine/LinearModel.lean) | for models linear in their parameters: on the path to a fit the residual shrinks in proportion, so a movement of `ε` buys the fraction `ε / d` of it; adding parameters never moves the nearest fit further away | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -244,7 +253,8 @@ theorem not_learningClaim_sineWave (A : ℝ) (hℓ : Measurable ℓ) (frequency 
 ```
 
 Not formalised: the exact constant `0.2974` for sines, the bound `V / (4·l)`,
-and the statements about network width.
+the rate at which travel falls with parameter count, and the statements about
+network width.
 
 To build (the first build downloads Mathlib):
 

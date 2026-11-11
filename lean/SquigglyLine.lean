@@ -13,6 +13,7 @@ The squiggly line conjecture, formalised.
 | `Verdict`        | so the learning claim fails for random-phase waves              | proved    |
 | `Oscillation`    | `nearest ≤ ρ` when `f` covers the labels within `ρ`; slope tax  | proved    |
 | `SineCloser`     | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`; limit zero | proved    |
+| `LinearModel`    | parameter space: a budget of movement buys `ε / d` of the loss  | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -24,3 +25,4 @@ import SquigglyLine.RandomPhase
 import SquigglyLine.Verdict
 import SquigglyLine.Oscillation
 import SquigglyLine.SineCloser
+import SquigglyLine.LinearModel
