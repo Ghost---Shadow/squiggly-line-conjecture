@@ -14,6 +14,7 @@ The squiggly line conjecture, formalised.
 | `Oscillation`    | `nearest ≤ ρ` when `f` covers the labels within `ρ`; slope tax  | proved    |
 | `SineCloser`     | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`; limit zero | proved    |
 | `LinearModel`    | parameter space: a budget of movement buys `ε / d` of the loss  | proved    |
+| `ExchangeRate`   | tight features: `travel = ‖residual‖ / √c`                      | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -26,3 +27,4 @@ import SquigglyLine.Verdict
 import SquigglyLine.Oscillation
 import SquigglyLine.SineCloser
 import SquigglyLine.LinearModel
+import SquigglyLine.ExchangeRate

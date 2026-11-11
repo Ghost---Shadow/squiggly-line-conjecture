@@ -167,8 +167,10 @@ This gives 0.45, 0.32 and 0.22 for 129, 257 and 513 parameters, against 0.48,
 a factor that grows like the root of the parameter count. At exactly `n`
 orthonormal features the factor is 1 and the two are equal. Near the threshold
 the features are far from orthogonal and the travel is much larger than this.
-The formula is a calculation checked against the experiment, not a Lean
-theorem.
+The exact version is a Lean theorem (`ExchangeRate.lean`): when the features
+are exactly orthogonal on the data side with squared length `c`, the travel is
+`‖residual‖ / √c`. That random Fourier features are nearly so, with
+`c = m + 1`, is checked by the experiment and not proved.
 
 ## The evidence
 
@@ -257,6 +259,7 @@ Lean's three standard axioms.
 | [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs | proved |
 | [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
 | [`LinearModel`](lean/SquigglyLine/LinearModel.lean) | for models linear in their parameters: on the path to a fit the residual shrinks in proportion, so a movement of `ε` buys the fraction `ε / d` of it; adding parameters never moves the nearest fit further away | proved |
+| [`ExchangeRate`](lean/SquigglyLine/ExchangeRate.lean) | when the features are orthogonal on the data side with squared length `c`: the distance to the nearest fit is exactly `‖residual‖ / √c`; with orthonormal features it equals the residual | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
