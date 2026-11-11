@@ -22,11 +22,104 @@ turned out to be true.
 > open an issue on this repository or write to the address on the first page
 > of the paper.
 
-This page goes in one line: [the idea](#1-the-idea), [the theorem](#2-the-theorem),
+Start with [how this helps you](#how-does-this-help-me), or read the argument
+in order: [the idea](#1-the-idea), [the theorem](#2-the-theorem),
 [why it is true](#3-why-it-is-true), [what it does to the idea](#4-what-it-does-to-the-idea),
 [where the idea is right](#5-where-the-idea-is-right), [the evidence](#6-the-evidence),
 [the proofs](#7-the-proofs). Everything after that is
 [supporting material](#8-supporting-material).
+
+## How does this help me?
+
+### If you are curious about AI
+
+- **A big model does not start out knowing more.** Before training, a big
+  model is exactly as wrong as a small one. This was measured and, for a
+  simple model, proved.
+- **It learns faster because a right answer is nearby.** A bigger model has
+  to change itself less to get there. Think of a bigger toolbox. The job is
+  not half done, but the right tool is within reach.
+- **That closeness has a price.** A model that is one small nudge away from
+  the right answer is also one small nudge away from a wrong one. This is one
+  reason an AI system can be fooled by a tiny change to its input.
+- **"Just big enough" is the worst size.** A model with barely enough room to
+  memorise its examples does badly on new ones. A much bigger model does well
+  again.
+- **What this does not say.** It is about simple mathematical models of
+  learning. It does not tell you what a large AI system will do, or whether
+  it is safe.
+
+The claims marked "proved" were checked line by line by a computer program
+built for checking proofs, not only argued in words.
+
+### If you train models
+
+Nothing here was tested on a production model. These are things the theorem
+says to check, each with a cheap way to check it.
+
+- **Do not judge a setup by its loss at step zero.** The loss at the start
+  cannot see what matters ([section 3](#3-why-it-is-true)). Compare setups by
+  how far the weights move to reach a fit, `‖θ_final − θ_start‖`, or by steps
+  to a target loss ([section 5](#5-where-the-idea-is-right)).
+- **Stay away from "just enough parameters".** Use clearly fewer than it
+  takes to fit the noise, or many more. The distance to a fit and the test
+  error both peak in between.
+- **If you want a model that can bend more, spend on depth before width.**
+  Each layer can double the number of turns. Each neuron in a single layer
+  adds one ([depth separation](docs/depth-separation.md)). This is about what
+  the model can draw, not how easy it is to train.
+- **Closeness and robustness pull against each other.** A function that sits
+  very near its data is steep, and a steep function is easy to tip over
+  ([section 3](#3-why-it-is-true), [dimpled manifold](docs/dimpled-manifold.md)).
+  If robustness matters, track the slope as well as the loss.
+- **Read sharpness against the step size, never alone.** The largest stable
+  step is `2 / sharpness`, and rescaling the weights changes the sharpness
+  without changing the model ([edge of stability](docs/edge-of-stability.md),
+  [flat minima](docs/flat-minima.md)). The product `step size × sharpness` is
+  the number that means something.
+- **When fine-tuning, forgetting is bounded by how far you move.** A new task
+  can change the old outputs by at most the distance travelled, and only
+  through inputs the model treats as alike ([forgetting](docs/forgetting.md)).
+  Lower the travel, or keep the tasks' features apart.
+
+### If you study learning
+
+**What you can take away**
+
+- **Say which distance.** "Closer to the data" is two different quantities.
+  The distance to the nearest point of the graph and the vertical error are
+  tied by slope alone: `vertical / √(1 + K²) ≤ nearest ≤ vertical`.
+- **The loss at initialisation is blind to structure.** The expected loss of
+  a random function depends only on its one-point marginals. Anything about
+  how the function varies between inputs needs a two-point object: a kernel,
+  or a distance in parameter space.
+- **Overparameterisation pays in travel, not in initial loss.** With
+  orthogonal features of strength `c`, the distance to the nearest fit is
+  exactly `‖residual‖ / √c`.
+- **A new quantity to compute.** The oscillation scale `ρ` of a function is
+  enough for nearness (`nearest ≤ ρ`) and for an exact fit after moving each
+  input by at most `ρ`. Its value for a network with random weights is open.
+- **Statements you can build on.** Every result is a Lean theorem with its
+  assumptions written out ([section 7](#7-the-proofs)).
+
+**What is settled**
+
+- Why the 2022 picture looks right and tests wrong: the geometry holds, and
+  the loss cannot see it.
+- Why double descent peaks at the interpolation threshold, for a model linear
+  in its weights: that is where the nearest fit is farthest away, exactly
+  `‖residual‖ / √λ` along a direction of strength `λ`.
+- For a fixed kernel, several separate observations come from one factor,
+  `1 − ηλ` per step: [spectral bias](docs/spectral-bias.md), the threshold
+  `2 / η` at the [edge of stability](docs/edge-of-stability.md), and the long
+  wait before a weak direction is learned.
+- For a fixed kernel, kernels add when features are put side by side, which
+  gives what [pruning](docs/lottery-ticket.md) costs and when
+  [overfitting is harmless](docs/benign-overfitting.md).
+
+**What is not settled.** Every one of these for a network whose kernel moves
+during training, and the size of `ρ` for random weights. See
+[open questions](#open-questions).
 
 ## 1. The idea
 
