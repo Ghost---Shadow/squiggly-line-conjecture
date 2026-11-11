@@ -1,3 +1,5 @@
+> **Historical record, as it stood before 11 November 2026.** This file is out of date. The current state of the project is in [`README.md`](README.md). Since then, the geometric claim has been proved for sines, with a named theorem in `lean/`; the original idea turned out to be true in parameter space; and the straight-line test and the reading of Hanin, Jeong and Rolnick were corrected. Open work is now listed in [`docs/open-problems.md`](docs/open-problems.md).
+
 # TASKS
 
 Work queue for the squiggly-line-conjecture repo, in priority order.
