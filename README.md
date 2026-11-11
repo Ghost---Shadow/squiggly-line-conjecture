@@ -10,6 +10,26 @@ This repository holds an idea from 2022 about why large neural networks learn
 fast, the experiments that tested it, and a machine-checked proof of what
 turned out to be true.
 
+**What it connects to.** The tools behind the theorem also give short,
+machine-checked statements about well-known puzzles of deep learning:
+[double descent](docs/double-descent.md),
+[lottery tickets](docs/lottery-ticket.md),
+[adversarial examples and the dimpled manifold](docs/dimpled-manifold.md),
+[benign overfitting](docs/benign-overfitting.md),
+[spectral bias, early stopping and grokking](docs/spectral-bias.md),
+[the edge of stability](docs/edge-of-stability.md),
+[flat minima](docs/flat-minima.md),
+[catastrophic forgetting](docs/forgetting.md),
+[mode connectivity](docs/mode-connectivity.md),
+[neural collapse](docs/neural-collapse.md),
+[the information bottleneck](docs/information-bottleneck.md),
+[the platonic representation hypothesis](docs/same-kernel.md),
+[depth separation](docs/depth-separation.md), and
+[skip connections and normalisation](docs/skip-and-norm.md).
+Each is proved for a simplified model, most often a fixed kernel (the
+lazy-training, or neural tangent kernel, regime), and none is needed for the
+theorem. They are collected under [supporting material](#8-supporting-material).
+
 - Proofs: [`lean/`](lean), rebuilt on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml)
 - Paper (draft of 11 Nov 2026): [`paper/main.pdf`](paper/main.pdf)
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
