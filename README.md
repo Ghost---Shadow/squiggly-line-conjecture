@@ -377,6 +377,7 @@ Lean's three standard axioms.
 | [`Dimple`](lean/SquigglyLine/Dimple.lean) | the dimpled manifold: a function that is `g` along the data manifold and has slope `K` across it has the loss of `g` on real data for every `K`, reaches any label by a step of `error / K` straight off the manifold, and has nearest-point distance between `vertical / √(1 + (L + K)²)` and `vertical / K` | proved |
 | [`LeastAction`](lean/SquigglyLine/LeastAction.lean) | least action: gradient descent moves only along the features, so any fit it arrives at is the nearest one to the start; and two turns `a`, `b` never keep more than two turns of their average, so the evenest path through the layers loses least | proved |
 | [`SpectralBias`](lean/SquigglyLine/SpectralBias.lean) | spectral bias: gradient descent multiplies the error along a kernel direction of strength `lam` by `1 - η lam` at every step, so strong directions are learned first, a direction's clock is `1 / (η lam)` steps (the share left lies between `1 - t η lam` and `exp(-t η lam)`), and a direction of strength zero is never learned | proved |
+| [`Reparam`](lean/SquigglyLine/Reparam.lean) | flat minima: rescaling the parameters by `c` keeps every output, divides the curvature of the loss by `c²` and multiplies the distance to the nearest fit by `\|c\|`; a gradient step of the rescaled model is a step with size `η / c²`; and along a direction of strength `lam`, strength times travel squared is the error squared | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -436,6 +437,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/flat-minima.md` | flat minima: flatness depends on the units of the parameters, flatter is farther, and what does not change |
 | `docs/spectral-bias.md` | spectral bias: each direction of the kernel is learned on its own clock, and what that says about early stopping and grokking |
 | `docs/least-action.md` | the trained path as a path of least action: the nearest fit, and the evenest route through the layers |
 | `docs/dimpled-manifold.md` | the dimpled manifold hypothesis in this picture: the price of nearness is slope, and it can be paid off the data manifold |
