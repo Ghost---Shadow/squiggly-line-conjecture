@@ -320,6 +320,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/fourier-and-relu-bridge.md` | how the Fourier model and the ReLU wind tunnel relate: a fold doubles a frequency, a model is its kernel, and where the two differ |
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
+| `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
@@ -354,6 +355,9 @@ sample spacing, which overestimated one control by 11% at frequency 1000
 (fixed 11 Nov 2026). Both are described in `docs/RESOLUTION.md` §2.
 
 ## Open questions
+
+The full list, with a status for each, is in
+[`docs/open-problems.md`](docs/open-problems.md).
 
 The original question is answered. What remains is in
 [`handoff.md`](handoff.md):
