@@ -22,6 +22,9 @@ The squiggly line conjecture, formalised.
 | `Kernel`         | same kernel: same gradient-descent path and same travel         | proved    |
 | `ThreePolarizers`| Malus's law, the plate chain, and more plates arriving closer   | proved    |
 | `MarkovChains`   | merged stays merged; the photon's chain; training solved        | proved    |
+| `Compression`    | any function squeezed by `w`: closer, steeper, no better        | proved    |
+| `TentCloser`     | `L` two-neuron layers pass within `1 / 2 ^ L` of the unit square | proved    |
+| `DoubleDescent`  | a near fit is tame; travel is large only where the kernel is weak | proved  |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -43,3 +46,6 @@ import SquigglyLine.Kernel
 import SquigglyLine.ThreePolarizers
 import SquigglyLine.MarkovChains
 import SquigglyLine.SquigglyLineTheorem
+import SquigglyLine.Compression
+import SquigglyLine.TentCloser
+import SquigglyLine.DoubleDescent

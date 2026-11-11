@@ -22,28 +22,38 @@ not a head start in loss.
 
 ## The theorem
 
-For a random-phase sine `A·sin(w·x + φ)` and data whose labels lie inside the
-band the sine sweeps:
+**Closer, steeper, and no better at the start.** Take any function, of any
+number of inputs, and squeeze it sideways by a factor `w`, so that every wiggle
+is `w` times narrower. Then:
 
-1. **Squigglier is closer, at a known rate.** At every data point and every
-   phase, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`.
-2. **All the way.** The expected nearest-point distance tends to zero as the
-   frequency grows.
-3. **The loss does not see it.** The expected loss, for every regression loss,
-   is the same at every frequency.
-4. **A small shift cashes it in.** Any target with values in the band is fitted
-   exactly after moving each input by at most `π / w`. For one data point that
-   is a change of phase.
+1. **Closer.** If the function reached every label within a distance `ρ` of
+   every input, the squeezed one is within `ρ / w` of every data point.
+2. **Steeper.** Its slope is `w` times larger, and its distance to a data point
+   is at least `vertical / √(1 + (w·K)²)`.
+3. **No better at the start.** If the function is random with the same
+   distribution of outputs at every input, squeezing it leaves the expected
+   loss unchanged, for every regression loss.
+4. **A small shift cashes it in.** Any target is fitted exactly after moving
+   each input by at most `ρ / w`.
 
 So the nearness is real and training can use it, by moving the input. It is a
-distance to move, not a lower loss at the start, and its price is slope. The
-plain-language account is in [`docs/phase-matching.md`](docs/phase-matching.md).
+distance to move, not a lower loss at the start, and its price is slope.
 
-This is `squiggly_line_theorem` in
-[`lean/SquigglyLine/SquigglyLineTheorem.lean`](lean/SquigglyLine/SquigglyLineTheorem.lean),
-machine-checked with no `sorry`. It is a theorem about sines. For neural
-networks the matching claim is still a conjecture, and
-[`docs/open-problems.md`](docs/open-problems.md) says what it reduces to.
+This is `squiggly_line_theorem_general` in
+[`lean/SquigglyLine/Compression.lean`](lean/SquigglyLine/Compression.lean),
+machine-checked with no `sorry`. A sine with a random phase is the standard
+example (`squiggly_line_theorem`, with `ρ / w = π / w`). Plain-language
+accounts are in [`docs/general-theorem.md`](docs/general-theorem.md) and
+[`docs/phase-matching.md`](docs/phase-matching.md).
+
+**For networks.** The first two claims hold for a constructed ReLU family: `L`
+layers of two neurons draw a curve that passes within `1 / 2^L` of every point
+of the unit square (`nearestDist_iterate_tent_le`). A network with one neuron
+per layer never turns at all. A chain of polarizers, which is a network of
+linear layers, delivers its target with an error of at most `π² / (8N)` after
+`N` plates. What is still open is the claim for networks with **random**
+weights; [`docs/open-problems.md`](docs/open-problems.md) says what it reduces
+to.
 
 ![The same 16 points beside a smooth curve and a squiggly curve. The lines to the nearest point of the curve get much shorter on the squiggly curve. The vertical lines do not.](graphs/readme_two_distances.png)
 
@@ -61,8 +71,8 @@ That is three claims in a chain:
 
 | # | Claim | Status |
 |---|---|---|
-| 1 | **Geometry.** A squigglier curve has a smaller mean distance to the nearest point of the curve. | True. Proved for sines, with a rate. |
-| 2 | **Parameters.** More parameters give a squigglier random function. | False for width. Depth adds a little. |
+| 1 | **Geometry.** A squigglier curve has a smaller mean distance to the nearest point of the curve. | True. Proved for any squeezed function, with a rate. |
+| 2 | **Parameters.** More parameters give a squigglier random function. | False for width with random weights; depth adds a little. True for a constructed ReLU family. |
 | 3 | **Learning.** A smaller nearest-point distance means a smaller training loss at the start. | False. Proved. |
 
 ## Why it fails
@@ -139,9 +149,11 @@ the marginal lemma, this gives the whole story as one theorem
 distance tends to zero, and the expected loss, for every regression loss, does
 not change at all.
 
-**Networks: reduced, not settled.** The open question is now precise: how does
-the oscillation scale of a random network depend on width, depth and weight
-scale? A family whose slope stays bounded cannot get closer than
+**Networks.** For chosen weights the answer is yes: `L` folding layers of two
+neurons have oscillation scale `1 / 2^L`, so the curve is within that of every
+point of the unit square (`TentCloser.lean`). For random weights the question
+is open, and it is now precise: how does the oscillation scale of a random
+network depend on width, depth and weight scale? A family whose slope stays bounded cannot get closer than
 `vertical / √(1 + K²)`, however many parameters it has. Hanin, Jeong and Rolnick's result (expected
 length does not grow at He initialisation) points to "no" for width. That step
 is not formalised here.
@@ -205,6 +217,48 @@ The exact version is a Lean theorem (`ExchangeRate.lean`): when the features
 are exactly orthogonal on the data side with squared length `c`, the travel is
 `‖residual‖ / √c`. That random Fourier features are nearly so, with
 `c = m + 1`, is checked by the experiment and not proved.
+
+## Double descent
+
+The 2022 deck said the picture ties in with double descent and derived
+nothing. [`scripts/double_descent.py`](scripts/double_descent.py) fits the same
+Fourier model to 20 noisy points and scores it on fresh ones.
+
+| parameters | test error | travel to the fit |
+|---|---|---|
+| 5 | 0.094 | 0.75 |
+| 13 | 0.45 | 1.2 |
+| 21 | 83 800 | 409 |
+| 33 | 4.7 | 3.0 |
+| 65 | 0.31 | 0.56 |
+| 513 | 0.31 | 0.17 |
+
+![Test error and travel against the number of parameters. Both peak where the model has as many parameters as training points.](graphs/double_descent.png)
+
+The test error falls, peaks where the model has as many parameters as points,
+and falls again. The travel peaks at the same place. Two proved facts connect
+them (`DoubleDescent.lean`):
+
+- A fit that is near the start stays near the starting function everywhere,
+  within the size of the features times the travel.
+- The travel is at most the size of the labels divided by `√c`, where `c` is
+  the weakest direction of the kernel. At the threshold `c` is 0.00000007. At
+  513 parameters it is 202.
+
+The peak itself is exact for a single direction of the labels. If the kernel
+stretches that direction by `λ`: with `λ = 0` no fit exists and the model
+leaves it alone; with `λ > 0` the travel is exactly its size divided by `√λ`,
+which grows without bound as `λ` shrinks. Being unable to fit the noise is
+safe, being barely able to is the worst case, and being easily able to is safe
+again.
+
+So the second descent is the same fact as "a bigger model starts nearer to a
+fit", and the peak is where the fit is furthest away. That the test error
+peaks there is measured, not proved. How low the second descent goes depends
+on which terms are cheap: with every term at the same scale it ends at 0.31,
+the error of predicting zero; with term `k` scaled by `1/k` it ends at 0.073,
+below the first minimum. Details are in
+[`docs/double-descent.md`](docs/double-descent.md).
 
 ## The evidence
 
@@ -302,6 +356,9 @@ Lean's three standard axioms.
 | [`Kernel`](lean/SquigglyLine/Kernel.lean) | for models linear in their weights: a gradient step sends the error `r` to `r − η·K·r`; the travel is the length of `A†K⁻¹r`; two models with the same kernel have the same training path and the same travel | proved |
 | [`ThreePolarizers`](lean/SquigglyLine/ThreePolarizers.lean) | Malus's law for a polarizer as a projection; crossed plates block; after `k` plates each turned by `θ` the light has length `cos(θ)^k` and angle `k·θ`; a 45° plate between crossed ones passes half the length; a quarter turn in `N ≥ 2` plates delivers at least `1 − π²/(8N)` | proved |
 | [`MarkovChains`](lean/SquigglyLine/MarkovChains.lean) | through the layers: merged stays merged, the flock never occupies more places, dead stays dead; the photon as a two-state chain, alive after `n` plates with probability `cⁿ`; through training with orthogonal features: the error after `t` steps is `(1 − η·c)ᵗ` times the start, and a step of size `1/c` fits at once | proved |
+| [`Compression`](lean/SquigglyLine/Compression.lean) | the theorem for any function: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the marginals of a random function with homogeneous marginals unchanged | proved |
+| [`TentCloser`](lean/SquigglyLine/TentCloser.lean) | `L` two-neuron ReLU layers pass within `1 / 2^L` of every point of the unit square | proved |
+| [`DoubleDescent`](lean/SquigglyLine/DoubleDescent.lean) | a fit near the start is tame everywhere; the travel is at most `‖residual‖ / √c` when the kernel is at least `c` in every direction; along a direction of strength `λ` no fit exists if `λ = 0` and the travel is exactly `‖residual‖ / √λ` if `λ > 0`; for one training point the kernel is the squared length of the feature vector | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -315,7 +372,8 @@ theorem not_learningClaim_sineWave (A : ℝ) (hℓ : Measurable ℓ) (frequency 
 
 Not formalised: the exact constant `0.2974` for sines, the bound `V / (4·l)`,
 the rate at which travel falls with parameter count (about `1/√parameters`),
-and the statements about network width.
+that the test error peaks at the threshold, and the statements about networks
+with random weights.
 
 To build (the first build downloads Mathlib):
 
@@ -338,6 +396,7 @@ python frequency_isolation.py    # the main experiment, ~10 s
 python saturation_scaling.py     # what sets the floor, several minutes
 python initial_mse.py            # random networks at five widths, ~1 min
 python fourier_params.py         # what adding parameters changes, ~1 min
+python double_descent.py         # test error and travel against model size, ~1 min
 python random_relu_length.py     # arc length of random ReLU curves
 python audit_legacy_metrics.py   # reproduces the defects listed below
 python readme_figures.py         # redraws the figures on this page, ~2 min
@@ -354,6 +413,8 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/fourier-parameters.md` | what adding parameters changes, in plain words: the Fourier-series family, travel, and the exchange rate |
 | `docs/fourier-and-relu-bridge.md` | how the Fourier model and the ReLU wind tunnel relate: a fold doubles a frequency, a model is its kernel, and where the two differ |
 | `docs/phase-matching.md` | how training can use the nearness: a shift for one point, a warp for many, and what it costs |
+| `docs/general-theorem.md` | the theorem without the sines: squeezing any function, and a ReLU family for which the conjecture is true |
+| `docs/double-descent.md` | double descent as the travel peak |
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
