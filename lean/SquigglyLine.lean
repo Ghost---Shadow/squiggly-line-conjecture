@@ -38,6 +38,7 @@ The squiggly line conjecture, formalised.
 | `EdgeOfStability`| error along a direction shrinks iff `η lam < 2`, grows past it   | proved    |
 | `ModeConnectivity`| linear in weights: no hill between fits; `a * b`: the hill       | proved    |
 | `Forgetting`     | a new task changes old errors through the cross kernel only      | proved    |
+| `BenignOverfitting`| the nearest fit swallows noise; junk features cap the damage   | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -75,3 +76,4 @@ import SquigglyLine.Bottleneck
 import SquigglyLine.EdgeOfStability
 import SquigglyLine.ModeConnectivity
 import SquigglyLine.Forgetting
+import SquigglyLine.BenignOverfitting

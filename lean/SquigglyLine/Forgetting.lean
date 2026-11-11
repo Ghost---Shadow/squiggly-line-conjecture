@@ -48,6 +48,7 @@ theorem inner_forgetting_step (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z) (y : Y) 
   rw [residual_gradientStep_other, inner_sub_right, real_inner_smul_right,
     ← adjoint_inner_left A, adjoint_inner_right]
 
+omit [CompleteSpace Y] in
 /-- **Separate features, nothing forgotten.** If the cross kernel is zero, any number of
 gradient steps on the new task leave the old errors exactly where they were. -/
 theorem residual_iterate_of_cross_kernel_eq_zero (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z)
@@ -70,6 +71,7 @@ theorem forgetting_le_dist (A : Θ →L[ℝ] Y) (y : Y) (θ θ' : Θ) :
   rw [hdiff, norm_neg]
   exact A.le_opNorm _
 
+omit [CompleteSpace Y] in
 /-- **A ceiling on forgetting.** If gradient descent arrives at a fit of the new task, the
 old errors have changed by at most `‖A‖` times the distance from the start to the nearest
 fit of the new task. -/
