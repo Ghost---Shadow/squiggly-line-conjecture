@@ -65,6 +65,10 @@ pieces, like pixels. Each neuron is one fold.
 - `L` layers of `n` neurons, one input: each layer folds what the earlier ones
   made, so the counts multiply. The maximum is about `n^L`.
 
+The doubling is **proved** for two neurons per layer (`Depth.lean`): `L` such
+layers draw a curve that alternates 0, 1, 0, 1 on `2^L + 1` evenly spaced
+inputs, so it turns `2^L − 1` times. The general `n^L` bound is **recalled**.
+
 So the maximum is width to the power of depth. Networks at a random start and
 after ordinary training use about width times depth (**recalled**: Hanin and
 Rolnick). The gap between the two is "possible but not practical".
@@ -84,8 +88,8 @@ relu(w1 · relu(w2 · relu(w3 · relu(w4·x + b4) + b3) + b2) + b1)
 
 Every layer here is a monotone function of its input, and a chain of monotone
 functions is monotone. So this network, at any depth, never turns: its output
-only rises with `x`, or only falls. Without biases it is a single line through
-the origin, or dead.
+only rises with `x`, or only falls (**proved**: `NarrowChain.lean`). Without
+biases it is a single line through the origin, or dead.
 
 ## ReLU is a polarizer with a wide opening
 
@@ -100,6 +104,10 @@ is positive. In two dimensions that corner is a 90° wedge.
 
 The weights decide how the wedge sits relative to the flock, just as one
 chooses the angle of a polarizer.
+
+All three cases are **proved** for a bird on the edge of the wedge
+(`Polarizer.lean`), along with the fact that ReLU sends each point to the
+nearest point of the wedge.
 
 ## The three-polarizer effect
 
@@ -120,6 +128,9 @@ simulation for 4, 8 and 16 layers):
 | 8 | 0.53 |
 | 16 | 0.73 |
 | 64 | 0.93 |
+
+The formula `cos(step)^N` is **proved**, and so is a floor: a half turn in
+`N ≥ 3` steps keeps at least `1 − π²/(2N)`, which tends to 1.
 
 More gradual means less loss. A simulation of 400 random two-neuron networks
 per depth agrees: with small random angles every bird survives, and with

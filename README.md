@@ -260,6 +260,9 @@ Lean's three standard axioms.
 | [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
 | [`LinearModel`](lean/SquigglyLine/LinearModel.lean) | for models linear in their parameters: on the path to a fit the residual shrinks in proportion, so a movement of `ε` buys the fraction `ε / d` of it; adding parameters never moves the nearest fit further away | proved |
 | [`ExchangeRate`](lean/SquigglyLine/ExchangeRate.lean) | when the features are orthogonal on the data side with squared length `c`: the distance to the nearest fit is exactly `‖residual‖ / √c`; with orthonormal features it equals the residual | proved |
+| [`NarrowChain`](lean/SquigglyLine/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth | proved |
+| [`Polarizer`](lean/SquigglyLine/Polarizer.lean) | in the plane ReLU sends a point to the nearest point of the positive quadrant; a rotate-then-ReLU layer keeps `cos θ` of a bird on the edge for a turn up to 90° and blocks it beyond; `N` small turns keep `cos θ ^ N`, and a half turn in `N ≥ 3` steps keeps at least `1 − π²/(2N)` | proved |
+| [`Depth`](lean/SquigglyLine/Depth.lean) | `L` layers of two neurons make a curve that alternates 0, 1, 0, 1 on `2^L + 1` evenly spaced inputs: `2^L − 1` turns | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -309,6 +312,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/EXPERIMENT_LOG.md` | a re-run of every script, 19 Sep 2026, with raw output |
 | `docs/literature-survey.md` | related work |
 | `docs/wind-tunnel-and-polarizers.md` | the ReLU picture in plain words: resolving power, the tunnel that cannot turn, ReLU as a polarizer |
+| `docs/fourier-parameters.md` | what adding parameters changes, in plain words: the Fourier-series family, travel, and the exchange rate |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |

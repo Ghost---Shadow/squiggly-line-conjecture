@@ -15,6 +15,9 @@ The squiggly line conjecture, formalised.
 | `SineCloser`     | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`; limit zero | proved    |
 | `LinearModel`    | parameter space: a budget of movement buys `ε / d` of the loss  | proved    |
 | `ExchangeRate`   | tight features: `travel = ‖residual‖ / √c`                      | proved    |
+| `NarrowChain`    | one neuron per layer: the network never turns                   | proved    |
+| `Polarizer`      | ReLU is a projection; a turn keeps `cos θ`; small turns survive | proved    |
+| `Depth`          | `L` two-neuron layers turn `2 ^ L - 1` times                    | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -28,3 +31,6 @@ import SquigglyLine.Oscillation
 import SquigglyLine.SineCloser
 import SquigglyLine.LinearModel
 import SquigglyLine.ExchangeRate
+import SquigglyLine.NarrowChain
+import SquigglyLine.Polarizer
+import SquigglyLine.Depth
