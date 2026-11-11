@@ -379,6 +379,7 @@ Lean's three standard axioms.
 | [`SpectralBias`](lean/SquigglyLine/SpectralBias.lean) | spectral bias: gradient descent multiplies the error along a kernel direction of strength `lam` by `1 - η lam` at every step, so strong directions are learned first, a direction's clock is `1 / (η lam)` steps (the share left lies between `1 - t η lam` and `exp(-t η lam)`), and a direction of strength zero is never learned | proved |
 | [`Reparam`](lean/SquigglyLine/Reparam.lean) | flat minima: rescaling the parameters by `c` keeps every output, divides the curvature of the loss by `c²` and multiplies the distance to the nearest fit by `\|c\|`; a gradient step of the rescaled model is a step with size `η / c²`; and along a direction of strength `lam`, strength times travel squared is the error squared | proved |
 | [`SameKernel`](lean/SquigglyLine/SameKernel.lean) | same kernel, same predictions: a gradient step changes the answer at a test point through the kernel only, so two models with the same kernel, the same test row and the same start give the same answer at that point after every step and at the fit, whatever their weights look like | proved |
+| [`Pruning`](lean/SquigglyLine/Pruning.lean) | lottery tickets: the kernel of a model is the sum of the kernels of the kept and the dropped weights, so pruning slows every direction it had strength in and, with orthogonal features, moves the nearest fit farther by `√((c + c') / c)`; a ticket wins on a direction exactly when the dropped weights had no strength there | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -438,6 +439,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/lottery-ticket.md` | lottery tickets: what pruning costs, and when it costs nothing |
 | `docs/same-kernel.md` | same kernel, same predictions: what the platonic representation hypothesis would buy if it holds |
 | `docs/flat-minima.md` | flat minima: flatness depends on the units of the parameters, flatter is farther, and what does not change |
 | `docs/spectral-bias.md` | spectral bias: each direction of the kernel is learned on its own clock, and what that says about early stopping and grokking |
