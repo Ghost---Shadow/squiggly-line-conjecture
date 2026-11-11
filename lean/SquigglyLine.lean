@@ -63,6 +63,7 @@ theorem.
 | `VanishingGradients`| a gain below one dies, above one blows up; gradients likewise      |
 | `UniversalApproximation` | `2n` ReLU units in one layer are within `2K / n` of `f`      |
 | `BatchSize`         | two small steps = one big step minus an `η²` cross-kernel term     |
+| `Capacity`          | storing arbitrary labels costs a parameter, or a bit, for each     |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -110,3 +111,4 @@ import SquigglyLine.BiasVariance
 import SquigglyLine.VanishingGradients
 import SquigglyLine.UniversalApproximation
 import SquigglyLine.BatchSize
+import SquigglyLine.Capacity
