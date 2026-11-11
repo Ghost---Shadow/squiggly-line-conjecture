@@ -20,6 +20,21 @@ not a head start in loss.
 > open an issue on this repository or write to the address on the first page
 > of the paper.
 
+## Citing
+
+```bibtex
+@misc{nanda2026squiggly,
+  title        = {The Squiggly Line Theorem},
+  author       = {Nanda, Souradeep},
+  year         = {2026},
+  howpublished = {\url{https://github.com/Ghost---Shadow/squiggly-line-theorem}},
+  note         = {Preprint, with machine-checked proofs in Lean 4}
+}
+```
+
+GitHub's "Cite this repository" button gives the same entry in other formats
+(from [`CITATION.cff`](CITATION.cff)).
+
 ## The theorem
 
 **Closer, steeper, and no better at the start.** Take any function, of any

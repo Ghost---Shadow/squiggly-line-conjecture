@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "The Squiggly Line Theorem"
+type: software
+authors:
+  - family-names: Nanda
+    given-names: Souradeep
+    affiliation: Unaffiliated
+date-released: 2026-11-12
+url: "https://github.com/Ghost---Shadow/squiggly-line-theorem"
+repository-code: "https://github.com/Ghost---Shadow/squiggly-line-theorem"
+license: MIT
+abstract: >-
+  Squeezing a function sideways brings it closer to the data, makes it steeper,
+  and leaves its expected loss unchanged. Proofs in Lean 4, experiments, and a
+  paper draft.
+keywords:
+  - overparameterization
+  - Lean 4
+  - neural networks
+  - double descent
+preferred-citation:
+  type: unpublished
+  title: "The Squiggly Line Theorem"
+  authors:
+    - family-names: Nanda
+      given-names: Souradeep
+      affiliation: Unaffiliated
+  year: 2026
+  url: "https://github.com/Ghost---Shadow/squiggly-line-theorem"
+  notes: "Preprint, with machine-checked proofs in Lean 4."
