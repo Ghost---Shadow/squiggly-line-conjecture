@@ -385,7 +385,7 @@ speed of light and with no power spent on the plates.
   (`relu2_nearest` in [`Polarizer`](lean/SquigglyLine/Polarizer.lean)).
 - Depth is affordable. A quarter turn spread over `N` plates loses at most
   `π² / (8N)` of the light (`quarter_turn_arrives`), and any turn `φ` loses at
-  most `φ² / (2N)` (`turn_in_steps_keeps`).
+  most `φ² / (2N)` once each step is small (`turn_in_steps_keeps`).
 - The two tricks of deep networks have optical parts. A skip connection is a
   beam that goes around the plate and rejoins. A normalisation is an amplifier
   after it ([`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean)).
