@@ -64,6 +64,7 @@ theorem.
 | `UniversalApproximation` | `2n` ReLU units in one layer are within `2K / n` of `f`      |
 | `BatchSize`         | two small steps = one big step minus an `η²` cross-kernel term     |
 | `Capacity`          | storing arbitrary labels costs a parameter, or a bit, for each     |
+| `CodeLength`        | a fold loses one bit; loss ≥ entropy; travel² is description length |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -112,3 +113,4 @@ import SquigglyLine.VanishingGradients
 import SquigglyLine.UniversalApproximation
 import SquigglyLine.BatchSize
 import SquigglyLine.Capacity
+import SquigglyLine.CodeLength

@@ -29,8 +29,10 @@ machine-checked statements about well-known puzzles of deep learning:
 [vanishing and exploding gradients](docs/vanishing-gradients.md),
 [skip connections and normalisation](docs/skip-and-norm.md),
 [weight decay](docs/weight-decay.md),
-[bias and variance](docs/bias-variance.md), and
-[the linear scaling rule for batch size](docs/batch-size.md).
+[bias and variance](docs/bias-variance.md),
+[the linear scaling rule for batch size](docs/batch-size.md),
+[storage capacity](docs/capacity.md), and
+[compression and code length](docs/code-length.md).
 Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
@@ -485,6 +487,7 @@ them proves the phenomenon for real networks.
 | Skip connections and normalisation | As optics: a skip is a bypass that never dims or blocks; a normalisation is an amplifier that restores full strength. | [note](docs/skip-and-norm.md) | [`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean) |
 | Vanishing and exploding gradients | A per-layer gain `g` gives `g^L`: it dies below one and blows up above. The gradient comes back through the same plates, so it is dimmed the same way. | [note](docs/vanishing-gradients.md) | [`VanishingGradients`](lean/SquigglyLine/VanishingGradients.lean) |
 | Information bottleneck | After any layer of a network that is right on every input: labels ≤ places occupied ≤ inputs. | [note](docs/information-bottleneck.md) | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) |
+| Compression | A fold throws away one bit, so `L` folds merge at most `2^L` inputs. The average log-loss of any model, and the average length of any code, is at least the entropy. With description length as squared travel, gradient descent finds the fit that is cheapest to describe. | [note](docs/code-length.md) | [`CodeLength`](lean/SquigglyLine/CodeLength.lean) |
 | Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/NeuralCollapse.lean) |
 | Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) |
 
