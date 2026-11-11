@@ -85,10 +85,17 @@ def measure(freq, phases, px, py):
     return np.mean(lengths), euclid.mean(), vert.mean()
 
 
-def main():
-    rng = np.random.default_rng(7)
+def sweep(rng):
+    """Draw the points and measure every frequency. Returns (px, py, rows)."""
     px = rng.uniform(-1, 1, size=(TRIALS, N_POINTS))
     py = rng.uniform(-1, 1, size=(TRIALS, N_POINTS))
+    rows = [measure(w, phase_pool(N_PHASES, rng), px, py) for w in FREQUENCIES]
+    return px, py, rows
+
+
+def main():
+    rng = np.random.default_rng(7)
+    px, py, rows = sweep(rng)
 
     print("=" * 74)
     print("FREQUENCY ISOLATION: squiggliness with amplitude held exactly fixed")
@@ -100,8 +107,7 @@ def main():
     print("-" * 50)
 
     lengths, euclids, verts = [], [], []
-    for w in FREQUENCIES:
-        L, e, v = measure(w, phase_pool(N_PHASES, rng), px, py)
+    for w, (L, e, v) in zip(FREQUENCIES, rows):
         lengths.append(L)
         euclids.append(e)
         verts.append(v)

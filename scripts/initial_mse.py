@@ -46,23 +46,33 @@ def initial_mse(width, he, x, y, rng):
     return losses.mean(), losses.std() / np.sqrt(N_NETS)
 
 
-def main():
+def sweep():
+    """
+    Measure every width. Returns (he_theory, rows), one row per width:
+    (width, He mean, He standard error, unscaled mean, unscaled theory).
+    """
     rng = np.random.default_rng(3)
     x = rng.uniform(-1, 1, size=(N_POINTS, D_IN))
     y = rng.uniform(-1, 1, size=N_POINTS)
-
     second_moment = np.mean((x ** 2).sum(axis=1)) / D_IN      # mean of |x|^2 / d_in
     he_theory = np.mean(y ** 2) + 2 * second_moment
+    rows = []
+    for width in WIDTHS:
+        he, he_se = initial_mse(width, True, x, y, rng)
+        raw, _ = initial_mse(width, False, x, y, rng)
+        raw_theory = np.mean(y ** 2) + D_IN * second_moment * (width / 2) ** N_HIDDEN
+        rows.append((width, he, he_se, raw, raw_theory))
+    return he_theory, rows
 
+
+def main():
+    he_theory, rows = sweep()
     print(f"{D_IN} inputs, {N_POINTS} points, {N_HIDDEN} hidden layers, "
           f"{N_NETS} networks per width")
     print()
     print(f"{'width':>6} {'He init':>18} {'He theory':>10} {'unscaled':>12} {'unscaled theory':>16}")
     print("-" * 66)
-    for width in WIDTHS:
-        he, he_se = initial_mse(width, True, x, y, rng)
-        raw, _ = initial_mse(width, False, x, y, rng)
-        raw_theory = np.mean(y ** 2) + D_IN * second_moment * (width / 2) ** N_HIDDEN
+    for width, he, he_se, raw, raw_theory in rows:
         print(f"{width:>6} {he:>10.3f} +- {he_se:.3f} {he_theory:>10.3f} "
               f"{raw:>12.3g} {raw_theory:>16.3g}")
 

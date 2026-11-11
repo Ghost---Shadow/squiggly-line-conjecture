@@ -11,6 +11,8 @@ training never measures.
 - Slides: [2026 deck](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing), [original deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
 - Full findings: [`docs/RESOLUTION.md`](docs/RESOLUTION.md)
 
+![The same 16 points beside a smooth curve and a squiggly curve. The lines to the nearest point of the curve get much shorter on the squiggly curve. The vertical lines do not.](graphs/readme_two_distances.png)
+
 ## The idea
 
 Scatter random points on a plane. Draw two curves without looking at the
@@ -85,6 +87,8 @@ of one fixed amplitude and a random phase. Only the frequency changes.
 | 16 | 52.31 | 0.0338 | 0.6665 |
 | 64 | 208.92 | 0.0207 | 0.6688 |
 
+![Mean nearest-point distance and mean vertical error against frequency. The nearest-point distance falls 30 times and stays above the lower bound of the slope sandwich. The vertical error is flat.](graphs/readme_frequency.png)
+
 The nearest-point distance falls by a factor of 30. The vertical error does not
 move. The second fact is the marginal lemma: a random phase gives `f(x)` the
 same distribution at every frequency, so the column is flat by construction and
@@ -98,6 +102,8 @@ that covers the data there is no floor, and the distance follows
 [`scripts/saturation_scaling.py`](scripts/saturation_scaling.py). Distance
 times arc length tends to 1.19, a little above the 1.0 of an evenly spread
 curve, because the strokes of a sine are not evenly spaced.
+
+![Nearest-point distance against frequency for two amplitudes. With the narrow band the curve levels off at the floor. With the band that covers the data it keeps falling along the closed form.](graphs/readme_floor.png)
 
 ### A straight line of the same length
 
@@ -122,6 +128,8 @@ hidden layers, 200 untrained ReLU networks per width.
 | He initialisation, measured | 1.07 | 1.02 | 1.07 | 1.10 | 1.03 |
 | He initialisation, predicted | 1.03 | 1.03 | 1.03 | 1.03 | 1.03 |
 | Unscaled weights, measured | 15 | 220 | 3 450 | 60 200 | 823 000 |
+
+![Initial MSE of untrained ReLU networks at five widths. Every width sits on the predicted value.](graphs/readme_initial_mse.png)
 
 A wider network does not start closer. With unscaled weights it starts much
 further away, because the output grows with width. That growth is the
@@ -184,6 +192,7 @@ python saturation_scaling.py     # what sets the floor, several minutes
 python initial_mse.py            # random networks at five widths, ~1 min
 python random_relu_length.py     # arc length of random ReLU curves
 python audit_legacy_metrics.py   # reproduces the defects listed below
+python readme_figures.py         # redraws the figures on this page, ~2 min
 ```
 
 ## Repository layout
@@ -196,7 +205,7 @@ python audit_legacy_metrics.py   # reproduces the defects listed below
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
-| `scripts/` (experiments) | the five scripts above |
+| `scripts/` (experiments) | the scripts listed above |
 | `scripts/` (other) | the first exploratory code, kept as a record |
 | `graphs/`, `diagrams/` | figures |
 | `handoff.md` | open experiments, with a prediction and a stop rule for each |
