@@ -1,0 +1,236 @@
+\section{Setting and results}
+\label{sec:theory}
+
+\subsection{Two distances}
+
+Let $(X,d)$ be a metric space of inputs and $f:X\to\R$ a function. A data point
+is a pair $(x,y)\in X\times\R$. We give $X\times\R$ the Euclidean product metric
+$\rho\bigl((x,y),(x',y')\bigr)=\sqrt{d(x,x')^2+(y-y')^2}$ and write
+$\Gamma_f=\{(x,f(x)):x\in X\}$ for the graph of $f$, the ``line'' of the
+conjecture. Two quantities compare a data point with the line:
+\begin{align*}
+  \vd_f(x,y) &= |y-f(x)| && \text{(vertical error)},\\
+  \nd_f(x,y) &= \inf_{x'\in X}\rho\bigl((x,y),(x',f(x'))\bigr) && \text{(nearest-point distance)}.
+\end{align*}
+Regression losses are functions of the residual $y-f(x)$, so they see $\vd_f$.
+The conjecture is stated with $\nd_f$.
+
+A \emph{random function} $F$ is a probability space $(\Theta,\pi)$ of parameters
+together with functions $f_\theta:X\to\R$ such that $\theta\mapsto f_\theta(x)$
+is measurable for every $x$. Its \emph{one-point marginal} at $x$ is the law
+$\nu^F_x$ of $f_\theta(x)$ under $\pi$. For a cost $c$ and a data distribution
+$\mu$ on $X\times\R$, the expected cost at initialisation is
+$\E_{(x,y)\sim\mu}\,\E_{\theta\sim\pi}\,c(f_\theta;x,y)$.\footnote{We assume the
+inner expectation is a measurable function of $(x,y)$. This holds if
+$(\theta,x)\mapsto f_\theta(x)$ is jointly measurable, and always when $\mu$ is
+the empirical measure of a finite data set.} For a family of random functions
+indexed by a size $m$, ``a bigger model starts closer'' means that this
+expectation is strictly decreasing in $m$. Claim (G) uses the cost $\nd$ and
+claim (L) uses costs of the form $\ell(y-f(x))$. We make ``squiggly'' concrete
+by the frequency of a wave of fixed amplitude and, for networks, by arc length
+and the number of turns.
+
+\subsection{The slope sandwich}
+
+\begin{theorem}[Slope sandwich]\label{thm:sandwich}
+If $f$ is $K$-Lipschitz, then for every data point $(x,y)$
+\[
+  \frac{\vd_f(x,y)}{\sqrt{1+K^2}}\;\le\;\nd_f(x,y)\;\le\;\vd_f(x,y).
+\]
+\end{theorem}
+
+\begin{proof}
+The point $(x,f(x))$ lies on $\Gamma_f$ at distance $|y-f(x)|$ from $(x,y)$,
+which gives the upper bound. For the lower bound take any $x'\in X$ and put
+$a=d(x,x')$ and $b=|y-f(x')|$. By the triangle inequality and the Lipschitz
+bound, $|y-f(x)|\le|y-f(x')|+|f(x')-f(x)|\le b+Ka$. By the Cauchy--Schwarz
+inequality, $b+Ka\le\sqrt{1+K^2}\,\sqrt{a^2+b^2}=\sqrt{1+K^2}\;\rho\bigl((x,y),(x',f(x'))\bigr)$.
+Taking the infimum over $x'$ gives $\vd_f(x,y)\le\sqrt{1+K^2}\,\nd_f(x,y)$.
+\end{proof}
+
+Both bounds are attained: for $X=\R$ and $f(x)=Kx$, the point $(0,y)$ has
+$\nd_f=|y|/\sqrt{1+K^2}$, and for a constant $f$ the two distances coincide.
+Taking expectations, the same two inequalities hold between the mean distances
+of any random $K$-Lipschitz function and any data distribution.
+
+The theorem says what a small nearest-point distance means. If
+$\nd_f(x,y)<\eta$, there is an input $x'$ with $d(x,x')<\eta$ and
+$|y-f(x')|<\eta$: a perturbation of the \emph{input} smaller than $\eta$ brings
+the output within $\eta$ of the label. When $\nd_f$ is small and $\vd_f$ is not,
+the function is steep near $x$: its Lipschitz constant is at least
+$\sqrt{(\vd_f/\nd_f)^2-1}$. That describes a function that is
+sensitive to its input near the data, not one that fits the data.
+
+\subsection{The marginal lemma}
+
+\begin{theorem}[Marginal lemma]\label{thm:marginal}
+Let $F$ be a random function and $\ell:\R\to[0,\infty)$ a measurable loss. For
+every data point $(x,y)$,
+\[
+  \E_{\theta}\,\ell\bigl(y-f_\theta(x)\bigr)=\int_{\R}\ell(y-t)\,\nu^F_x(dt).
+\]
+Consequently, if two random functions $F$ and $G$ have $\nu^F_x=\nu^G_x$ for
+every $x$, their expected losses are equal for every such $\ell$ and every data
+distribution $\mu$.
+\end{theorem}
+
+\begin{proof}
+By definition $\nu^F_x$ is the image of $\pi$ under $\theta\mapsto f_\theta(x)$.
+The displayed identity is the change-of-variables formula for an image measure,
+applied to the measurable function $t\mapsto\ell(y-t)$. Integrating both sides
+against $\mu$ gives the second statement.
+\end{proof}
+
+The proof is one line, and the content is in what is absent: the joint law of
+$\bigl(f_\theta(x),f_\theta(x')\bigr)$ at two inputs does not enter. How $f$
+moves between inputs is what ``squiggly'' means, so the expected initial loss
+cannot register squiggliness. The lemma is about the expectation over $\theta$
+only. The variance of the initial loss, the probability of a low initial loss,
+and everything that happens during training do depend on joint laws.
+
+\begin{corollary}[Random-phase waves]\label[corollary]{cor:phase}
+Let $g:\R\to\R$ be measurable and $T$-periodic, let $\varphi$ be uniform on
+$[0,T)$, and for a frequency $w\in\R$ let $f_{w,\varphi}(x)=g(wx+\varphi)$ on
+$X=\R$. Then the one-point marginal of $f_{w,\cdot}$ at every $x$ is the law of
+$g(\varphi)$, for every $w$. Hence the expected loss
+$\E_{(x,y)\sim\mu}\E_\varphi\,\ell\bigl(y-f_{w,\varphi}(x)\bigr)$ is the same for
+every $w$, every measurable $\ell\ge0$ and every $\mu$. No sequence of
+frequencies makes it decrease.
+\end{corollary}
+
+\begin{proof}
+The uniform distribution on the circle $\R/T\mathbb{Z}$ is invariant under
+translation, so $wx+\varphi \bmod T$ is uniform on $[0,T)$ for every fixed $w$
+and $x$, and $g(wx+\varphi)$ has the law of $g(\varphi)$. Apply
+\cref{thm:marginal}.
+\end{proof}
+
+For the curves of \cref{sec:experiments}, $g=p\sin$ with peak $p\le1$, and data
+with $y$ uniform on $[-1,1]$ independent of $x$. Since
+$\E_y|y-s|=(1+s^2)/2$ for $|s|\le1$, the expected vertical error is
+$(1+p^2/2)/2$ at every frequency.
+
+\begin{corollary}[ReLU networks under He initialisation]\label[corollary]{cor:he}
+Let $f_\theta(x)=u^\top\relu\bigl(W^L\relu(\cdots\relu(W^1x))\bigr)$ for
+$x\in\R^{d}$, with $\relu$ the ReLU, no biases, hidden widths $n_1,\dots,n_L$,
+$n_0=d$, and independent weights $W^k_{ij}\sim N(0,2/n_{k-1})$ and
+$u_i\sim N(0,2/n_L)$. Then for every $x$ and $y$,
+\[
+  \E f_\theta(x)=0,\qquad \E f_\theta(x)^2=\frac{2\|x\|^2}{d},\qquad
+  \E\bigl(y-f_\theta(x)\bigr)^2=y^2+\frac{2\|x\|^2}{d},
+\]
+whatever the depth and the widths. If all weights are instead $N(0,1)$, the last
+quantity is $y^2+\|x\|^2\prod_{k=1}^{L}(n_k/2)$.
+\end{corollary}
+
+The proof is a layer-by-layer recursion for $\E\|h^k\|^2$ and is in
+\cref{app:proofs}. It uses only that the weights are independent, symmetric and
+of the stated variance; preserving the second moment across layers is the
+design criterion of this initialisation \citep{he2015delving}. In the terms of
+\cref{thm:marginal}, the squared loss reads only the first two moments of
+$\nu_x$, and these do not depend on the width. The full law $\nu_x$ does depend
+on the width, so for other losses the corollary gives no exact statement.
+
+\subsection{The tube identity and a bound from length}
+
+For a non-empty set $S$ in a metric space, write
+$N_r(S)=\{q:\dist(q,S)\le r\}$ for the closed tube of radius $r$ around $S$.
+
+\begin{theorem}[Tube identity]\label{thm:tube}
+Let $S$ be a non-empty subset of a metric space and $P$ a random point of that
+space. Then
+\[
+  \E\,\dist(P,S)=\int_0^\infty\P\bigl(\dist(P,S)>r\bigr)\,dr
+  =\int_0^\infty\P\bigl(P\notin N_r(S)\bigr)\,dr ,
+\]
+where both sides may be infinite.
+\end{theorem}
+
+\begin{proof}
+The function $q\mapsto\dist(q,S)$ is $1$-Lipschitz, hence measurable, and
+non-negative. For a non-negative random variable $Z$ we have
+$Z=\int_0^\infty\mathbf 1\{Z>r\}\,dr$, and Tonelli's theorem gives
+$\E Z=\int_0^\infty\P(Z>r)\,dr$. This is the layer-cake formula
+\citep[Section~1.13]{lieb2001analysis}. Take $Z=\dist(P,S)$.
+\end{proof}
+
+The identity holds for any set in any metric space. It reduces the mean
+distance to the volume of tubes, which for curves in the plane is controlled by
+length.
+
+\begin{lemma}\label[lemma]{lem:tube-area}
+Let $S\subset\R^2$ be the image of a rectifiable curve of length $l$. Then the
+area of $N_r(S)$ is at most $2lr+\pi r^2$ for every $r\ge0$.
+\end{lemma}
+
+The proof, by polygonal approximation, is in \cref{app:proofs}.
+
+\begin{proposition}[Length bound]\label[proposition]{prop:length}
+Let $\Omega\subset\R^2$ be measurable with area $V\in(0,\infty)$, let $P$ be
+uniform on $\Omega$, and let $S$ be the image of a rectifiable curve of length
+$l$. Then
+\[
+  \E\,\dist(P,S)\;\ge\;\frac{V}{4l+2\sqrt{\pi V}} .
+\]
+\end{proposition}
+
+\begin{proof}
+Put $r_0=V/(2l+\sqrt{\pi V})$. For $0\le r\le r_0$ we have
+$\pi r\le\pi V/\sqrt{\pi V}=\sqrt{\pi V}$, so by \cref{lem:tube-area} the area
+of $N_r(S)$ is at most $(2l+\sqrt{\pi V})\,r=Vr/r_0$. Therefore
+$\P(P\notin N_r(S))\ge1-r/r_0$ for $r\le r_0$, and by \cref{thm:tube}
+$\E\,\dist(P,S)\ge\int_0^{r_0}(1-r/r_0)\,dr=r_0/2$.
+\end{proof}
+
+To leading order in $l$ the bound is $V/(4l)$. We draw three consequences.
+Length is necessary: a mean distance of at most $\varepsilon$ requires
+$l\ge V/(4\varepsilon)-\sqrt{\pi V}/2$. Length is not sufficient: a part of the
+curve further than $r$ from $\Omega$ adds nothing to $N_r(S)\cap\Omega$, so
+length outside the data region is wasted (\cref{sec:line}). And the bound is
+nearly attained only if the tube around the curve stays inside $\Omega$ and
+overlaps itself little, that is, if the length is spread evenly over the
+region. The proposition is for curves in the plane; for inputs of dimension
+above one the graph is a surface, and its area takes the role of length.
+
+\subsection{The sine family}
+
+The experiments use $f_{w,\varphi}(x)=p\sin(w\pi x+\varphi)$ on $x\in[-1,1]$
+with $\varphi$ uniform on $[0,2\pi)$, and a point $P$ uniform on
+$\Omega=[-1,1]^2$, so $V=4$. The curve makes $w$ full periods across the box and
+is $p\,w\pi$-Lipschitz. Write $D_p(w)$ for the mean of $\nd$ over $P$ and
+$\varphi$, and $l(w)$ for the arc length.
+
+\begin{proposition}[The sine that spans the data; leading order]\label[proposition]{prop:sine}
+For $p=1$, as $w\to\infty$,
+\[
+  \frac{l(w)}{w}\to4,\qquad
+  w\,D_1(w)\to\frac{2-8/\pi^2}{4}\approx0.2974,\qquad
+  D_1(w)\,l(w)\to2-\frac{8}{\pi^2}\approx1.189 .
+\]
+\end{proposition}
+
+The first limit is proved in \cref{app:proofs}. The second is a leading-order
+derivation. At height $y$ the curve crosses on two interleaved lattices of
+period $2/w$, with gaps $(1/w)(1\mp2\arcsin(y)/\pi)$. At high frequency the
+strokes are nearly vertical, so the nearest point of the curve is, to leading
+order, the nearest crossing at the same height. Averaging that distance over
+$x$ and then over $y$, with $\int_0^1\arcsin(y)^2\,dy=\pi^2/4-2$, gives the
+constant. The step from horizontal to Euclidean distance is argued in outline
+in \cref{app:proofs}, without all details, and the constant is checked
+numerically in \cref{sec:saturation}. The limit $1.189$ exceeds the value
+$V/4=1$ of \cref{prop:length} because the strokes of a sine are not evenly
+spaced.
+
+\begin{proposition}[Band-edge floor]\label[proposition]{prop:floor}
+For $0<p\le1$ and $w\ge1$,
+\[
+  \frac{(1-p)^2}{2}\;\le\;D_p(w)\;\le\;\frac{(1-p)^2}{2}+\frac{2}{w}.
+\]
+\end{proposition}
+
+The proof is in \cref{app:proofs}. The curve stays in the band $|y|\le p$, so a
+point at height $|y|>p$ is never nearer than $|y|-p$, and
+$\E\max(0,|y|-p)=(1-p)^2/2$. Raising the frequency removes the rest at rate
+$O(1/w)$. The floor depends on the amplitude relative to the range of the data.
+It does not depend on the number of data points: $D_p(w)$ is the mean of a
+per-point quantity, so its expectation is the same for a sample of any size.

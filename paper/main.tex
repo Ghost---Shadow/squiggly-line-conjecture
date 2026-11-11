@@ -1,0 +1,95 @@
+% The Squiggly Line Conjecture -- preprint.
+% Build:  latexmk -pdf main.tex      (see README.md in this folder)
+\documentclass{article}
+
+% Official NeurIPS 2026 style, loaded with the `preprint' option so that the
+% footer reads "Preprint." This paper has not been submitted to or accepted by NeurIPS.
+\usepackage[preprint]{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue!50!black}
+\usepackage[capitalize,noabbrev]{cleveref}   % after hyperref, before \newtheorem
+
+% ---------------------------------------------------------------- theorems
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---------------------------------------------------------------- macros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\vd}{v}            % vertical error
+\newcommand{\nd}{\delta}       % nearest-point distance
+\newcommand{\relu}{\sigma}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\repo}{\url{https://github.com/Ghost---Shadow/squiggly-line-conjecture}}
+
+\title{The Squiggly Line Conjecture: A Geometric Picture of Overparameterization That Training Cannot Use}
+
+\author{%
+  Souradeep Nanda \\
+  Unaffiliated \\
+  \texttt{souradeep.nanda123@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The squiggly line conjecture is a geometric account of why larger networks learn
+faster: a network with more parameters is a squigglier random curve at
+initialisation, a squigglier curve passes nearer to the data, and so a larger
+network starts closer to a fit. We split it into three claims and test each.
+The geometric claim holds. For random-phase sines of fixed amplitude, the mean
+Euclidean distance from a random point to the nearest point of the curve falls
+by a factor of 30 as the frequency rises from 0.25 to 64. The other two claims
+fail. The distance that falls is not the one a regression loss charges: for a
+$K$-Lipschitz function the nearest-point distance lies between the vertical
+error divided by $\sqrt{1+K^2}$ and the vertical error, so a curve can be much
+nearer than its vertical error only where it is steep. The expected loss of a
+random function depends only on its one-point marginals, and for random-phase
+waves these do not depend on the frequency; in the same experiment the mean
+vertical error stays at $0.67$. For random ReLU networks under He initialisation
+the expected initial squared error is the same at every width, and the curves
+of random networks do not get longer with width. We also prove a lower bound on
+the mean distance in terms of curve length, derive the constant for the sine,
+and identify what sets the saturation floor. The main statements are checked in
+Lean~4. The picture is correct as geometry and does not explain learning.
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_theory}
+\input{sections/03_experiments}
+\input{sections/04_formalisation}
+\input{sections/05_related_work}
+\input{sections/06_discussion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\newpage
+\appendix
+\input{sections/A_appendix}
+
+\end{document}

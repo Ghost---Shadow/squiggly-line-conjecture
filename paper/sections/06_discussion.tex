@@ -1,0 +1,58 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\emph{One-dimensional inputs.} The geometry experiments and
+\cref{prop:length,prop:sine,prop:floor} are for curves in the plane; claim (G)
+has not been measured for surfaces.
+\emph{A degenerate family.} For fixed $w$ the functions $p\sin(w\pi x+\varphi)$
+span a two-dimensional space, and their covariance kernel
+$\tfrac{p^2}{2}\cos(w\pi(x-x'))$ has rank 2. No member can fit more than two
+generic points at once, at any frequency, and the mean per-point distance
+cannot see this because it scores each point alone.
+\emph{Nothing to learn.} The labels are independent of the inputs, so the
+experiments concern the loss at initialisation only and say nothing about
+learning speed or generalisation.
+\emph{Expectation only.} \Cref{thm:marginal} and \cref{cor:he} are about the
+mean initial loss; whether the probability of a low initial loss changes with
+width is not addressed.
+\emph{Own scripts.} The experiments are small computations written for this
+question, not an established benchmark, and the code has needed correction more
+than once (\cref{app:wrong}).
+\emph{Proof status.} The constant in \cref{prop:sine} rests on a leading-order
+argument and a numerical check.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The conjecture joined two facts that are each true: a squigglier curve is
+nearer to random points, and larger networks learn faster. The link fails at
+both ends. Width does not make a random network's curve longer, and the
+nearness that squiggliness buys is nearness to points displaced in the input
+direction, which a regression loss does not reward and which
+\cref{thm:sandwich} shows is paid for in slope.
+
+\paragraph{Where ``starts closer'' might still hold.} The claim could be moved
+to weight space: a larger network may need to travel a shorter relative distance
+from its initial weights to a fit. The repository's notes predict from the
+lazy-training results of \cref{sec:related} that it does, in which case an
+experiment would be a replication. We have not run it.
+
+\paragraph{An untested proposal: joint fit.} The nearest-point distance scores
+each point alone. A cost that sees all points at once is $y^\top K^{-1}y$, where
+$y\in\R^n$ collects the labels and $K$ is the positive-definite covariance
+matrix of the random function at the $n$ inputs; it is the data-fit term of the
+Gaussian-process marginal likelihood \citep{rasmussen2006gaussian}. For
+uncorrelated labels of zero mean and unit variance its mean is $\tr(K^{-1})$,
+and $\tr(K^{-1})\ge n^2/\tr(K)$ with equality if and only if $K$ is a multiple
+of the identity, by the Cauchy--Schwarz inequality
+$n^2=\bigl(\sum_i\lambda_i^{1/2}\lambda_i^{-1/2}\bigr)^2\le\sum_i\lambda_i\sum_i\lambda_i^{-1}$
+for the eigenvalues $\lambda_i$ of $K$. At fixed output variance $\tr(K)$ is
+fixed, so for random labels the cost is smallest for the prior whose values at
+different inputs are uncorrelated, the squiggliest one; for labels that vary
+smoothly with the input we expect the order to reverse. This is a direction
+only. Beyond the inequality it is untested here: we have not measured this cost
+for networks and do not know whether it predicts anything about training.
+
+\paragraph{Conclusion.} The squiggly line picture is correct as geometry and
+does not explain why overparameterized networks learn. The distance it uses is
+not the one that training measures.

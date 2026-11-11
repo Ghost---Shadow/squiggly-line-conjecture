@@ -1,0 +1,50 @@
+\section{Related work}
+\label{sec:related}
+
+We describe each work only as far as its abstract does; the reading of how it
+bears on the conjecture is ours.
+
+\paragraph{Length of random network curves (claim P).}
+\citet{raghu2017expressive} propose trajectory length, the length of the image
+of a one-dimensional input path, as a measure of expressivity, and report that
+it grows exponentially with depth. \citet{hanin2022preserve} prove that for ReLU
+networks with standard random initialisation the expected length distortion does
+not grow with depth. \citet{hanin2019few} bound the average number of activation
+patterns of a ReLU network at initialisation in terms of the number of neurons
+and the input dimension. By \cref{prop:length}, a curve that does not get longer
+cannot get much closer in the nearest-point sense.
+
+\paragraph{Squiggliness after training.}
+\citet{dherin2021geometric} argue that stochastic gradient descent implicitly
+favours functions of low geometric complexity, which for one-dimensional
+regression is the arc length. \citet{bubeck2021universal} show that, for broad
+classes of models and data, fitting the data smoothly requires $d$ times more
+parameters than merely interpolating it, where $d$ is the input dimension; in
+that account parameters buy smoothness, the opposite of (P).
+\citet{humayun2024grok} report that the linear regions of a network migrate
+away from the training samples late in training, and
+\citet{hosseini2023straighten} that trained language models straighten the
+trajectory of a sentence across layers while untrained ones do not.
+
+\paragraph{Size helping before or without training.}
+\citet{frankle2019lottery} find sparse subnetworks that train in isolation to
+the accuracy of the full network. \citet{ramanujan2020hidden} show that a random
+network with fixed weights contains subnetworks that perform well untrained,
+and that these improve as the network gets wider and deeper.
+\citet{larsen2022degrees} find that training within a random subspace succeeds
+once its dimension passes a threshold that depends on the target loss and the
+initial loss. \citet{chiang2023loss} report that sampling random parameter
+vectors until one fits the training set reaches test accuracy comparable to
+gradient descent in low-sample regimes. These are statements about subnetworks
+or about weight space, not about the nearest-point distance of the full random
+function, and \cref{cor:he} is compatible with them.
+\citet{martinelli2026escape} argue that the lottery-ticket analogy does not
+explain overparameterization and propose that width adds dimensions along which
+optimisation escapes bad minima.
+
+\paragraph{Wide networks.} In the lazy regime a model behaves like its
+linearisation around the initial weights \citep{chizat2019lazy}, with the neural
+tangent kernel governing training \citep{jacot2018ntk}, and wide random networks
+converge to Gaussian processes \citep{matthews2018gaussian}. This is the setting
+in which ``starts closer'' might be restated in weight space
+(\cref{sec:discussion}).
