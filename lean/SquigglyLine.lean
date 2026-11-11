@@ -37,6 +37,7 @@ The squiggly line conjecture, formalised.
 | `Bottleneck`     | labels ≤ places after any layer ≤ inputs; full compression       | proved    |
 | `EdgeOfStability`| error along a direction shrinks iff `η lam < 2`, grows past it   | proved    |
 | `ModeConnectivity`| linear in weights: no hill between fits; `a * b`: the hill       | proved    |
+| `Forgetting`     | a new task changes old errors through the cross kernel only      | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -73,3 +74,4 @@ import SquigglyLine.DepthSeparation
 import SquigglyLine.Bottleneck
 import SquigglyLine.EdgeOfStability
 import SquigglyLine.ModeConnectivity
+import SquigglyLine.Forgetting

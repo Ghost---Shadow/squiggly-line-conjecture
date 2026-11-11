@@ -386,6 +386,7 @@ Lean's three standard axioms.
 | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) | the information bottleneck by counting: after any layer of a network that gets every label right, the flock occupies at least as many places as there are labels and at most as many as there are inputs; and a layer squeezed down to exactly as many places as labels merges two inputs exactly when they share a label | proved |
 | [`EdgeOfStability`](lean/SquigglyLine/EdgeOfStability.lean) | the edge of stability: each gradient step multiplies the size of the error along a kernel direction of strength `lam` by `\|1 - η lam\|`, so it shrinks when `η lam < 2`, keeps its size for ever at `η lam = 2`, and grows without limit past it; a direction is stable exactly when the step size is below `2 / lam` | proved |
 | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) | mode connectivity: for a model linear in its weights the straight line between two fits is all fits and the error on any line never exceeds the worse end; for the two-weight model `a * b` the output on the line between two fits is off by exactly `t (1 - t) (a₁ - a₂)(b₁ - b₂)`, and halfway between a fit and its mirror image, which is the same function, the output is zero | proved |
+| [`Forgetting`](lean/SquigglyLine/Forgetting.lean) | catastrophic forgetting: a gradient step on a new task changes the old task's errors through the cross kernel between old and new inputs only, so nothing is forgotten when it is zero; and if gradient descent fits the new task, the old errors change by at most the size of the old features times the new task's travel | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -445,6 +446,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/forgetting.md` | catastrophic forgetting: what a new task costs an old one, and why forgetting and generalising are one mechanism |
 | `docs/mode-connectivity.md` | mode connectivity: one flat valley without depth, the smallest hill with it, and how a symmetry removes the hill |
 | `docs/edge-of-stability.md` | the edge of stability: where the number `2 / step size` comes from, and what a fixed kernel cannot explain |
 | `docs/information-bottleneck.md` | the information bottleneck, by counting the places a flock occupies after each layer |
