@@ -130,3 +130,23 @@ background is in the other files of this folder.
 20. **Backprop as the inner chain run backward.** (**known, not formalised**)
     `chain-of-markov-chains.md` describes training as a chain of chains. Only
     the two chains separately are in Lean.
+
+## Ideas noted on 11 Nov 2026, not yet thought through
+
+21. **What is batch norm, in the polarizer picture?** (**open**)
+    A first reading: gain control. Batch norm rescales and recentres the flock
+    after a layer, which undoes the `cos θ` loss and moves the flock back to
+    the middle of the wedge. For one photon the matching step is to
+    renormalise the state after each plate, that is, to follow only the
+    photons that survive. It acts on the whole flock at once, so with it a
+    single bird's path depends on the other birds. It cannot separate birds
+    that have merged, and it cannot revive a blocked one.
+
+22. **What is a residual layer, in the polarizer picture?** (**open**)
+    A first reading: a bypass. Split the beam, send one part through the plate
+    and one part around it, and add them. The result keeps the part the plate
+    would have removed, so nothing is ever fully blocked and nothing merges.
+    A partial polarizer, which passes one direction fully and the other
+    weakly, does the same thing in one piece. This would make every layer a
+    small change, which is the "many small turns" regime where almost nothing
+    is lost.
