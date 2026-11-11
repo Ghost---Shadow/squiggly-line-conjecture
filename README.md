@@ -384,6 +384,7 @@ Lean's three standard axioms.
 | [`SmallSteps`](lean/SquigglyLine/SmallSteps.lean) | many small steps: if a step of size `s` keeps at least `1 - c s²`, then `N` steps over a distance `D` keep at least `1 - c D² / N`, while a cost in proportion to the step gains nothing from being cut up; for polarizers, any turn `φ` in `N` plates keeps at least `1 - φ² / (2N)`, and halving every turn never loses | proved |
 | [`DepthSeparation`](lean/SquigglyLine/DepthSeparation.lean) | depth separation: a ReLU unit is straight away from its one kink, so a network with one hidden layer needs a unit for every up-and-down; `L + 1` tent layers (`2(L + 1)` neurons) draw a zigzag that no such network with fewer than `2^L` units can follow, even to within one half at the grid points | proved |
 | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) | the information bottleneck by counting: after any layer of a network that gets every label right, the flock occupies at least as many places as there are labels and at most as many as there are inputs; and a layer squeezed down to exactly as many places as labels merges two inputs exactly when they share a label | proved |
+| [`EdgeOfStability`](lean/SquigglyLine/EdgeOfStability.lean) | the edge of stability: each gradient step multiplies the size of the error along a kernel direction of strength `lam` by `\|1 - η lam\|`, so it shrinks when `η lam < 2`, keeps its size for ever at `η lam = 2`, and grows without limit past it; a direction is stable exactly when the step size is below `2 / lam` | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -443,6 +444,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/edge-of-stability.md` | the edge of stability: where the number `2 / step size` comes from, and what a fixed kernel cannot explain |
 | `docs/information-bottleneck.md` | the information bottleneck, by counting the places a flock occupies after each layer |
 | `docs/depth-separation.md` | depth separation: why a wide, shallow network pays one neuron per turn while each added layer doubles the turns |
 | `docs/small-steps.md` | many small steps: why cutting a jump into pieces helps, when it does not, and what that says about diffusion, curricula and annealing |

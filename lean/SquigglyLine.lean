@@ -35,6 +35,7 @@ The squiggly line conjecture, formalised.
 | `SmallSteps`     | a square-law loss over `N` steps is at most `c D² / N`           | proved    |
 | `DepthSeparation`| one hidden layer needs `2^L` units to follow `L + 1` tent layers | proved    |
 | `Bottleneck`     | labels ≤ places after any layer ≤ inputs; full compression       | proved    |
+| `EdgeOfStability`| error along a direction shrinks iff `η lam < 2`, grows past it   | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -69,3 +70,4 @@ import SquigglyLine.SkipAndNorm
 import SquigglyLine.SmallSteps
 import SquigglyLine.DepthSeparation
 import SquigglyLine.Bottleneck
+import SquigglyLine.EdgeOfStability
