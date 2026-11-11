@@ -471,6 +471,7 @@ them proves the phenomenon for real networks.
 |---|---|---|---|
 | Depth separation | A network with one hidden layer needs `2^L` units to stay within one half of `L + 1` tent layers. | [note](docs/depth-separation.md) | [`DepthSeparation`](lean/SquigglyLine/DepthSeparation.lean) |
 | Skip connections and normalisation | As optics: a skip is a bypass that never dims or blocks; a normalisation is an amplifier that restores full strength. | [note](docs/skip-and-norm.md) | [`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean) |
+| Vanishing and exploding gradients | A per-layer gain `g` gives `g^L`: it dies below one and blows up above. The gradient comes back through the same plates, so it is dimmed the same way. | [note](docs/vanishing-gradients.md) | [`VanishingGradients`](lean/SquigglyLine/VanishingGradients.lean) |
 | Information bottleneck | After any layer of a network that is right on every input: labels ≤ places occupied ≤ inputs. | [note](docs/information-bottleneck.md) | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) |
 | Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/NeuralCollapse.lean) |
 | Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) |
