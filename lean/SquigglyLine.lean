@@ -20,6 +20,7 @@ The squiggly line conjecture, formalised.
 | `Depth`          | `L` two-neuron layers turn `2 ^ L - 1` times                    | proved    |
 | `Bridge`         | `L` folds are one Fourier term of frequency `2 ^ L`             | proved    |
 | `Kernel`         | same kernel: same gradient-descent path and same travel         | proved    |
+| `ThreePolarizers`| Malus's law, the plate chain, and more plates arriving closer   | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -38,3 +39,4 @@ import SquigglyLine.Polarizer
 import SquigglyLine.Depth
 import SquigglyLine.Bridge
 import SquigglyLine.Kernel
+import SquigglyLine.ThreePolarizers

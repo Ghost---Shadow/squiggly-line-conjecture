@@ -1,8 +1,9 @@
 # Three polarizers, and the photon's squiggly line
 
-Notes from 11 Nov 2026, written before the proofs. Each statement is marked
-**proved** (in `lean/`), **checked** (by a calculation here), **to prove**, or
-**recalled** (textbook physics, not derived here).
+Notes from 11 Nov 2026. Written before the proofs, then updated once they were
+done. Each statement is marked **proved** (in `lean/ThreePolarizers.lean`),
+**checked** (by a calculation here), or **recalled** (textbook physics, not
+derived here).
 
 ## The experiment
 
@@ -24,8 +25,8 @@ Adding an obstacle lets more light through. That is the surprise.
 Each polarizer does one thing: it replaces the light's vibration by its shadow
 on the polarizer's axis. If the axis is at an angle `θ` to the vibration, the
 shadow has `cos θ` of the length. This is Malus's law. The brightness is the
-square of the length, so it goes as `cos² θ`. (**recalled**; the shadow rule is
-**to prove** as a statement about projections.)
+square of the length, so it goes as `cos² θ`. (**recalled** as physics; the shadow rule is
+**proved** as a statement about projections: `malus`.)
 
 - Horizontal light on a vertical axis: the angle is 90°, `cos 90° = 0`.
   Nothing passes.
@@ -77,7 +78,8 @@ turn into `N` equal steps:
 (**checked**)
 
 The length that arrives is `cos(90°/N)^N`. It is at least `1 − π²/(8N)`, so
-the shortfall shrinks like one over the number of plates (**to prove**).
+the shortfall shrinks like one over the number of plates (**proved**:
+`quarter_turn_arrives`, for `N ≥ 2`).
 
 The path gets longer and squigglier as plates are added, and its far end gets
 closer to the target. Its length climbs towards `π/2 = 1.571`, the length of
@@ -116,7 +118,7 @@ operation and can compute nothing a single plate could not. ReLU casts the
 shadow on a wedge, which leaves a quarter of all directions untouched and
 folds the rest. That is not linear, and it is why depth adds something.
 
-## What to prove
+## What was to prove (all five now proved)
 
 1. **Malus's law for the arrow.** A polarizer at angle `φ` sends an arrow of
    length `a` at angle `ψ` to an arrow of length `a·cos(φ − ψ)` at angle `φ`.
