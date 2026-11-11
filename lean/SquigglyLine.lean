@@ -58,6 +58,7 @@ theorem.
 | `Bottleneck`        | labels ≤ places after any layer ≤ inputs; full compression         |
 | `NeuralCollapse`    | `K` unit arrows: every pair ≤ `c` forces `(K - 1) c ≥ -1`          |
 | `ModeConnectivity`  | linear in weights: no hill between fits; `a * b`: the hill         |
+| `WeightDecay`       | weight decay leaves `mu / (lam + mu)`; early stopping matches it   |
 -/
 -- 1. The theorem
 import SquigglyLine.Defs
@@ -100,3 +101,4 @@ import SquigglyLine.SkipAndNorm
 import SquigglyLine.Bottleneck
 import SquigglyLine.NeuralCollapse
 import SquigglyLine.ModeConnectivity
+import SquigglyLine.WeightDecay
