@@ -27,6 +27,7 @@ The squiggly line conjecture, formalised.
 | `DoubleDescent`  | a near fit is tame; travel is large only where the kernel is weak | proved  |
 | `Dimple`         | gentle on the data manifold, steep off it: loss blind, fragile   | proved    |
 | `LeastAction`    | gradient descent reaches the nearest fit; even steps lose least  | proved    |
+| `SpectralBias`   | each kernel direction shrinks by `(1 - η lam)^t`; strong first   | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -53,3 +54,4 @@ import SquigglyLine.TentCloser
 import SquigglyLine.DoubleDescent
 import SquigglyLine.Dimple
 import SquigglyLine.LeastAction
+import SquigglyLine.SpectralBias
