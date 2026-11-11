@@ -18,6 +18,9 @@ width is not addressed.
 \emph{Own scripts.} The experiments are small computations written for this
 question, not an established benchmark, and the code has needed correction more
 than once (\cref{app:wrong}).
+\emph{Existence only.} \Cref{cor:warp} shows that a small warp of the input
+fits any target. It does not show that the warp is smooth or that gradient
+descent finds it.
 \emph{Linear models only.} \Cref{sec:param} is for models that are linear in
 their parameters. A network trained in every layer is not, and its kernel moves
 during training; nothing here bounds by how much.
@@ -67,7 +70,9 @@ only. Beyond the inequality it is untested here: we have not measured this cost
 for networks and do not know whether it predicts anything about training.
 
 \paragraph{Conclusion.} The squiggly line picture is correct as geometry, and
-for sines it is a theorem. It does not explain why overparameterized networks
-learn, because the distance it uses is not the one that training measures. The
-statement that does hold, that a larger model starts nearer to a fit, is a
-statement about parameters.
+for sines it is a theorem. It does not say that a larger model starts with a
+smaller loss, because the loss at initialisation does not see the distance it
+uses. What that distance measures is how far the input must be moved for the
+curve to fit (\cref{cor:warp}), and what the number of parameters changes is
+how far the parameters must be moved (\cref{sec:param}). Both statements that
+hold are about a distance to move.

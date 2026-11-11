@@ -3,9 +3,10 @@
 An idea from 2022 about why large neural networks learn fast, the experiments
 that tested it, and a Lean formalisation of what turned out to be provable.
 
-**Verdict:** the picture is geometrically true and does not explain learning.
-A squigglier curve passes nearer to random points, but only in a distance that
-training never measures.
+**Verdict:** the picture is geometrically true, and it does not mean what it
+was meant to. A squigglier curve passes nearer to the data, but the loss at the
+start does not see that. What the nearness buys is a short distance to move,
+not a head start in loss.
 
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
 - Slides: [2026 deck](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing), [original deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
@@ -28,8 +29,15 @@ band the sine sweeps:
    phase, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`.
 2. **All the way.** The expected nearest-point distance tends to zero as the
    frequency grows.
-3. **And it buys nothing.** The expected loss, for every regression loss, is
-   the same at every frequency.
+3. **The loss does not see it.** The expected loss, for every regression loss,
+   is the same at every frequency.
+4. **A small shift cashes it in.** Any target with values in the band is fitted
+   exactly after moving each input by at most `π / w`. For one data point that
+   is a change of phase.
+
+So the nearness is real and training can use it, by moving the input. It is a
+distance to move, not a lower loss at the start, and its price is slope. The
+plain-language account is in [`docs/phase-matching.md`](docs/phase-matching.md).
 
 This is `squiggly_line_theorem` in
 [`lean/SquigglyLine/SquigglyLineTheorem.lean`](lean/SquigglyLine/SquigglyLineTheorem.lean),
@@ -282,9 +290,9 @@ Lean's three standard axioms.
 | [`Marginal`](lean/SquigglyLine/Marginal.lean) | a regression loss sees only one-point marginals | proved |
 | [`RandomPhase`](lean/SquigglyLine/RandomPhase.lean) | frequency does not change the marginals of a random-phase wave | proved |
 | [`Verdict`](lean/SquigglyLine/Verdict.lean) | the learning claim fails for random-phase sines, for every regression loss and every data distribution | proved |
-| [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs | proved |
+| [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs; any target with labels in range is fitted exactly after a warp of the input of size at most `ρ` | proved |
 | [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
-| [`SquigglyLineTheorem`](lean/SquigglyLine/SquigglyLineTheorem.lean) | the three statements above, collected into one theorem | proved |
+| [`SquigglyLineTheorem`](lean/SquigglyLine/SquigglyLineTheorem.lean) | the four statements above, collected into one theorem | proved |
 | [`LinearModel`](lean/SquigglyLine/LinearModel.lean) | for models linear in their parameters: on the path to a fit the residual shrinks in proportion, so a movement of `ε` buys the fraction `ε / d` of it; adding parameters never moves the nearest fit further away | proved |
 | [`ExchangeRate`](lean/SquigglyLine/ExchangeRate.lean) | when the features are orthogonal on the data side with squared length `c`: the distance to the nearest fit is exactly `‖residual‖ / √c`; with orthonormal features it equals the residual | proved |
 | [`NarrowChain`](lean/SquigglyLine/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth | proved |
@@ -345,6 +353,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/wind-tunnel-and-polarizers.md` | the ReLU picture in plain words: resolving power, the tunnel that cannot turn, ReLU as a polarizer |
 | `docs/fourier-parameters.md` | what adding parameters changes, in plain words: the Fourier-series family, travel, and the exchange rate |
 | `docs/fourier-and-relu-bridge.md` | how the Fourier model and the ReLU wind tunnel relate: a fold doubles a frequency, a model is its kernel, and where the two differ |
+| `docs/phase-matching.md` | how training can use the nearness: a shift for one point, a warp for many, and what it costs |
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |

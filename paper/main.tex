@@ -44,7 +44,7 @@
 \newcommand{\lean}[1]{\texttt{#1}}
 \newcommand{\repo}{\url{https://github.com/Ghost---Shadow/squiggly-line-theorem}}
 
-\title{The Squiggly Line Theorem: Squigglier Curves Are Closer to the Data, in a Direction Training Cannot Use}
+\title{The Squiggly Line Theorem: Squigglier Curves Are Closer to the Data, in a Direction the Initial Loss Cannot See}
 
 \author{%
   Souradeep Nanda \\
@@ -72,7 +72,10 @@ divided by $\sqrt{1+K^2}$, with $K$ the slope of the sine, and $1/w$; its
 expectation tends to zero as $w$ grows. The learning claim is false for the same
 family: the expected loss of a random function depends only on its one-point
 marginals, and these do not depend on the frequency, so the expected loss is
-the same at every frequency for every regression loss. The claim about
+the same at every frequency for every regression loss. The nearness is not
+useless, though. It is a distance to move: a warp of the input that moves no
+point by more than $1/w$ makes the sine fit any target with values in its band,
+at the price of slope. The claim about
 parameters fails for width: under He initialisation the expected initial squared
 error of a ReLU network is the same at every width, and the curves of random
 networks do not get longer with width. The idea is true in parameter space. For

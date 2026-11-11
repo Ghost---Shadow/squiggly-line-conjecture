@@ -262,8 +262,27 @@ $\Gamma_f$ at distance $d(x,x')\le\rho$ from $(x,y)$. The second statement
 follows from \cref{thm:sandwich}.
 \end{proof}
 
+\begin{corollary}[Nearness is a distance to move]\label[corollary]{cor:warp}
+If $f$ covers $S$ within $\rho$, then for every target $g:X\to S$ there is a map
+$h:X\to X$ with $d(x,h(x))\le\rho$ for every $x$ and $f\circ h=g$.
+\end{corollary}
+
+\begin{proof}
+For each $x$ choose $h(x)$ as the point $x'$ of \cref{def:cover} for the label
+$g(x)$.
+\end{proof}
+
+The corollary says in what sense the nearness can be used. The loss at
+initialisation does not see it (\cref{thm:marginal}). But a function that
+covers the labels within $\rho$ fits any data with labels in $S$ once each
+input is moved by at most $\rho$. For a single data point the movement is a
+shift, which for a wave is a change of phase. For several points the shifts
+differ, and $h$ is a warp of the input, which in a network is what the earlier
+layers can supply. The corollary does not say that $h$ is continuous, or that
+training finds it.
+
 So a small oscillation scale is sufficient for a small nearest-point distance,
-and by the second statement it has a price: a function that covers labels at
+and by the second statement of \cref{thm:cover} it has a price: a function that covers labels at
 vertical distance $\vd$ within $\rho$ has slope at least
 $\sqrt{(\vd/\rho)^2-1}$. Claims (G) and (P) for a family of models therefore
 come down to how its oscillation scale and its slope depend on its size. For
@@ -299,7 +318,11 @@ $\nd\ge0$. (iii) is \cref{cor:phase}.
 \end{proof}
 
 Parts (i) and (ii) are claim (G), with a rate: both ends of the sandwich fall
-like $1/w$. Part (iii) is the failure of claim (L). On the bounded domain
+like $1/w$. Part (iii) is the failure of claim (L). By \cref{cor:warp}, any
+target with values in $[-p,p]$ is fitted exactly by $f_{w,\varphi}$ after a warp
+of the input of size at most $1/w$. For one data point this is a change of
+phase of at most $\pi$, at every frequency: a squigglier sine is closer in the
+input and exactly as far in the phase. On the bounded domain
 $[-1,1]$ of the experiments the same argument gives $2/w$ in place of $1/w$,
 which is the upper bound of \cref{prop:floor}; the exact constant is the one in
 \cref{prop:sine}.

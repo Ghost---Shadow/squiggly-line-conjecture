@@ -111,8 +111,15 @@ matter how squiggly the curve is. Wiggles let the curve pass near a point that i
 **horizontally displaced** from it. Euclidean distance rewards that; mean squared
 error gives nothing for being near in `x` and charges the full vertical gap.
 
-The squiggly line is closer to the data in a direction gradient descent does not
-measure.
+The squiggly line is closer to the data in a direction the loss does not
+measure at the start.
+
+*Correction (11 Nov 2026).* This sentence first ended "in a direction gradient
+descent does not measure", which was too strong. The nearness can be used: a
+shift of the input no larger than the nearest-point scale makes the curve pass
+through a point, and a small warp of the input fits any target
+(`docs/phase-matching.md`). What is false is that the nearness is a lower loss
+before anything moves.
 
 Direct confirmation on the object of interest — random ReLU networks, 10 inputs,
 200 random points, initial MSE before any training:

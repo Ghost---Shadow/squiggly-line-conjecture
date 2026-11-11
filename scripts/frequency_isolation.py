@@ -52,7 +52,8 @@ Result
 
 Conclusion: the geometric claim holds and the learning claim does not. The
 squiggly curve really is closer to the data -- but only in a direction that
-gradient descent does not measure.
+the loss does not measure at the start. A shift of the input can use the
+nearness (docs/phase-matching.md); the initial loss cannot see it.
 
 Run:  python frequency_isolation.py
 """

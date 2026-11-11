@@ -55,6 +55,21 @@ theorem sin_coversWithin (A φ : ℝ) {w : ℝ} (hw : 0 < w) :
     rw [harg, sin_add_int_mul_two_pi, ht, sin_arcsin hlo hhi]
     field_simp
 
+/-- **Once the phase matches.** For any data point with its label in the band, a change of
+phase of at most half a turn makes the sine pass through it. The change needed does not
+shrink with the frequency: a squigglier sine is closer in the input and exactly as far in
+the phase. -/
+theorem sin_exists_phaseShift (A φ : ℝ) {w : ℝ} (hw : 0 < w) (x : ℝ) {y : ℝ}
+    (hy : y ∈ Set.Icc (-|A|) |A|) : ∃ δ : ℝ, |δ| ≤ π ∧ A * sin (w * x + (φ + δ)) = y := by
+  obtain ⟨x', hx', hfit⟩ := sin_coversWithin A φ hw x y hy
+  refine ⟨w * (x' - x), ?_, ?_⟩
+  · rw [abs_mul, abs_of_pos hw, abs_sub_comm, ← Real.dist_eq]
+    calc w * dist x x' ≤ w * (π / w) := mul_le_mul_of_nonneg_left hx' hw.le
+      _ = π := by field_simp
+  · rw [← hfit]
+    congr 2
+    ring
+
 /-- With the phase written as a real number, the random-phase sine is the usual sine. -/
 theorem sineWave_eval_coe (A w φ : ℝ) :
     (sineWave A w).eval (φ : AddCircle (2 * π)) = fun x => A * sin (w * x + φ) := by
@@ -96,6 +111,15 @@ theorem sineWave_nearestDist_bounds (A : ℝ) {w : ℝ} (hw : 0 < w) (φ : (sine
   have h := verticalDist_le_of_lipschitz (lipschitzWith_sine A w φ') p
   have hK : ((‖A‖₊ * ‖w‖₊ : NNReal) : ℝ) ^ 2 = (A * w) ^ 2 := by simp [mul_pow]
   rwa [hK] at h
+
+/-- **A sine fits anything in its band, after a small warp.** Any target with values in the
+band is matched exactly by the sine of frequency `w` after moving each input by at most
+`π / w`. For a single data point this is a shift of the phase. -/
+theorem sineWave_exists_warp (A : ℝ) {w : ℝ} (hw : 0 < w) (φ : (sineWave A w).Param)
+    (target : ℝ → ℝ) (ht : ∀ x, target x ∈ Set.Icc (-|A|) |A|) :
+    ∃ warp : ℝ → ℝ, (∀ x, dist x (warp x) ≤ π / w) ∧
+      ∀ x, (sineWave A w).eval φ (warp x) = target x :=
+  exists_warp_of_coversWithin (sineWave_coversWithin A hw φ) target ht
 
 variable {μ : Measure (DataPoint ℝ)} [IsProbabilityMeasure μ]
 

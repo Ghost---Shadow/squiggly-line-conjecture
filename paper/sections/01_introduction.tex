@@ -47,7 +47,9 @@ frequency $w$ and labels in its band, the nearest-point distance lies between
 the vertical error divided by $\sqrt{1+K^2}$ and $1/w$, its expectation tends
 to zero, and the expected loss is the same at every frequency. The upper bound
 is an instance of a covering bound (\cref{thm:cover}), which reduces (G) for any
-family to the oscillation scale of its functions.
+family to the oscillation scale of its functions. The nearness is a distance
+to move: a warp of the input no larger than the oscillation scale fits any
+target (\cref{cor:warp}).
 \item \emph{Parameter space} (\cref{sec:param}). For a model that is linear in
 its parameters, gradient descent and the distance to the nearest fit depend on
 the model only through its kernel (\cref{thm:kernel}); with orthogonal features

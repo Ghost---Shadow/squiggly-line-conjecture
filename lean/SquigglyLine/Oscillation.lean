@@ -51,6 +51,16 @@ theorem verticalDist_le_of_lipschitz_of_coversWithin {K : ℝ≥0} (hf : Lipschi
   (verticalDist_le_of_lipschitz hf p).trans
     (mul_le_mul_of_nonneg_left (nearestDist_le_of_coversWithin h p hp) (Real.sqrt_nonneg _))
 
+/-- **Nearness can be used, by moving the input.** If `f` covers the labels within `ρ`, then
+any target with labels in range is fitted exactly by `f` after a warp of the input that moves
+no point by more than `ρ`. The loss at the start does not see the nearness; a small shift of
+the input cashes it in. -/
+theorem exists_warp_of_coversWithin (h : CoversWithin f ρ s) (target : X → ℝ)
+    (ht : ∀ x, target x ∈ s) :
+    ∃ warp : X → X, (∀ x, dist x (warp x) ≤ ρ) ∧ ∀ x, f (warp x) = target x := by
+  choose warp hwarp using fun x => h x (target x) (ht x)
+  exact ⟨warp, fun x => (hwarp x).1, fun x => (hwarp x).2⟩
+
 section Expected
 
 variable [MeasurableSpace X]

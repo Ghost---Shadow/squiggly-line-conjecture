@@ -131,6 +131,18 @@ background is in the other files of this folder.
     `chain-of-markov-chains.md` describes training as a chain of chains. Only
     the two chains separately are in Lean.
 
+## Using the nearness
+
+23. **Does gradient descent find the warp?** (**open**)
+    `exists_warp_of_coversWithin` shows that a warp of the input of size at
+    most the oscillation scale fits any target. Whether training reaches such
+    a warp, and how fast, is not shown. At high frequency the loss as a
+    function of one phase has many local minima.
+
+24. **How smooth can the warp be?** (**open**)
+    The warp moves no point far, but it may be rough. Bound its slope in terms
+    of the frequency of the curve and the spacing and labels of the data.
+
 ## Ideas noted on 11 Nov 2026, not yet thought through
 
 21. **What is batch norm, in the polarizer picture?** (**open**)
