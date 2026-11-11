@@ -318,6 +318,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/fourier-parameters.md` | what adding parameters changes, in plain words: the Fourier-series family, travel, and the exchange rate |
 | `docs/fourier-and-relu-bridge.md` | how the Fourier model and the ReLU wind tunnel relate: a fold doubles a frequency, a model is its kernel, and where the two differ |
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
+| `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/` (other) | development notes, kept as history |
 | `lean/` | the formalisation |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
