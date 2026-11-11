@@ -388,6 +388,7 @@ Lean's three standard axioms.
 | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) | mode connectivity: for a model linear in its weights the straight line between two fits is all fits and the error on any line never exceeds the worse end; for the two-weight model `a * b` the output on the line between two fits is off by exactly `t (1 - t) (a₁ - a₂)(b₁ - b₂)`, and halfway between a fit and its mirror image, which is the same function, the output is zero | proved |
 | [`Forgetting`](lean/SquigglyLine/Forgetting.lean) | catastrophic forgetting: a gradient step on a new task changes the old task's errors through the cross kernel between old and new inputs only, so nothing is forgotten when it is zero; and if gradient descent fits the new task, the old errors change by at most the size of the old features times the new task's travel | proved |
 | [`BenignOverfitting`](lean/SquigglyLine/BenignOverfitting.lean) | benign overfitting: the nearest fit fits signal and noise exactly and moves a new answer by each part's overlap divided by the strength of its direction; with junk features of strength `c'` in every direction the noise term is at most the overlap over `c'`, however weak the noise direction, while the signal term changes by at most the fraction `c' / lamS` | proved |
+| [`NeuralCollapse`](lean/SquigglyLine/NeuralCollapse.lean) | neural collapse geometry: for `K` arrows of length one, if every pair has overlap at most `c` then `(K - 1) c ≥ -1`, so no arrangement is farther apart than the simplex; and evenly spread arrows reach that limit exactly when they add up to zero | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -447,6 +448,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/neural-collapse.md` | neural collapse: why the class points end up on a simplex, and why it is centred |
 | `docs/benign-overfitting.md` | benign overfitting: how a model can fit the noise exactly and not be hurt, and how that sits beside double descent |
 | `docs/forgetting.md` | catastrophic forgetting: what a new task costs an old one, and why forgetting and generalising are one mechanism |
 | `docs/mode-connectivity.md` | mode connectivity: one flat valley without depth, the smallest hill with it, and how a symmetry removes the hill |

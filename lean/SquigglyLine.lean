@@ -39,6 +39,7 @@ The squiggly line conjecture, formalised.
 | `ModeConnectivity`| linear in weights: no hill between fits; `a * b`: the hill       | proved    |
 | `Forgetting`     | a new task changes old errors through the cross kernel only      | proved    |
 | `BenignOverfitting`| the nearest fit swallows noise; junk features cap the damage   | proved    |
+| `NeuralCollapse` | `K` unit arrows: every pair ≤ `c` forces `(K - 1) c ≥ -1`        | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -77,3 +78,4 @@ import SquigglyLine.EdgeOfStability
 import SquigglyLine.ModeConnectivity
 import SquigglyLine.Forgetting
 import SquigglyLine.BenignOverfitting
+import SquigglyLine.NeuralCollapse
