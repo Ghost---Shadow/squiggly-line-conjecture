@@ -11,6 +11,8 @@ The squiggly line conjecture, formalised.
 | `Marginal`       | a regression loss sees only one-point marginals                 | proved    |
 | `RandomPhase`    | frequency does not change the marginals of a random-phase wave  | proved    |
 | `Verdict`        | so the learning claim fails for random-phase waves              | proved    |
+| `Oscillation`    | `nearest ≤ ρ` when `f` covers the labels within `ρ`; slope tax  | proved    |
+| `SineCloser`     | sines: `vertical / √(1 + (A w)²) ≤ nearest ≤ π / w`; limit zero | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -20,3 +22,5 @@ import SquigglyLine.Coverage
 import SquigglyLine.Marginal
 import SquigglyLine.RandomPhase
 import SquigglyLine.Verdict
+import SquigglyLine.Oscillation
+import SquigglyLine.SineCloser

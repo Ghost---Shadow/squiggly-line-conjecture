@@ -259,10 +259,20 @@ start. G is true. P is false for width and weak for depth. L is false.
 - **A limit of the test family.** A random-phase sine has one degree of
   freedom and can never fit more than two points at once. The mean per-point
   distance cannot see this, which is why `n` dropped out in §6.
+- **Claim G, proved for sines.** If `f` takes every label in range within
+  distance `ρ` of every input, then `nearest ≤ ρ`. A sine of frequency `w` does
+  so within `π/w`. With the sandwich: `vertical / √(1 + (A·w)²) ≤ nearest ≤ π/w`
+  at every data point and phase. So the expected nearest-point distance tends
+  to zero as the frequency grows while every regression loss stays fixed.
+- **What the conjecture reduces to.** The nearest-point distance is controlled
+  by the oscillation scale `ρ` of the function, and a small `ρ` forces a large
+  slope. The conjecture holds for a model family exactly when its oscillation
+  scale shrinks with size. For random networks that question is open.
 - **Formalisation.** `lean/` states the conjecture and the learning claim and
-  proves the sandwich, the tube identity, the marginal lemma, and that the
-  learning claim fails for random-phase sines. Not formalised: claim G, the
-  `V/(4l)` bound, and anything about network width.
+  proves the sandwich, the tube identity, the marginal lemma, the covering
+  bound, the two-sided bound for sines, and that the learning claim fails for
+  random-phase sines. Not formalised: the constant 0.2974, the `V/(4l)` bound,
+  and anything about network width.
 
 ---
 

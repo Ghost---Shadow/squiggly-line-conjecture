@@ -27,7 +27,7 @@ That is three claims in a chain:
 
 | # | Claim | Status |
 |---|---|---|
-| 1 | **Geometry.** A squigglier curve has a smaller mean distance to the nearest point of the curve. | True. Measured, and bounded by a theorem. |
+| 1 | **Geometry.** A squigglier curve has a smaller mean distance to the nearest point of the curve. | True. Proved for sines, with a rate. |
 | 2 | **Parameters.** More parameters give a squigglier random function. | False for width. Depth adds a little. |
 | 3 | **Learning.** A smaller nearest-point distance means a smaller training loss at the start. | False. Proved. |
 
@@ -71,6 +71,45 @@ is `E[y²] + E[f(x)²]` at every width.
 
 Results 1 to 3 are proved in Lean (see [the formalisation](#the-formalisation)).
 The bound in result 3 and result 4 are derivations checked by the scripts below.
+
+## The conjecture, un-conjectured
+
+"More parameters, closer to the data" is not one claim that is true or false.
+It reduces to one property of the function, and that property can be checked
+family by family.
+
+Say that `f` **covers the labels within `ρ`** when, near every input, some
+input at distance at most `ρ` is sent to any label you ask for. The smallest
+such `ρ` is the oscillation scale of `f`: how far you must walk along the input
+to see every label. Then, at every data point with a label in range:
+
+```
+vertical / √(1 + K²)  ≤  nearest  ≤  ρ
+```
+
+So the nearest-point distance is small exactly when the oscillation scale is
+small, and a small oscillation scale forces a large slope `K`. The conjecture
+holds for a family of models if and only if its oscillation scale shrinks as
+the model grows. Parameter count does not enter except through that.
+
+**Sines: settled.** A sine of frequency `w` covers its band within `π / w`, so
+
+```
+vertical / √(1 + (A·w)²)  ≤  nearest  ≤  π / w
+```
+
+at every data point and every phase. Both ends fall like `1 / w`. Put next to
+the marginal lemma, this gives the whole story as one theorem
+(`closer_but_no_better`): as the frequency grows, the expected nearest-point
+distance tends to zero, and the expected loss, for every regression loss, does
+not change at all.
+
+**Networks: reduced, not settled.** The open question is now precise: how does
+the oscillation scale of a random network depend on width, depth and weight
+scale? A family whose slope stays bounded cannot have a shrinking oscillation
+scale, so it cannot get closer. Hanin, Jeong and Rolnick's result (expected
+length does not grow at He initialisation) points to "no" for width. That step
+is not formalised here.
 
 ## The evidence
 
@@ -156,6 +195,8 @@ Lean's three standard axioms.
 | [`Marginal`](lean/SquigglyLine/Marginal.lean) | a regression loss sees only one-point marginals | proved |
 | [`RandomPhase`](lean/SquigglyLine/RandomPhase.lean) | frequency does not change the marginals of a random-phase wave | proved |
 | [`Verdict`](lean/SquigglyLine/Verdict.lean) | the learning claim fails for random-phase sines, for every regression loss and every data distribution | proved |
+| [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`, and the slope this costs | proved |
+| [`SineCloser`](lean/SquigglyLine/SineCloser.lean) | for sines, `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`; the expected distance tends to zero while the loss stays fixed | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -167,8 +208,8 @@ theorem not_learningClaim_sineWave (A : ℝ) (hℓ : Measurable ℓ) (frequency 
     (μ : Measure (DataPoint ℝ)) : ¬ LearningClaim ℓ (fun m => sineWave A (frequency m)) μ
 ```
 
-Not formalised: that frequency lowers the nearest-point distance (measured
-only), the bound `V / (4·l)`, and the statements about network width.
+Not formalised: the exact constant `0.2974` for sines, the bound `V / (4·l)`,
+and the statements about network width.
 
 To build (the first build downloads Mathlib):
 
@@ -178,8 +219,8 @@ lake exe cache get
 lake build
 ```
 
-The files were checked with Lean 4.36.0-rc1 against the Mathlib commit pinned
-in [`lean/lakefile.toml`](lean/lakefile.toml).
+`lake build` passes with Lean 4.36.0-rc1 and the Mathlib commit pinned in
+[`lean/lake-manifest.json`](lean/lake-manifest.json).
 
 ## Running the experiments
 
