@@ -32,6 +32,7 @@ The squiggly line conjecture, formalised.
 | `SameKernel`     | same kernel and test row: same prediction at every step          | proved    |
 | `Pruning`        | pruning subtracts a kernel: slower, farther; when a ticket wins  | proved    |
 | `SkipAndNorm`    | a skip is a bypass (never dims); a norm is an amplifier          | proved    |
+| `SmallSteps`     | a square-law loss over `N` steps is at most `c D² / N`           | proved    |
 -/
 import SquigglyLine.Defs
 import SquigglyLine.RandomFunction
@@ -63,3 +64,4 @@ import SquigglyLine.Reparam
 import SquigglyLine.SameKernel
 import SquigglyLine.Pruning
 import SquigglyLine.SkipAndNorm
+import SquigglyLine.SmallSteps

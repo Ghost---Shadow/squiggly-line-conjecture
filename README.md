@@ -381,6 +381,7 @@ Lean's three standard axioms.
 | [`SameKernel`](lean/SquigglyLine/SameKernel.lean) | same kernel, same predictions: a gradient step changes the answer at a test point through the kernel only, so two models with the same kernel, the same test row and the same start give the same answer at that point after every step and at the fit, whatever their weights look like | proved |
 | [`Pruning`](lean/SquigglyLine/Pruning.lean) | lottery tickets: the kernel of a model is the sum of the kernels of the kept and the dropped weights, so pruning slows every direction it had strength in and, with orthogonal features, moves the nearest fit farther by `√((c + c') / c)`; a ticket wins on a direction exactly when the dropped weights had no strength there | proved |
 | [`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean) | skip connections and normalisation as optics: a plate with a bypass never dims the light, does nothing when crossed, and turns the light only part of the way; a plate followed by an amplifier delivers full strength along its axis for any turn short of a right angle, so a whole stack loses nothing, but it cannot revive light a crossed plate blocked | proved |
+| [`SmallSteps`](lean/SquigglyLine/SmallSteps.lean) | many small steps: if a step of size `s` keeps at least `1 - c s²`, then `N` steps over a distance `D` keep at least `1 - c D² / N`, while a cost in proportion to the step gains nothing from being cut up; for polarizers, any turn `φ` in `N` plates keeps at least `1 - φ² / (2N)`, and halving every turn never loses | proved |
 
 Both halves of the conjecture are one definition, `StartsCloser cost M μ`: the
 expected cost falls strictly as the model grows. The conjecture uses the
@@ -440,6 +441,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/three-polarizers.md` | the three-polarizer experiment in plain words, and why the photon's path is a squiggly line |
 | `docs/chain-of-markov-chains.md` | training as a chain through the layers inside a chain through the steps, and what having no memory costs |
 | `docs/open-problems.md` | twenty problems this repository leaves open, each marked open, known but not formalised, or measured |
+| `docs/small-steps.md` | many small steps: why cutting a jump into pieces helps, when it does not, and what that says about diffusion, curricula and annealing |
 | `docs/skip-and-norm.md` | skip connections as a bypass around a polarizer, normalisation as an amplifier after it |
 | `docs/lottery-ticket.md` | lottery tickets: what pruning costs, and when it costs nothing |
 | `docs/same-kernel.md` | same kernel, same predictions: what the platonic representation hypothesis would buy if it holds |
