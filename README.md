@@ -37,8 +37,15 @@ machine-checked statements about well-known puzzles of deep learning:
 [softmax and cross-entropy](docs/supporting/training/cross-entropy.md),
 [dropout](docs/supporting/training/dropout.md),
 [attention and in-context learning](docs/supporting/network-shape/attention.md),
-[signed distance functions](docs/supporting/network-shape/signed-distance.md), and
-[the kernel trick](docs/networks/kernel-trick.md).
+[signed distance functions](docs/supporting/network-shape/signed-distance.md),
+[the kernel trick](docs/networks/kernel-trick.md),
+[Fourier features and position signals](docs/networks/fourier-lift.md),
+[the perceptron, XOR and no free lunch](docs/supporting/training/perceptron.md),
+[adversarial examples and temperature](docs/supporting/network-shape/network-slope.md),
+[ensembles and diffusion](docs/supporting/new-inputs/averaging.md),
+[normalisation](docs/supporting/training/symmetry.md),
+[Adam, clipping and low-rank training](docs/supporting/training/step-rules.md), and
+[He initialisation](docs/supporting/network-shape/gain.md).
 Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
