@@ -32,8 +32,13 @@ machine-checked statements about well-known puzzles of deep learning:
 [bias and variance](docs/supporting/new-inputs/bias-variance.md),
 [the linear scaling rule for batch size](docs/supporting/training/batch-size.md),
 [storage capacity](docs/supporting/network-shape/capacity.md),
-[compression and code length](docs/supporting/network-shape/code-length.md), and
-[the Chinchilla scaling rule](docs/supporting/training/compute-budget.md).
+[compression and code length](docs/supporting/network-shape/code-length.md),
+[the Chinchilla scaling rule](docs/supporting/training/compute-budget.md),
+[softmax and cross-entropy](docs/supporting/training/cross-entropy.md),
+[dropout](docs/supporting/training/dropout.md),
+[attention and in-context learning](docs/supporting/network-shape/attention.md),
+[signed distance functions](docs/supporting/network-shape/signed-distance.md), and
+[the kernel trick](docs/networks/kernel-trick.md).
 Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
@@ -636,6 +641,56 @@ The full list, with a status for each, is in
 
 Experiments that are specified and not yet run are in
 [`handoff.md`](handoff.md).
+
+## Wishlist
+
+The open questions above are ones somebody could pick up now. This is the
+other list: proofs I want and cannot get yet. The aim is to say all of deep
+learning in the terms used here (slope, nearness, travel, the kernel and the
+lift), with every step machine-checked. Each row says what is in the way.
+
+The papers are recalled from memory and have not been checked against this
+list.
+
+**The mathematics is known. A machine-checked proof is out of reach here for
+now.** Most of these need facts about large random matrices, which the proof
+library does not have yet. The rest are long.
+
+| What I want proved | What exists | What is in the way |
+|---|---|---|
+| A wide network trains like a model linear in its weights: its kernel hardly moves. This one result would carry every fixed-kernel row of section 8 to real, wide networks. | Jacot et al. 2018; Lee et al. 2019 | Limits of wide random layers, and control of the kernel along the whole training path. |
+| Random features are nearly orthogonal, so travel falls like one over the root of the parameter count. | Measured in section 5 | A concentration bound for random matrices. |
+| The height of the double-descent peak, and that the test error peaks where the travel does. | Hastie et al. 2022; here only the travel is proved | The spectrum of a large random matrix. |
+| Fitting noise is harmless exactly when the weak directions are many and even. | Bartlett et al. 2020; here one junk direction | The same. |
+| Cross-entropy on separable data sends the weights toward the widest-margin direction. | Soudry et al. 2018; here only that no finite score is best | A long limit argument on the training path. |
+| A big enough random network already contains a small one that fits (the strong lottery ticket). | Malach et al. 2020; here pruning for a fixed kernel | Counting arguments with chance in them. |
+| Depth beats width for networks of any depth. | Telgarsky 2016; here one hidden layer against a deep one | The general bound on how many straight pieces a network draws. |
+| Approximation with a rate in many dimensions. | Barron 1993; here one dimension | Fourier analysis in many dimensions. |
+| Neural collapse comes out of training. | Proved for a simplified model in the literature; here only that the simplex is the limit | The training path, even for the simplified model. |
+| A distance field changes at rate exactly one away from the shape (the eikonal equation). | Classical; here only "at most one" | Geometry of nearest points; not attempted yet. |
+| Dropout and weight decay under cross-entropy. | Wager, Wang and Liang 2013, to second order | The error is no longer linear in the outputs. |
+
+**Nobody knows yet.** These need new mathematics, or a statement precise
+enough to prove.
+
+| What I want proved | What exists | What is in the way |
+|---|---|---|
+| How squiggly a network with random weights is, as a function of width, depth and weight scale. This is the original conjecture for networks. | [`docs/open-problems.md`](docs/open-problems.md), item 1 | No known formula for the oscillation scale. |
+| What happens when the lift moves. A network that learns features is choosing its own upstairs ([kernel trick](docs/networks/kernel-trick.md)). Every row of section 8 would need a version for it. | Theories for special cases | No general theory of feature learning. |
+| Why the sharpness of a real network rises to `2 / η` and then stays there. | Observed: Cohen et al. 2021; here only the threshold | The kernel moves, and why it stops at the edge is not understood. |
+| Grokking: why a network can start to generalise long after it fits. | Observed: Power et al. 2022; argued here from the clocks of spectral bias | No agreed statement to prove. |
+| Why adaptive methods such as Adam beat plain gradient descent on transformers. | Observed | Not understood. |
+| Whether flat minima generalise, and in what sense of flat. | [Flat minima](docs/supporting/training/flat-minima.md) shows plain flatness cannot be the reason | No measure of flatness that survives rescaling and still predicts. |
+| No hill between two trained networks once the neurons of one are relabelled. | Conjectured: Entezari et al. 2022; here the linear case | Open even for small networks. |
+| That training a transformer finds heads that run gradient descent on the prompt, and what softmax attention with feed-forward layers computes. | Proved for linear attention in the literature; here only that one head can be one step | The softmax and the other layers. |
+| Why the loss falls as a power of parameters and of data, and what sets the powers. | Measured: Kaplan et al. 2020; Hoffmann et al. 2022; here only the balance rule | The form of the loss is a measurement with no derivation. |
+| A bound on test error that is tight enough to mean something for a real network. | Bounds exist and are mostly far too loose | Not known what quantity to bound with. |
+| Why a network trained to remove noise makes new images and does not copy its training set. | Observed in diffusion models | Not understood. |
+| How many features a layer can hold in fewer dimensions, and how training lays them out (superposition). | Observed: Elhage et al. 2022; here the opposite bound for well-separated directions | No theory of the training side. |
+| What normalising across a batch does. | [`docs/open-problems.md`](docs/open-problems.md), item 21; here one example at a time | Each example's path depends on the others. |
+
+At the far end is the question of why predicting the next word gives a model
+that can do so much else. There is not yet a statement of it to prove.
 
 ## Citing
 

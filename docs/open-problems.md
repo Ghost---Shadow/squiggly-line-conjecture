@@ -11,6 +11,9 @@ Each problem has a status:
   exercise. What is missing is a machine-checked proof that fits this project.
 - **measured**: an experiment here supports it. No proof.
 
+Larger aims that are out of reach for now are in the Wishlist section of the
+README.
+
 Definitions and proved results are in `lean/SquigglyLine/`, in one folder
 for each group of the README. Plain-language background is in the other
 notes under `docs/`, grouped the same way.
