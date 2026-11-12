@@ -43,6 +43,7 @@ In `SquigglyLine/Networks/`.
 | `Kernel`          | same kernel: same gradient-descent path and same travel               |
 | `DoubleDescent`   | a near fit is tame; travel is large only where the kernel is weak     |
 | `Lift`            | squiggly below is flat above; slope ≤ tilt × stretch; kernel trick   |
+| `FourierLift`     | the Fourier lift stretches by at most `w`; its kernel sees only gaps  |
 
 ## 3. Supporting material
 
@@ -123,6 +124,7 @@ import SquigglyLine.Networks.ExchangeRate
 import SquigglyLine.Networks.Kernel
 import SquigglyLine.Networks.DoubleDescent
 import SquigglyLine.Networks.Lift
+import SquigglyLine.Networks.FourierLift
 -- 3. Supporting material: how training moves
 import SquigglyLine.Supporting.Training.LeastAction
 import SquigglyLine.Supporting.Training.SpectralBias

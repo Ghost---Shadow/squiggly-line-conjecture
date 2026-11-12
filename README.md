@@ -421,6 +421,7 @@ same way.
 | [`Kernel`](lean/SquigglyLine/Networks/Kernel.lean) | a gradient step sends the error `r` to `r − η·K·r`; two models with the same kernel have the same training path and the same travel |
 | [`DoubleDescent`](lean/SquigglyLine/Networks/DoubleDescent.lean) | a fit near the start is tame everywhere; along a direction of strength `λ` the travel is exactly `‖residual‖ / √λ` |
 | [`Lift`](lean/SquigglyLine/Networks/Lift.lean) | a model linear in its weights is a flat plane seen through a lift: a point is on the squiggly line exactly when its lift is on the plane; the slope is at most the size of the weights times the stretch of the lift; weights moved along the lifted data predict through the kernel alone ([note](docs/networks/kernel-trick.md)) |
+| [`FourierLift`](lean/SquigglyLine/Networks/FourierLift.lean) | winding the input round a circle at frequency `w` stretches distances by at most `w`, so a wave is no steeper than its weights times its frequency; the kernel is `cos(w(x − x′))`, which sees only the gap, so shifting data and question together changes no answer ([note](docs/networks/fourier-lift.md)) |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the

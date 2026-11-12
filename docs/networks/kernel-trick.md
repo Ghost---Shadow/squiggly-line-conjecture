@@ -113,6 +113,8 @@ linear layer).
 
 - **A lift that moves.** See above.
 - **The converse for kernels.** Recalled, not proved.
-- **The sine wave picture** is described and not formalised.
-- **How much stretch a given lift has.** For the Fourier lift with `m` terms
-  it grows with `m`. Not computed here.
+- **The sine wave picture** is now in `FourierLift.lean`; see
+  `docs/networks/fourier-lift.md`.
+- **How much stretch a given lift has.** For the Fourier lift of one
+  frequency `w` it is at most `w` (`lipschitzWith_fourierLift`). Other lifts
+  are not computed.

@@ -87,9 +87,9 @@ The papers and years are recalled from memory and have not been checked.
 | Neural tangent kernel (Jacot et al. 2018) | For training, a model is its kernel. | **proved** for a fixed kernel: `Kernel.lean` |
 | Spectral bias (Rahaman et al. 2019) | Gentle directions of the kernel are learned first. | **proved**: `SpectralBias.lean` |
 | Edge of stability (Cohen et al. 2021) | A direction is stable up to strength `2 / η`. | **proved**: `EdgeOfStability.lean` |
-| Fourier features and NeRF (Tancik et al. 2020; Mildenhall et al. 2020) | A Fourier lift of frequency `w` stretches distances by exactly up to `w`. That stretch is where the fine detail comes from. | **next** |
-| Position signals (Vaswani et al. 2017; Su et al. 2021) | The same lift applied to position. Moving along the sequence is a fixed turn, so the kernel of two positions depends only on how far apart they are. | **next**, with the row above |
-| Convolution (LeCun et al. 1989) | A kernel that depends only on how far apart two inputs are gives the same line when the data is shifted. | **next**, with the row above |
+| Fourier features and NeRF (Tancik et al. 2020; Mildenhall et al. 2020) | A Fourier lift of frequency `w` stretches distances by exactly up to `w`. That stretch is where the fine detail comes from. | **proved**: `FourierLift.lean` |
+| Position signals (Vaswani et al. 2017; Su et al. 2021) | The same lift applied to position. Moving along the sequence is a fixed turn, so the kernel of two positions depends only on how far apart they are. | **proved**: `FourierLift.lean` |
+| Convolution (LeCun et al. 1989) | A kernel that depends only on how far apart two inputs are gives the same line when the data is shifted. | **proved**: `FourierLift.lean` |
 | Platonic representations (Huh et al. 2024) | Same kernel, same learner. | **proved**: `SameKernel.lean` |
 | Catastrophic forgetting (Kirkpatrick et al. 2017) | A new task moves an old one through the kernel between them. | **proved**: `Forgetting.lean` |
 | Benign overfitting (Bartlett et al. 2020) | Junk directions of the kernel swallow the noise. | **proved** for one junk direction: `BenignOverfitting.lean` |
