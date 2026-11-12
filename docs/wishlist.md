@@ -68,13 +68,13 @@ The papers and years are recalled from memory and have not been checked.
 | Loss along a line (Goodfellow et al. 2015) | From the start to the fit in a straight line, the loss only falls. | **proved** for linear models: `LinearModel.lean`, `CrossEntropy.lean` |
 | Mode connectivity (Garipov et al. 2018; Draxler et al. 2018) | No hill on the straight path between two fits. | **proved** for linear models: `ModeConnectivity.lean` |
 | Flat minima (Keskar et al. 2017; Dinh et al. 2017) | Rescaling changes flatness and travel and leaves the line alone. | **proved**: `Reparam.lean` |
-| Normalisation (Ioffe and Szegedy 2015; Ba et al. 2016) | Weights that feed a normalisation can be rescaled freely, so the gradient is at right angles to them and each step makes them longer. Their size stops setting the slope. | **next**. One example at a time: **proved**, `SkipAndNorm.lean` |
+| Normalisation (Ioffe and Szegedy 2015; Ba et al. 2016) | Weights that feed a normalisation can be rescaled freely, so the gradient is at right angles to them and each step makes them longer. Their size stops setting the slope. | **proved**: `Symmetry.lean`, `SkipAndNorm.lean` |
 | Adam (Kingma and Ba 2015) | Adam travels the same distance per step along a strong direction and a weak one. It removes the "strong first" clock of spectral bias, so squiggles are fitted sooner. | **next** |
 | Gradient clipping (Pascanu et al. 2013) | A cap on travel per step. | **next**, with Adam |
 | Low-rank adaptation, intrinsic dimension (Li et al. 2018; Hu et al. 2021) | Training only some directions never shortens the travel. | **next** |
 | Quantisation (Courbariaux et al. 2015 and after) | Moving the weights by a rounding error moves each output by at most that error times the stretch of the lift. | **next** |
-| Relabelling neurons (Entezari et al. 2022) | Shuffling the hidden units gives the same line at a different place in weight space. Travel is to the nearest copy. | **next**. No hill after shuffling: **out of reach** |
-| Deep linear networks (Saxe et al. 2014; Arora et al. 2018) | For two weights multiplied, training keeps `a² − b²` almost fixed, so the slope is shared between the layers. | **next** |
+| Relabelling neurons (Entezari et al. 2022) | Shuffling the hidden units gives the same line at a different place in weight space. Travel is to the nearest copy. | **proved**: `Symmetry.lean`. No hill after shuffling: **out of reach** |
+| Deep linear networks (Saxe et al. 2014; Arora et al. 2018) | For two weights multiplied, training keeps `a² − b²` almost fixed, so the slope is shared between the layers. | **proved**: `Symmetry.lean` |
 | Linear scaling rule (Goyal et al. 2017) | Two small steps are one big step, up to a term through the kernel. | **proved**: `BatchSize.lean` |
 | Scaling laws (Kaplan et al. 2020; Hoffmann et al. 2022) | The best split of a budget balances the two terms of the loss. | **proved**: `ComputeBudget.lean` |
 | Lottery ticket (Frankle and Carbin 2019) | Pruning subtracts a kernel: slower and farther. | **proved** for a fixed kernel: `Pruning.lean` |

@@ -64,6 +64,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `CrossEntropy`    | softmax loss pushes by prediction minus label; same kernel       |
 | `Dropout`         | expected dropout loss = loss + `v` × squared shares: weight decay |
 | `Perceptron`      | margin is nearness; at most `(R / γ)²` mistakes; XOR; no free lunch |
+| `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
 
 ### What a fit does to new inputs
 
@@ -137,6 +138,7 @@ import SquigglyLine.Supporting.Training.ComputeBudget
 import SquigglyLine.Supporting.Training.CrossEntropy
 import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
+import SquigglyLine.Supporting.Training.Symmetry
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
