@@ -61,6 +61,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `BatchSize`       | two small steps = one big step minus an `η²` cross-kernel term   |
 | `ComputeBudget`   | `A / N + B / D` with `N D` fixed is least when the terms balance |
 | `CrossEntropy`    | softmax loss pushes by prediction minus label; same kernel       |
+| `Dropout`         | expected dropout loss = loss + `v` × squared shares: weight decay |
 
 ### What a fit does to new inputs
 
@@ -129,6 +130,7 @@ import SquigglyLine.Supporting.Training.WeightDecay
 import SquigglyLine.Supporting.Training.BatchSize
 import SquigglyLine.Supporting.Training.ComputeBudget
 import SquigglyLine.Supporting.Training.CrossEntropy
+import SquigglyLine.Supporting.Training.Dropout
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
