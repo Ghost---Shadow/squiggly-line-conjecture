@@ -11,8 +11,9 @@ Each problem has a status:
   exercise. What is missing is a machine-checked proof that fits this project.
 - **measured**: an experiment here supports it. No proof.
 
-Definitions and proved results are in `lean/SquigglyLine/`. Plain-language
-background is in the other files of this folder.
+Definitions and proved results are in `lean/SquigglyLine/`, in one folder
+for each group of the README. Plain-language background is in the other
+files of this folder.
 
 ## The network case
 

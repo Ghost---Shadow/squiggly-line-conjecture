@@ -13,7 +13,7 @@ every width: E[f(x)^2] = 2 * |x|^2 / d_in. So the expected initial MSE does
 not depend on width. With unscaled N(0, 1) weights each hidden layer multiplies
 the second moment by width / 2, and the initial MSE grows with width.
 
-This is the network version of the marginal lemma in lean/SquigglyLine/Marginal.lean:
+This is the network version of the marginal lemma in lean/SquigglyLine/Theorem/Marginal.lean:
 the expected loss reads only the distribution of f(x) at each single x.
 
 Setup: 10 inputs, 200 points, x and y uniform on [-1, 1], two hidden layers,

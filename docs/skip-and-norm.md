@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/SkipAndNorm.lean`), **recalled**, or **open**.
+`lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean`), **recalled**, or **open**.
 
 ## The question
 

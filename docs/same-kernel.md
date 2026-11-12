@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/SameKernel.lean` unless another file is named),
+`lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean` unless another file is named),
 **recalled**, or **open**.
 
 ## The idea

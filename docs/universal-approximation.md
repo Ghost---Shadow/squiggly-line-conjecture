@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/UniversalApproximation.lean` unless another file is
+`lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean` unless another file is
 named), **recalled**, or **open**.
 
 ## The idea

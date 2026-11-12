@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/BiasVariance.lean` unless another file is named),
+`lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean` unless another file is named),
 **recalled**, **argued**, or **open**.
 
 ## The idea

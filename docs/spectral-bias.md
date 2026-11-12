@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/SpectralBias.lean`), **recalled**, **argued**, or **open**.
+`lean/SquigglyLine/Supporting/Training/SpectralBias.lean`), **recalled**, **argued**, or **open**.
 
 ## The idea
 

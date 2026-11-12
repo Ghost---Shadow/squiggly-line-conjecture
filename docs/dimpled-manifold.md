@@ -1,7 +1,7 @@
 # The dimpled manifold, in the squiggly line picture
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/SquigglyLine/Dimple.lean`),
+done. Each statement is marked **proved** (in `lean/SquigglyLine/Supporting/NewInputs/Dimple.lean`),
 **recalled** (from the paper, not checked against it line by line), or **open**.
 
 ## The hypothesis

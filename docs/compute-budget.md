@@ -2,7 +2,7 @@
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/ComputeBudget.lean` unless another file is named),
+`lean/SquigglyLine/Supporting/Training/ComputeBudget.lean` unless another file is named),
 **recalled**, or **open**.
 
 ## The idea

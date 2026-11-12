@@ -222,7 +222,7 @@ So the nearness is real, and training can use it by moving the input. It is a
 distance to move. It is not a lower loss at the start, and its price is slope.
 
 This is `squiggly_line_theorem_general` in
-[`lean/SquigglyLine/Compression.lean`](lean/SquigglyLine/Compression.lean). A
+[`lean/SquigglyLine/Theorem/Compression.lean`](lean/SquigglyLine/Theorem/Compression.lean). A
 sine with a random phase is the standard example (`squiggly_line_theorem`, with
 `ρ / w = π / w`). Plain-language accounts:
 [`docs/general-theorem.md`](docs/general-theorem.md) and
@@ -378,32 +378,33 @@ to 5.1 from 1 to 16 layers;
 ## 7. The proofs
 
 [`lean/`](lean) is a Lean 4 project on Mathlib. There is no `sorry`, and each
-theorem depends only on Lean's three standard axioms.
+theorem depends only on Lean's three standard axioms. The files are in one
+folder for each group below.
 
-**The theorem.**
-
-| File | What it proves |
-|---|---|
-| [`Defs`](lean/SquigglyLine/Defs.lean), [`RandomFunction`](lean/SquigglyLine/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the 2022 conjecture as a statement |
-| [`Sandwich`](lean/SquigglyLine/Sandwich.lean) | `vertical / √(1 + K²) ≤ nearest ≤ vertical` |
-| [`Marginal`](lean/SquigglyLine/Marginal.lean) | a regression loss sees only one-point marginals |
-| [`Coverage`](lean/SquigglyLine/Coverage.lean) | the mean distance to a set is its uncovered mass, integrated over the radius |
-| [`Oscillation`](lean/SquigglyLine/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`; any target in range is fitted after moving each input by at most `ρ` |
-| [`RandomPhase`](lean/SquigglyLine/RandomPhase.lean), [`SineCloser`](lean/SquigglyLine/SineCloser.lean), [`Verdict`](lean/SquigglyLine/Verdict.lean), [`SquigglyLineTheorem`](lean/SquigglyLine/SquigglyLineTheorem.lean) | the sine case: `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`, the loss does not depend on the frequency, and so the learning claim fails |
-| [`Compression`](lean/SquigglyLine/Compression.lean) | **the theorem for any function**: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the expected loss unchanged |
-
-**Networks and parameter space.**
+**The theorem**, in [`lean/SquigglyLine/Theorem/`](lean/SquigglyLine/Theorem).
 
 | File | What it proves |
 |---|---|
-| [`NarrowChain`](lean/SquigglyLine/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth |
-| [`Depth`](lean/SquigglyLine/Depth.lean), [`TentCloser`](lean/SquigglyLine/TentCloser.lean) | `L` layers of two neurons make `2^L` straight pieces and pass within `1 / 2^L` of every point of the unit square |
-| [`Bridge`](lean/SquigglyLine/Bridge.lean) | one fold doubles a frequency, so `L` folds seen through a fixed lens are one Fourier term of frequency `2^L` |
-| [`Polarizer`](lean/SquigglyLine/Polarizer.lean), [`ThreePolarizers`](lean/SquigglyLine/ThreePolarizers.lean) | ReLU sends a point to the nearest point of the positive quadrant; Malus's law; a quarter turn in `N` plates delivers at least `1 − π²/(8N)` |
-| [`MarkovChains`](lean/SquigglyLine/MarkovChains.lean) | through the layers: merged stays merged, dead stays dead; through training with orthogonal features: the error after `t` steps is `(1 − η·c)ᵗ` times the start |
-| [`LinearModel`](lean/SquigglyLine/LinearModel.lean), [`ExchangeRate`](lean/SquigglyLine/ExchangeRate.lean) | on the straight path to a fit the error shrinks in proportion; adding parameters never moves the nearest fit away; with orthogonal features the travel is `‖residual‖ / √c` |
-| [`Kernel`](lean/SquigglyLine/Kernel.lean) | a gradient step sends the error `r` to `r − η·K·r`; two models with the same kernel have the same training path and the same travel |
-| [`DoubleDescent`](lean/SquigglyLine/DoubleDescent.lean) | a fit near the start is tame everywhere; along a direction of strength `λ` the travel is exactly `‖residual‖ / √λ` |
+| [`Defs`](lean/SquigglyLine/Theorem/Defs.lean), [`RandomFunction`](lean/SquigglyLine/Theorem/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Theorem/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the 2022 conjecture as a statement |
+| [`Sandwich`](lean/SquigglyLine/Theorem/Sandwich.lean) | `vertical / √(1 + K²) ≤ nearest ≤ vertical` |
+| [`Marginal`](lean/SquigglyLine/Theorem/Marginal.lean) | a regression loss sees only one-point marginals |
+| [`Coverage`](lean/SquigglyLine/Theorem/Coverage.lean) | the mean distance to a set is its uncovered mass, integrated over the radius |
+| [`Oscillation`](lean/SquigglyLine/Theorem/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`; any target in range is fitted after moving each input by at most `ρ` |
+| [`RandomPhase`](lean/SquigglyLine/Theorem/RandomPhase.lean), [`SineCloser`](lean/SquigglyLine/Theorem/SineCloser.lean), [`Verdict`](lean/SquigglyLine/Theorem/Verdict.lean), [`SquigglyLineTheorem`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) | the sine case: `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`, the loss does not depend on the frequency, and so the learning claim fails |
+| [`Compression`](lean/SquigglyLine/Theorem/Compression.lean) | **the theorem for any function**: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the expected loss unchanged |
+
+**Networks and parameter space**, in [`lean/SquigglyLine/Networks/`](lean/SquigglyLine/Networks).
+
+| File | What it proves |
+|---|---|
+| [`NarrowChain`](lean/SquigglyLine/Networks/NarrowChain.lean) | a ReLU network with one neuron per layer never turns, at any depth |
+| [`Depth`](lean/SquigglyLine/Networks/Depth.lean), [`TentCloser`](lean/SquigglyLine/Networks/TentCloser.lean) | `L` layers of two neurons make `2^L` straight pieces and pass within `1 / 2^L` of every point of the unit square |
+| [`Bridge`](lean/SquigglyLine/Networks/Bridge.lean) | one fold doubles a frequency, so `L` folds seen through a fixed lens are one Fourier term of frequency `2^L` |
+| [`Polarizer`](lean/SquigglyLine/Networks/Polarizer.lean), [`ThreePolarizers`](lean/SquigglyLine/Networks/ThreePolarizers.lean) | ReLU sends a point to the nearest point of the positive quadrant; Malus's law; a quarter turn in `N` plates delivers at least `1 − π²/(8N)` |
+| [`MarkovChains`](lean/SquigglyLine/Networks/MarkovChains.lean) | through the layers: merged stays merged, dead stays dead; through training with orthogonal features: the error after `t` steps is `(1 − η·c)ᵗ` times the start |
+| [`LinearModel`](lean/SquigglyLine/Networks/LinearModel.lean), [`ExchangeRate`](lean/SquigglyLine/Networks/ExchangeRate.lean) | on the straight path to a fit the error shrinks in proportion; adding parameters never moves the nearest fit away; with orthogonal features the travel is `‖residual‖ / √c` |
+| [`Kernel`](lean/SquigglyLine/Networks/Kernel.lean) | a gradient step sends the error `r` to `r − η·K·r`; two models with the same kernel have the same training path and the same travel |
+| [`DoubleDescent`](lean/SquigglyLine/Networks/DoubleDescent.lean) | a fit near the start is tame everywhere; along a direction of strength `λ` the travel is exactly `‖residual‖ / √λ` |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the
@@ -437,15 +438,15 @@ speed of light and with no power spent on the plates.
 **What is proved here.** Only the arithmetic, not the hardware.
 
 - A plate is a projection, and Malus's law follows (`malus` in
-  [`ThreePolarizers`](lean/SquigglyLine/ThreePolarizers.lean)). In the plane,
+  [`ThreePolarizers`](lean/SquigglyLine/Networks/ThreePolarizers.lean)). In the plane,
   ReLU is also a projection, onto a quadrant where the plate's is onto a line
-  (`relu2_nearest` in [`Polarizer`](lean/SquigglyLine/Polarizer.lean)).
+  (`relu2_nearest` in [`Polarizer`](lean/SquigglyLine/Networks/Polarizer.lean)).
 - Depth is affordable. A quarter turn spread over `N` plates loses at most
   `π² / (8N)` of the light (`quarter_turn_arrives`), and any turn `φ` loses at
   most `φ² / (2N)` once each step is small (`turn_in_steps_keeps`).
 - The two tricks of deep networks have optical parts. A skip connection is a
   beam that goes around the plate and rejoins. A normalisation is an amplifier
-  after it ([`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean)).
+  after it ([`SkipAndNorm`](lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean)).
 
 **What is missing.** The nonlinearity. A stack of polarizers is one linear
 map, however many plates it has, so on its own it is a network with no
@@ -480,54 +481,54 @@ model, most often one that is linear in its weights, with a plain-language
 note and a Lean proof. Each note also says what it does **not** show. None of
 them proves the phenomenon for real networks.
 
-**How training moves**
+**How training moves**, in [`lean/SquigglyLine/Supporting/Training/`](lean/SquigglyLine/Supporting/Training).
 
 | Topic | What is shown | Note | Proof |
 |---|---|---|---|
-| Least action | Gradient descent moves only along the features, so any fit it reaches is the nearest one. | [note](docs/least-action.md) | [`LeastAction`](lean/SquigglyLine/LeastAction.lean) |
-| Spectral bias | The error along a direction of strength `λ` shrinks by `1 − ηλ` per step. Strong directions are learned first. | [note](docs/spectral-bias.md) | [`SpectralBias`](lean/SquigglyLine/SpectralBias.lean) |
-| Edge of stability | That error shrinks when `ηλ < 2`, holds its size at `ηλ = 2`, and grows past it. | [note](docs/edge-of-stability.md) | [`EdgeOfStability`](lean/SquigglyLine/EdgeOfStability.lean) |
-| Flat minima | Rescaling the parameters by `c` keeps every output, makes the loss flatter by `c²` and the fit farther by `\|c\|`. | [note](docs/flat-minima.md) | [`Reparam`](lean/SquigglyLine/Reparam.lean) |
-| Many small steps | A square-law loss over `N` steps is at most `c·D² / N`. A loss in proportion to the step gains nothing. | [note](docs/small-steps.md) | [`SmallSteps`](lean/SquigglyLine/SmallSteps.lean) |
-| Weight decay and early stopping | Weight decay `μ` leaves the share `μ / (λ + μ)` of the error. Stopping after `t` steps cuts at least as hard as `μ = 1 / (ηt)`. Spare features act the same way. | [note](docs/weight-decay.md) | [`WeightDecay`](lean/SquigglyLine/WeightDecay.lean) |
-| Batch size and learning rate | Two steps on two batches equal one step on both, minus `η²` times a term through the kernel between the batches. With averaged gradients that is the linear scaling rule. | [note](docs/batch-size.md) | [`BatchSize`](lean/SquigglyLine/BatchSize.lean) |
-| Chinchilla scaling | If the loss above its floor is `A / N + B / D` and compute fixes `N × D`, the best split has the two terms equal, so parameters and data grow together in the ratio `A / B`. The form itself is a measurement. | [note](docs/compute-budget.md) | [`ComputeBudget`](lean/SquigglyLine/ComputeBudget.lean) |
+| Least action | Gradient descent moves only along the features, so any fit it reaches is the nearest one. | [note](docs/least-action.md) | [`LeastAction`](lean/SquigglyLine/Supporting/Training/LeastAction.lean) |
+| Spectral bias | The error along a direction of strength `λ` shrinks by `1 − ηλ` per step. Strong directions are learned first. | [note](docs/spectral-bias.md) | [`SpectralBias`](lean/SquigglyLine/Supporting/Training/SpectralBias.lean) |
+| Edge of stability | That error shrinks when `ηλ < 2`, holds its size at `ηλ = 2`, and grows past it. | [note](docs/edge-of-stability.md) | [`EdgeOfStability`](lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean) |
+| Flat minima | Rescaling the parameters by `c` keeps every output, makes the loss flatter by `c²` and the fit farther by `\|c\|`. | [note](docs/flat-minima.md) | [`Reparam`](lean/SquigglyLine/Supporting/Training/Reparam.lean) |
+| Many small steps | A square-law loss over `N` steps is at most `c·D² / N`. A loss in proportion to the step gains nothing. | [note](docs/small-steps.md) | [`SmallSteps`](lean/SquigglyLine/Supporting/Training/SmallSteps.lean) |
+| Weight decay and early stopping | Weight decay `μ` leaves the share `μ / (λ + μ)` of the error. Stopping after `t` steps cuts at least as hard as `μ = 1 / (ηt)`. Spare features act the same way. | [note](docs/weight-decay.md) | [`WeightDecay`](lean/SquigglyLine/Supporting/Training/WeightDecay.lean) |
+| Batch size and learning rate | Two steps on two batches equal one step on both, minus `η²` times a term through the kernel between the batches. With averaged gradients that is the linear scaling rule. | [note](docs/batch-size.md) | [`BatchSize`](lean/SquigglyLine/Supporting/Training/BatchSize.lean) |
+| Chinchilla scaling | If the loss above its floor is `A / N + B / D` and compute fixes `N × D`, the best split has the two terms equal, so parameters and data grow together in the ratio `A / B`. The form itself is a measurement. | [note](docs/compute-budget.md) | [`ComputeBudget`](lean/SquigglyLine/Supporting/Training/ComputeBudget.lean) |
 
-**What a fit does to new inputs**
-
-| Topic | What is shown | Note | Proof |
-|---|---|---|---|
-| Same kernel, same predictions | Two models with the same kernel give the same answer at a test point after every step, whatever their weights. | [note](docs/same-kernel.md) | [`SameKernel`](lean/SquigglyLine/SameKernel.lean) |
-| Benign overfitting | The nearest fit swallows the noise. With junk features of strength `c'` the damage at a new input is capped by `1 / c'`. | [note](docs/benign-overfitting.md) | [`BenignOverfitting`](lean/SquigglyLine/BenignOverfitting.lean) |
-| Bias and variance | With noise that is zero on average, the expected squared error at a new input is bias² plus variance. A floor `μ` on every direction raises the first and lowers the second. | [note](docs/bias-variance.md) | [`BiasVariance`](lean/SquigglyLine/BiasVariance.lean) |
-| Catastrophic forgetting | A step on a new task changes the old errors through the cross kernel only, and by at most the new task's travel. | [note](docs/forgetting.md) | [`Forgetting`](lean/SquigglyLine/Forgetting.lean) |
-| Lottery tickets | Pruning subtracts a kernel: slower and farther. It costs nothing where the dropped weights had no strength. | [note](docs/lottery-ticket.md) | [`Pruning`](lean/SquigglyLine/Pruning.lean) |
-| Dimpled manifold | A function can keep its loss on real data and still be one small step from any label, straight off the data manifold. | [note](docs/dimpled-manifold.md) | [`Dimple`](lean/SquigglyLine/Dimple.lean) |
-
-**The shape of a network**
+**What a fit does to new inputs**, in [`lean/SquigglyLine/Supporting/NewInputs/`](lean/SquigglyLine/Supporting/NewInputs).
 
 | Topic | What is shown | Note | Proof |
 |---|---|---|---|
-| Depth separation | A network with one hidden layer needs `2^L` units to stay within one half of `L + 1` tent layers. | [note](docs/depth-separation.md) | [`DepthSeparation`](lean/SquigglyLine/DepthSeparation.lean) |
-| Universal approximation | A one-hidden-layer ReLU network with `2n` units is within `2K / n` of any function on `[0, 1]` with slope at most `K`. The cost in units goes as slope over error. | [note](docs/universal-approximation.md) | [`UniversalApproximation`](lean/SquigglyLine/UniversalApproximation.lean) |
-| Storage capacity | A model linear in `m` weights fits arbitrary labels on at most `m` points. A network with `b` bits of weights memorises every labelling of at most `b` inputs. Depth buys pattern, not storage. | [note](docs/capacity.md) | [`Capacity`](lean/SquigglyLine/Capacity.lean) |
-| Skip connections and normalisation | As optics: a skip is a bypass that never dims or blocks; a normalisation is an amplifier that restores full strength. | [note](docs/skip-and-norm.md) | [`SkipAndNorm`](lean/SquigglyLine/SkipAndNorm.lean) |
-| Vanishing and exploding gradients | A per-layer gain `g` gives `g^L`: it dies below one and blows up above. The gradient comes back through the same plates, so it is dimmed the same way. | [note](docs/vanishing-gradients.md) | [`VanishingGradients`](lean/SquigglyLine/VanishingGradients.lean) |
-| Information bottleneck | After any layer of a network that is right on every input: labels ≤ places occupied ≤ inputs. | [note](docs/information-bottleneck.md) | [`Bottleneck`](lean/SquigglyLine/Bottleneck.lean) |
-| Compression | A fold throws away one bit, so `L` folds merge at most `2^L` inputs. The average log-loss of any model, and the average length of any code, is at least the entropy. With description length as squared travel, gradient descent finds the fit that is cheapest to describe. | [note](docs/code-length.md) | [`CodeLength`](lean/SquigglyLine/CodeLength.lean) |
-| Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/NeuralCollapse.lean) |
-| Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/ModeConnectivity.lean) |
+| Same kernel, same predictions | Two models with the same kernel give the same answer at a test point after every step, whatever their weights. | [note](docs/same-kernel.md) | [`SameKernel`](lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean) |
+| Benign overfitting | The nearest fit swallows the noise. With junk features of strength `c'` the damage at a new input is capped by `1 / c'`. | [note](docs/benign-overfitting.md) | [`BenignOverfitting`](lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean) |
+| Bias and variance | With noise that is zero on average, the expected squared error at a new input is bias² plus variance. A floor `μ` on every direction raises the first and lowers the second. | [note](docs/bias-variance.md) | [`BiasVariance`](lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean) |
+| Catastrophic forgetting | A step on a new task changes the old errors through the cross kernel only, and by at most the new task's travel. | [note](docs/forgetting.md) | [`Forgetting`](lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) |
+| Lottery tickets | Pruning subtracts a kernel: slower and farther. It costs nothing where the dropped weights had no strength. | [note](docs/lottery-ticket.md) | [`Pruning`](lean/SquigglyLine/Supporting/NewInputs/Pruning.lean) |
+| Dimpled manifold | A function can keep its loss on real data and still be one small step from any label, straight off the data manifold. | [note](docs/dimpled-manifold.md) | [`Dimple`](lean/SquigglyLine/Supporting/NewInputs/Dimple.lean) |
+
+**The shape of a network**, in [`lean/SquigglyLine/Supporting/NetworkShape/`](lean/SquigglyLine/Supporting/NetworkShape).
+
+| Topic | What is shown | Note | Proof |
+|---|---|---|---|
+| Depth separation | A network with one hidden layer needs `2^L` units to stay within one half of `L + 1` tent layers. | [note](docs/depth-separation.md) | [`DepthSeparation`](lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean) |
+| Universal approximation | A one-hidden-layer ReLU network with `2n` units is within `2K / n` of any function on `[0, 1]` with slope at most `K`. The cost in units goes as slope over error. | [note](docs/universal-approximation.md) | [`UniversalApproximation`](lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean) |
+| Storage capacity | A model linear in `m` weights fits arbitrary labels on at most `m` points. A network with `b` bits of weights memorises every labelling of at most `b` inputs. Depth buys pattern, not storage. | [note](docs/capacity.md) | [`Capacity`](lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean) |
+| Skip connections and normalisation | As optics: a skip is a bypass that never dims or blocks; a normalisation is an amplifier that restores full strength. | [note](docs/skip-and-norm.md) | [`SkipAndNorm`](lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean) |
+| Vanishing and exploding gradients | A per-layer gain `g` gives `g^L`: it dies below one and blows up above. The gradient comes back through the same plates, so it is dimmed the same way. | [note](docs/vanishing-gradients.md) | [`VanishingGradients`](lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) |
+| Information bottleneck | After any layer of a network that is right on every input: labels ≤ places occupied ≤ inputs. | [note](docs/information-bottleneck.md) | [`Bottleneck`](lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean) |
+| Compression | A fold throws away one bit, so `L` folds merge at most `2^L` inputs. The average log-loss of any model, and the average length of any code, is at least the entropy. With description length as squared travel, gradient descent finds the fit that is cheapest to describe. | [note](docs/code-length.md) | [`CodeLength`](lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean) |
+| Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean) |
+| Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean) |
 
 **Known results that are here under another name**
 
 | Usual name | Where it is |
 |---|---|
-| Neural tangent kernel, lazy training | The fixed-kernel setting of most rows above. [`Kernel`](lean/SquigglyLine/Kernel.lean) is the statement that training sees only the kernel. |
-| Implicit bias of gradient descent | It reaches the nearest fit: `gradientDescent_fit_is_nearest` in [`LeastAction`](lean/SquigglyLine/LeastAction.lean). |
+| Neural tangent kernel, lazy training | The fixed-kernel setting of most rows above. [`Kernel`](lean/SquigglyLine/Networks/Kernel.lean) is the statement that training sees only the kernel. |
+| Implicit bias of gradient descent | It reaches the nearest fit: `gradientDescent_fit_is_nearest` in [`LeastAction`](lean/SquigglyLine/Supporting/Training/LeastAction.lean). |
 | Robustness against accuracy | The slope sandwich of [section 3](#3-why-it-is-true), and the [dimpled manifold](docs/dimpled-manifold.md). |
 | Memorising random labels | The travel table of [section 5](#5-where-the-idea-is-right) uses random labels, and [benign overfitting](docs/benign-overfitting.md) says when that is harmless. |
 | Random Fourier features | The model of [section 5](#5-where-the-idea-is-right). |
-| Dying ReLU | "Dead stays dead" in [`MarkovChains`](lean/SquigglyLine/MarkovChains.lean). |
+| Dying ReLU | "Dead stays dead" in [`MarkovChains`](lean/SquigglyLine/Networks/MarkovChains.lean). |
 | Grokking, and double descent over training time | Argued from the clocks in [spectral bias](docs/spectral-bias.md). Not proved. |
 
 Two more notes give the pictures behind these:
@@ -556,7 +557,9 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 
 | Path | Contents |
 |---|---|
-| `lean/` | the proofs |
+| `lean/SquigglyLine/Theorem/` | the proof of the theorem |
+| `lean/SquigglyLine/Networks/` | the proofs for networks and parameter space |
+| `lean/SquigglyLine/Supporting/` | the proofs of the supporting material, in `Training/`, `NewInputs/` and `NetworkShape/` |
 | `paper/` | a NeurIPS-format draft of the paper |
 | `docs/RESOLUTION.md` | the findings in full |
 | `docs/general-theorem.md`, `docs/phase-matching.md` | the theorem in plain words |
