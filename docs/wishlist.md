@@ -21,7 +21,7 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order.
+  order. None are left as of 12 Nov 2026.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
 
@@ -40,8 +40,8 @@ The papers and years are recalled from memory and have not been checked.
 | Wasserstein GAN (Arjovsky et al. 2017) | The critic is held to slope one. The gap it reports between two points is then at most their distance, and a distance field is such a critic. | **proved**: `NetworkSlope.lean` |
 | Temperature and calibration (Guo et al. 2017; Holtzman et al. 2020) | Dividing the scores by a temperature divides their slope and never changes their order. | **proved**: `NetworkSlope.lean` |
 | Softmax and cross-entropy | For a yes-or-no label no finite score is best, so the loss keeps asking for a steeper line. | **proved**: `CrossEntropy.lean` |
-| Label smoothing (Szegedy et al. 2016) | With a soft label the best score is finite, so the slope can stop growing. | **next** |
-| Reinforcement learning (Bellman 1957; Mnih et al. 2015) | One sweep of value updates is a map of slope `γ < 1`, so repeated sweeps pull every guess to one answer. | **next** |
+| Label smoothing (Szegedy et al. 2016) | With a soft label the best score is finite, so the slope can stop growing. | **proved**: `CrossEntropy.lean` |
+| Reinforcement learning (Bellman 1957; Mnih et al. 2015) | One sweep of value updates is a map of slope `γ < 1`, so repeated sweeps pull every guess to one answer. | **proved**: `Gain.lean` |
 | Signed distance networks (Park et al. 2019) | The distance field of any line has slope at most one. | **proved**: `SignedDistance.lean` |
 
 ## Nearness
@@ -102,7 +102,7 @@ The papers and years are recalled from memory and have not been checked.
 |---|---|---|
 | ReLU and depth (Nair and Hinton 2010; Telgarsky 2016) | `L` folds make `2^L` pieces and pass within `1 / 2^L` of every point. | **proved**: `Depth.lean`, `TentCloser.lean`, `DepthSeparation.lean` |
 | Universal approximation (Cybenko 1989) | Units needed go as slope over error. | **proved** in one dimension: `UniversalApproximation.lean` |
-| Initialisation (Glorot and Bengio 2010; He et al. 2015) | A fold keeps half the squared size of a signal that is as often negative as positive. That is the factor two in He initialisation. | **next** |
+| Initialisation (Glorot and Bengio 2010; He et al. 2015) | A fold keeps half the squared size of a signal that is as often negative as positive. That is the factor two in He initialisation. | **proved**: `Gain.lean` |
 | Residual networks (He et al. 2016) | A skip is a bypass: nothing is fully blocked. | **proved** for plates: `SkipAndNorm.lean` |
 | Dying ReLU | Dead stays dead. | **proved**: `MarkovChains.lean` |
 | Information bottleneck (Shwartz-Ziv and Tishby 2017) | A fold merges inputs and merged stays merged. | **proved**: `Bottleneck.lean`, `CodeLength.lean` |

@@ -79,7 +79,10 @@ Three things follow (**argued**).
   they cut off weak directions. With cross-entropy they are also what stops
   the weights growing without end.
 - **Label smoothing gives the loss a floor.** With a label of 0.9 in place of
-  1 the best score is finite, and the weights can stop.
+  1 the best score is finite, and the weights can stop. This one is
+  **proved**: for a label strictly between zero and one, the score whose
+  prediction equals the label has the least loss (`logLoss_le_of_sigmoid_eq`,
+  `exists_best_score`).
 
 ## How this meets the squiggly line
 

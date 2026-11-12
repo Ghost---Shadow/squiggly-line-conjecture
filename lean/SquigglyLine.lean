@@ -99,6 +99,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `Attention`              | attention averages, so it never spreads tokens; one head = one step |
 | `SignedDistance`         | the theorem's distance is a distance field: slope ≤ 1; safe steps   |
 | `NetworkSlope`           | slope ≤ product of layers; flipping costs score / slope; temperature |
+| `Gain`                   | a fold keeps half (He initialisation); a Bellman sweep has slope `γ` |
 -/
 -- 1. The theorem
 import SquigglyLine.Theorem.Defs
@@ -162,3 +163,4 @@ import SquigglyLine.Supporting.NetworkShape.ModeConnectivity
 import SquigglyLine.Supporting.NetworkShape.Attention
 import SquigglyLine.Supporting.NetworkShape.SignedDistance
 import SquigglyLine.Supporting.NetworkShape.NetworkSlope
+import SquigglyLine.Supporting.NetworkShape.Gain

@@ -14,6 +14,8 @@ One example:
 * `convexOn_logLoss` : the loss is convex in the score.
 * `logLoss_one_pos`, `strictAnti_logLoss_one` : for a yes-or-no label no
   finite score is best. A larger score is always better.
+* `logLoss_le_of_sigmoid_eq`, `exists_best_score` : for a soft label, the
+  score whose prediction equals the label is best, and it is finite.
 
 A model linear in its weights, under any reading of the error:
 * `gradientStep_eq_errorStep` : squared error is the case "output minus label".
@@ -173,6 +175,38 @@ theorem strictAnti_logLoss_one : StrictAnti (logLoss 1) :=
   strictAnti_of_deriv_neg fun z => by
     rw [deriv_logLoss]
     exact sub_neg.mpr (sigmoid_lt_one z)
+
+/-- A score whose prediction equals the label is a best score. -/
+theorem logLoss_le_of_sigmoid_eq {y z₀ : ℝ} (hmatch : sigmoid z₀ = y) (z : ℝ) :
+    logLoss y z₀ ≤ logLoss y z := by
+  have hdiff : Differentiable ℝ (logLoss y) := fun x => (hasDerivAt_logLoss y x).differentiableAt
+  have hderiv (x : ℝ) : deriv (logLoss y) x = sigmoid x - sigmoid z₀ := by
+    rw [(hasDerivAt_logLoss y x).deriv, hmatch]
+  rcases le_total z z₀ with hz | hz
+  · have hfalling : AntitoneOn (logLoss y) (Set.Iic z₀) :=
+      antitoneOn_of_deriv_nonpos (convex_Iic z₀) hdiff.continuous.continuousOn
+        hdiff.differentiableOn fun x hx => by
+          rw [interior_Iic] at hx
+          rw [hderiv]
+          exact sub_nonpos.mpr (sigmoid_le (Set.mem_Iio.mp hx).le)
+    exact hfalling hz (Set.mem_Iic.mpr le_rfl) hz
+  · have hrising : MonotoneOn (logLoss y) (Set.Ici z₀) :=
+      monotoneOn_of_deriv_nonneg (convex_Ici z₀) hdiff.continuous.continuousOn
+        hdiff.differentiableOn fun x hx => by
+          rw [interior_Ici] at hx
+          rw [hderiv]
+          exact sub_nonneg.mpr (sigmoid_le (Set.mem_Ioi.mp hx).le)
+    exact hrising (Set.mem_Ici.mpr le_rfl) hz hz
+
+/-- **A soft label has a finite best score.** For a label strictly between zero and one, some
+finite score has the least loss. Compare `strictAnti_logLoss_one`. -/
+theorem exists_best_score {y : ℝ} (h0 : 0 < y) (h1 : y < 1) :
+    ∃ z₀, ∀ z, logLoss y z₀ ≤ logLoss y z := by
+  have hrange : y ∈ Set.range sigmoid := by
+    rw [range_sigmoid]
+    exact ⟨h0, h1⟩
+  obtain ⟨z₀, hz₀⟩ := hrange
+  exact ⟨z₀, logLoss_le_of_sigmoid_eq hz₀⟩
 
 end TwoClasses
 
