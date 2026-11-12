@@ -76,6 +76,7 @@ In `SquigglyLine/Supporting/NewInputs/`.
 | `Forgetting`        | a new task changes old errors through the cross kernel only      |
 | `Pruning`           | pruning subtracts a kernel: slower, farther; when a ticket wins  |
 | `Dimple`            | gentle on the data manifold, steep off it: loss blind, fragile   |
+| `Averaging`         | ensemble error = mean error − spread; the ideal denoiser averages |
 
 ### The shape of a network
 
@@ -141,6 +142,7 @@ import SquigglyLine.Supporting.NewInputs.BiasVariance
 import SquigglyLine.Supporting.NewInputs.Forgetting
 import SquigglyLine.Supporting.NewInputs.Pruning
 import SquigglyLine.Supporting.NewInputs.Dimple
+import SquigglyLine.Supporting.NewInputs.Averaging
 -- 3. Supporting material: the shape of a network
 import SquigglyLine.Supporting.NetworkShape.DepthSeparation
 import SquigglyLine.Supporting.NetworkShape.UniversalApproximation

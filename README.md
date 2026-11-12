@@ -527,6 +527,7 @@ them proves the phenomenon for real networks.
 | Catastrophic forgetting | A step on a new task changes the old errors through the cross kernel only, and by at most the new task's travel. | [note](docs/supporting/new-inputs/forgetting.md) | [`Forgetting`](lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) |
 | Lottery tickets | Pruning subtracts a kernel: slower and farther. It costs nothing where the dropped weights had no strength. | [note](docs/supporting/new-inputs/lottery-ticket.md) | [`Pruning`](lean/SquigglyLine/Supporting/NewInputs/Pruning.lean) |
 | Dimpled manifold | A function can keep its loss on real data and still be one small step from any label, straight off the data manifold. | [note](docs/supporting/new-inputs/dimpled-manifold.md) | [`Dimple`](lean/SquigglyLine/Supporting/NewInputs/Dimple.lean) |
+| Ensembles, weight averaging, diffusion | The squared error of an average is the average error minus the spread of its members, and the average is no steeper than the steepest member. For a model linear in its weights, averaging weights is averaging lines. The ideal denoiser is an attention head over the training examples, so it never leaves the region they span. | [note](docs/supporting/new-inputs/averaging.md) | [`Averaging`](lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 
 **The shape of a network.** Proofs in
 [`lean/SquigglyLine/Supporting/NetworkShape/`](lean/SquigglyLine/Supporting/NetworkShape), notes in

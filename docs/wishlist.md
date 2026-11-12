@@ -114,9 +114,9 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Attention (Vaswani et al. 2017) | A weighted average. It cannot spread the tokens, so it cannot add squiggle. | **proved**: `Attention.lean` |
-| Ensembles (Krogh and Vedelsby 1995; Lakshminarayanan et al. 2017) | The average of several lines is no steeper than the steepest, and its squared error is the average error minus the spread of the lines. | **next** |
-| Model soups and weight averaging (Izmailov et al. 2018; Wortsman et al. 2022) | For a model linear in its weights, averaging weights is averaging lines. | **next**, with ensembles |
-| Diffusion models (Ho et al. 2020; Song et al. 2021) | The best denoiser is an attention head over the training set: a weighted average of the clean examples. So it never leaves the region the examples span. | **next** |
+| Ensembles (Krogh and Vedelsby 1995; Lakshminarayanan et al. 2017) | The average of several lines is no steeper than the steepest, and its squared error is the average error minus the spread of the lines. | **proved**: `Averaging.lean` |
+| Model soups and weight averaging (Izmailov et al. 2018; Wortsman et al. 2022) | For a model linear in its weights, averaging weights is averaging lines. | **proved**: `Averaging.lean` |
+| Diffusion models (Ho et al. 2020; Song et al. 2021) | The best denoiser is an attention head over the training set: a weighted average of the clean examples. So it never leaves the region the examples span. | **proved**: `Averaging.lean` |
 | Bias and variance (Geman et al. 1992) | The noise an average removes is the variance. | **proved**: `BiasVariance.lean` |
 | Neural collapse (Papyan et al. 2020) | Class averages can be no farther apart than a simplex. | **proved**: `NeuralCollapse.lean` |
 
