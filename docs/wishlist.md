@@ -49,9 +49,9 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | The 2022 conjecture | A squigglier line is nearer to the data. | **proved** for sines and for any squeezed function: `SquigglyLineTheorem.lean`, `Compression.lean` |
-| No free lunch (Wolpert 1996) | Averaged over every labelling of the unseen inputs, no line is nearer than any other. Squiggle helps only when labels vary gently. | **next** |
-| Perceptron (Rosenblatt 1958; Novikoff 1962) | If the data is at least `γ` from a flat boundary and inside radius `R`, the perceptron makes at most `(R / γ)²` mistakes. Nearness of the data to the boundary sets the number of steps. | **next** |
-| XOR (Minsky and Papert 1969) | The smallest data that no flat boundary fits. One lift, or one fold, fixes it. | **next** |
+| No free lunch (Wolpert 1996) | Averaged over every labelling of the unseen inputs, no line is nearer than any other. Squiggle helps only when labels vary gently. | **proved**: `Perceptron.lean` |
+| Perceptron (Rosenblatt 1958; Novikoff 1962) | If the data is at least `γ` from a flat boundary and inside radius `R`, the perceptron makes at most `(R / γ)²` mistakes. Nearness of the data to the boundary sets the number of steps. | **proved**: `Perceptron.lean` |
+| XOR (Minsky and Papert 1969) | The smallest data that no flat boundary fits. One lift, or one fold, fixes it. | **proved**: `Perceptron.lean` |
 | Sphere tracing (Hart 1996) | A step shorter than the distance field cannot reach the line. | **proved**: `SignedDistance.lean` |
 
 ## Travel
