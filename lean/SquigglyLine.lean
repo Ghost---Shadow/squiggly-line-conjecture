@@ -91,6 +91,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `NeuralCollapse`         | `K` unit arrows: every pair ≤ `c` forces `(K - 1) c ≥ -1`           |
 | `ModeConnectivity`       | linear in weights: no hill between fits; `a * b`: the hill          |
 | `Attention`              | attention averages, so it never spreads tokens; one head = one step |
+| `SignedDistance`         | the theorem's distance is a distance field: slope ≤ 1; safe steps   |
 -/
 -- 1. The theorem
 import SquigglyLine.Theorem.Defs
@@ -146,3 +147,4 @@ import SquigglyLine.Supporting.NetworkShape.CodeLength
 import SquigglyLine.Supporting.NetworkShape.NeuralCollapse
 import SquigglyLine.Supporting.NetworkShape.ModeConnectivity
 import SquigglyLine.Supporting.NetworkShape.Attention
+import SquigglyLine.Supporting.NetworkShape.SignedDistance

@@ -44,6 +44,15 @@ theorem footpoint_mem_curve {X : Type*} (f : X → ℝ) (p : DataPoint X) :
     embed (p.1, f p.1) ∈ curve f :=
   ⟨p.1, rfl⟩
 
+/-- A data point is on the line exactly when its label is the function's value. -/
+theorem embed_mem_curve_iff {X : Type*} (f : X → ℝ) (p : DataPoint X) :
+    embed p ∈ curve f ↔ p.2 = f p.1 := by
+  constructor
+  · rintro ⟨x, hx⟩
+    rw [← (WithLp.toLp_injective 2) hx]
+  · intro h
+    exact ⟨p.1, congrArg embed (Prod.ext rfl h.symm)⟩
+
 section Geometry
 
 variable {X : Type*} [SeminormedAddCommGroup X]

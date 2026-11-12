@@ -537,6 +537,7 @@ them proves the phenomenon for real networks.
 | Neural collapse | `K` unit vectors cannot all be farther apart than a simplex, and the simplex is the centred arrangement. | [note](docs/supporting/network-shape/neural-collapse.md) | [`NeuralCollapse`](lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean) |
 | Mode connectivity | Linear in the weights: no hill between two fits. Two weights multiplied: the hill is exactly `t(1 − t)(a₁ − a₂)(b₁ − b₂)`. | [note](docs/supporting/network-shape/mode-connectivity.md) | [`ModeConnectivity`](lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean) |
 | Attention and in-context learning | An attention head is a weighted average, so any stack of them keeps every token inside the region the tokens started in. One head without the softmax, reading examples as tokens, gives the prediction of one step of gradient descent on those examples. | [note](docs/supporting/network-shape/attention.md) | [`Attention`](lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
+| Signed distance functions | The theorem's distance is the distance field of the line, read at the data. The field never changes faster than one, however steep the line. A step shorter than the field cannot reach the line. The height above the line overstates the signed distance by at most `√(1 + K²)`. | [note](docs/supporting/network-shape/signed-distance.md) | [`SignedDistance`](lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean) |
 
 **Known results that are here under another name**
 

@@ -28,15 +28,6 @@ namespace SquigglyLine
 
 open NNReal
 
-/-- A data point is on the line exactly when its label is the function's value. -/
-theorem embed_mem_curve_iff {X : Type*} (f : X → ℝ) (p : DataPoint X) :
-    embed p ∈ curve f ↔ p.2 = f p.1 := by
-  constructor
-  · rintro ⟨x, hx⟩
-    rw [← (WithLp.toLp_injective 2) hx]
-  · intro h
-    exact ⟨p.1, congrArg embed (Prod.ext rfl h.symm)⟩
-
 variable {X Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- The flat function upstairs: the inner product of a feature vector with the weights. -/
