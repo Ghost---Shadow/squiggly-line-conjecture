@@ -65,6 +65,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `Dropout`         | expected dropout loss = loss + `v` × squared shares: weight decay |
 | `Perceptron`      | margin is nearness; at most `(R / γ)²` mistakes; XOR; no free lunch |
 | `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
+| `StepRules`       | Adam's step is a sign; clipping caps travel; subspaces; rounding    |
 
 ### What a fit does to new inputs
 
@@ -139,6 +140,7 @@ import SquigglyLine.Supporting.Training.CrossEntropy
 import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry
+import SquigglyLine.Supporting.Training.StepRules
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
