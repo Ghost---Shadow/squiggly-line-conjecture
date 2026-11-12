@@ -285,6 +285,11 @@ the number of parameters is the only dial: a Fourier series with random
 coefficients, scaled so the output has the same variance at every size. There
 are 20 points with random labels.
 
+In the terms of statistics this is a generalized linear model in its plainest
+case: fixed features (the sines and cosines), no link function, and squared
+error. That is linear regression. Every proof in this section uses that the
+output is linear in the parameters.
+
 | parameters | loss at start | travel to a fit | gradient-descent steps |
 |---|---|---|---|
 | 9 | 0.65 | no fit | never |

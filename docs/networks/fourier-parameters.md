@@ -32,6 +32,38 @@ bigger model is simply louder, and everything below would measure loudness.
 The data is 20 points with random labels. A model can fit all 20 points once
 it has 20 parameters. That is the threshold.
 
+## This is a generalized linear model
+
+A generalized linear model has three parts (**recalled**: the standard
+definition).
+
+- **A weighted sum of fixed features.** The features do not change in
+  training. Only the weights do.
+- **A link.** A fixed function that turns the sum into a prediction.
+- **A noise model.** It decides which loss is used.
+
+The Fourier series is the plainest case. The features are the sines and
+cosines. The weights are the coefficients. The link does nothing, and the loss
+is squared error. That is linear regression in sine and cosine features.
+
+The single sine of the first experiments is not one. Its frequency and phase
+sit inside the sine, so the output is not a weighted sum of fixed features.
+
+The results below divide by which part they use.
+
+- **The weighted sum only.** Travel, the exchange rate, the double-descent
+  peak in travel, and "more parameters never move the fit away" are
+  statements about the features and a target. Under another link the target
+  is the labels read on the link's scale, and the statements stay the same
+  (**argued**, not proved here). They need that target to be finite. For a
+  yes-or-no label under the logistic link it is not, so no exact fit exists
+  at any distance.
+- **No link and squared error.** "The error left is `1 − t` times the
+  starting error", the gradient-descent step, and everything proved about its
+  speed and stability use both.
+- **Neither.** That the initial loss does not move (`Marginal.lean`) holds for
+  any model and any loss of this kind.
+
 ## Four things to measure
 
 - **Initial loss.** The usual training loss of the random model, before any
@@ -138,3 +170,6 @@ parameters and the measurement is 16.
   The experiment starts them at random.
 - Everything here is for models that are linear in their parameters. A neural
   network is only approximately so, and only when it is very wide.
+- Everything proved about training is for squared error with no link. What
+  carries over to other links, such as the logistic one, is listed in
+  `docs/open-problems.md`, items 25 to 28.

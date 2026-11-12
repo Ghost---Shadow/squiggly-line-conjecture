@@ -5,6 +5,9 @@ Take a model whose outputs on the data are linear in its parameters, such as
 a Fourier series in its coefficients: `A θ` is the vector of outputs, `y` the
 vector of labels, `residual A y θ = y - A θ` what is left to fit.
 
+In the terms of statistics this is a generalized linear model with no link
+function and squared error, that is, linear regression on the features `A`.
+
 * `residual_along`: on the straight path from a start `θ₀` to a fit `θ₁`, the
   residual shrinks in proportion. Every model walks the same loss curve.
 * `exists_within_budget`: so moving a distance `ε` from the start removes the

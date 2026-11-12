@@ -88,6 +88,40 @@ notes under `docs/`, grouped the same way.
     300,000,000 against 1.7 for 513 features and 20 points. How does that
     ratio grow with the number of points?
 
+## The Fourier model under another link
+
+The Fourier model is a generalized linear model with no link and squared
+error (see `docs/networks/fourier-parameters.md`). These ask what survives a
+change of link or loss. Added 12 Nov 2026.
+
+25. **A budget of movement under any convex loss.** (**known, not
+    formalised**)
+    `exists_within_budget` says a move of `ε` toward a fit at distance `d`
+    removes exactly `ε / d` of the error. For any loss that is convex in the
+    weighted sum, which covers the logistic and Poisson losses, the same move
+    removes at least `ε / d` of the gap in loss. `no_barrier` extends the same
+    way.
+
+26. **Gradient descent reaches the nearest fit, under any link.** (**known,
+    not formalised**)
+    `gradientDescent_fit_is_nearest` is proved for squared error. Under any
+    link each step is still a weighted sum of the feature vectors, which is
+    all the proof uses.
+
+27. **Below the threshold.** (**known, not formalised**)
+    With too few parameters no fit exists, and the repository says nothing
+    more. Least squares still has an answer: the weights at which the error
+    is at right angles to every feature. State it, and show the error splits
+    into the part no weights can remove and the part still to go.
+
+28. **Yes-or-no labels.** (**known, not formalised**; recalled from Cover 1965
+    and Soudry et al. 2018, not verified here)
+    Under the logistic link no finite weights fit, so travel is infinite and
+    the threshold changes. Random labels on `n` points can be separated about
+    half the time when there are `n / 2` parameters. Gradient descent then
+    runs off to infinity along the widest-margin direction. Neither is
+    formalised here.
+
 ## The geometry of curves
 
 12. **The length bound.** (**known, not formalised**)
