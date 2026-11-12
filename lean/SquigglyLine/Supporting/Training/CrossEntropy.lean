@@ -7,6 +7,8 @@ and its predictions.
 
 One example:
 * `softmax_pos`, `sum_softmax` : a softmax is a set of positive shares.
+* `softmax_lt_one`, `crossEntropy_single_pos` : with two or more classes no
+  share reaches one, so the loss of a sure label is never zero.
 * `hasDerivAt_crossEntropy`, `hasDerivAt_logLoss` : the push on the scores is
   prediction minus label, as it is for squared error.
 * `convexOn_logLoss` : the loss is convex in the score.
@@ -72,6 +74,26 @@ theorem crossEntropy_eq_neg_sum_log [Nonempty ι] {y : ι → ℝ} (hy : ∑ i, 
     rw [softmax, log_div (exp_pos _).ne' (sum_exp_pos z).ne', log_exp]
   simp only [hlog, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul, hy, crossEntropy]
   ring
+
+/-- With at least two classes, every share is below one. -/
+theorem softmax_lt_one [Nontrivial ι] (z : ι → ℝ) (i : ι) : softmax z i < 1 := by
+  classical
+  obtain ⟨j, hj⟩ := exists_ne i
+  have hrest : 0 < ∑ k ∈ Finset.univ.erase i, exp (z k) :=
+    Finset.sum_pos (fun k _ => exp_pos (z k)) ⟨j, Finset.mem_erase.mpr ⟨hj, Finset.mem_univ j⟩⟩
+  have hsplit := Finset.add_sum_erase Finset.univ (fun k => exp (z k)) (Finset.mem_univ i)
+  rw [softmax, div_lt_one (sum_exp_pos z)]
+  linarith
+
+/-- **The loss of a sure label is never zero.** Against the label "class `i`, for certain", no
+finite scores bring the cross-entropy to zero. -/
+theorem crossEntropy_single_pos [Nontrivial ι] [DecidableEq ι] (z : ι → ℝ) (i : ι) :
+    0 < crossEntropy (Pi.single i 1) z := by
+  have hloss : crossEntropy (Pi.single i 1) z = -log (softmax z i) := by
+    rw [crossEntropy_eq_neg_sum_log (by simp)]
+    simp [Pi.single_apply]
+  rw [hloss, neg_pos]
+  exact log_neg (softmax_pos z i) (softmax_lt_one z i)
 
 /-- **Prediction minus label.** Move the scores in the direction `d`. The loss changes at the
 rate "share minus label", summed against `d`. -/

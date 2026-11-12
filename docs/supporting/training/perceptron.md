@@ -67,6 +67,41 @@ squiggly line.
   does. After the fold a flat boundary works (**proved**:
   `separatesXor_fold`). This is one ReLU layer, as in `Depth.lean`.
 
+## Can XOR be done with no hidden layer by changing the encoding?
+
+Two ways to do it are sometimes offered. Each one is true as far as it goes,
+and each one hides a lift.
+
+- **One input per corner.** Replace the two inputs by four, one for each of
+  the four corners: the input for the present corner is one and the rest are
+  zero. Then a flat layer fits XOR. It fits anything: with one feature per
+  input, any labels at all are a flat function, and the weights are the
+  labels (**proved**: `oneHot_fits`). This is a table lookup. The four new
+  inputs are not flat functions of the old two. Making them is the lift, and
+  it is the work a hidden layer would have done.
+- **One class per corner.** Keep the two inputs and ask for four outputs, one
+  for each corner. A flat layer with a softmax does this too. A flat layer
+  with one score per class names the nearest of its anchor points
+  (**proved**: `anchorScore_le_iff`), so it can tell any distinct points
+  apart (**proved**: `anchorScore_lt_self`). But this names the corner. It
+  does not compute XOR of it. Reading "corner 1 or corner 2" off the four
+  outputs is a second step, and that step is the hidden layer.
+
+A softmax on its own changes nothing. With the two original inputs and two
+classes, the answer changes where two flat scores are equal, which is again a
+flat boundary, and no flat boundary splits XOR (**proved**:
+`not_separatesXor_twoScores`).
+
+So the old statement stands: with the two inputs as given and one yes-or-no
+output, no network without a hidden layer computes XOR. What the two
+encodings show is the point of `docs/networks/kernel-trick.md`: any problem
+is flat in some lift, and choosing the lift is where the work is.
+
+One more thing seen in such experiments: the training loss ends small and not
+zero. That is not rounding error. Against a sure label, no finite scores
+bring cross-entropy to zero (**proved**: `crossEntropy_single_pos` in
+`CrossEntropy.lean`). The loss only stops falling when training stops.
+
 ## No free lunch: squiggle helps only if labels vary gently
 
 Fix an input the model has not seen, and any guess at its label. Among all

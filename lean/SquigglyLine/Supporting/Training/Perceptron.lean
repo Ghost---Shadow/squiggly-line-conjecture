@@ -20,6 +20,11 @@ XOR (`SeparatesXor`):
 * `not_separatesXor_flat` : no flat boundary splits it.
 * `separatesXor_lift` : one lifted feature, the product, does.
 * `separatesXor_fold` : so does one fold.
+* `not_separatesXor_twoScores` : two classes with a softmax are still flat.
+* `oneHot_fits` : with one feature per input, any labels are flat. A table
+  lookup is a lift.
+* `anchorScore_le_iff`, `anchorScore_lt_self` : a flat layer with one score
+  per class names the nearest anchor, so it tells any distinct points apart.
 
 No free lunch:
 * `card_agree_eq_card_disagree` : at an unseen input, any prediction is right
@@ -158,7 +163,53 @@ theorem separatesXor_lift : SeparatesXor fun x y => x + y - 2 * (x * y) - 1 / 2 
 theorem separatesXor_fold : SeparatesXor fun x y => |x - y| - 1 / 2 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num
 
+/-- **Two classes with a softmax are still flat.** With one flat score per class, the answer
+changes where the two scores are equal, and that is again a flat boundary. -/
+theorem not_separatesXor_twoScores (a₀ b₀ c₀ a₁ b₁ c₁ : ℝ) :
+    ¬SeparatesXor fun x y => (a₁ * x + b₁ * y + c₁) - (a₀ * x + b₀ * y + c₀) := by
+  intro h
+  obtain ⟨h00, h11, h01, h10⟩ := h
+  norm_num at h00 h11 h01 h10
+  linarith
+
+/-- **A table lookup is a lift that fits anything.** Give every input its own feature, one for
+that input and zero for the rest. Then any labels at all are a flat function of the features:
+the weights are the labels. -/
+theorem oneHot_fits {X : Type*} [Fintype X] [DecidableEq X] (labels : X → ℝ) (x : X) :
+    ∑ i, labels i * (Pi.single x (1 : ℝ) : X → ℝ) i = labels x := by
+  simp [Pi.single_apply]
+
 end Xor
+
+/-! ### Naming the nearest anchor -/
+
+section Anchors
+
+variable {Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
+
+/-- A flat score for the anchor point `c`, read at the input `x`. -/
+def anchorScore (c x : Θ) : ℝ :=
+  2 * inner ℝ c x - ‖c‖ ^ 2
+
+theorem anchorScore_eq (c x : Θ) : anchorScore c x = ‖x‖ ^ 2 - ‖x - c‖ ^ 2 := by
+  rw [anchorScore, norm_sub_sq_real, real_inner_comm x c]
+  ring
+
+/-- **A flat layer with one score per class names the nearest anchor.** The anchor with the
+highest score is the one nearest to the input. -/
+theorem anchorScore_le_iff (c c' x : Θ) :
+    anchorScore c' x ≤ anchorScore c x ↔ ‖x - c‖ ≤ ‖x - c'‖ := by
+  rw [anchorScore_eq, anchorScore_eq, sub_le_sub_iff_left,
+    sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
+
+/-- So it tells any set of distinct points apart: at an anchor, its own score is the highest.
+This names the point. It does not compute anything about it. -/
+theorem anchorScore_lt_self {c c' : Θ} (h : c' ≠ c) : anchorScore c' c < anchorScore c c := by
+  have hapart : 0 < ‖c - c'‖ := norm_pos_iff.mpr (sub_ne_zero.mpr h.symm)
+  rw [anchorScore_eq, anchorScore_eq, sub_self, norm_zero, zero_pow two_ne_zero, sub_zero]
+  linarith [pow_pos hapart 2]
+
+end Anchors
 
 /-! ### No free lunch -/
 

@@ -62,7 +62,9 @@ by any rule at all: `err(outputs)`.
 
 For a yes-or-no label there is no best score. The loss is never zero, and a
 larger score always has a smaller loss (**proved**: `logLoss_one_pos`,
-`strictAnti_logLoss_one`).
+`strictAnti_logLoss_one`). The same holds with many classes: no share
+reaches one, so the loss of a sure label is never zero (**proved**:
+`softmax_lt_one`, `crossEntropy_single_pos`).
 
 So a classifier that can separate its training data never finishes. Its loss
 keeps falling as its scores grow, and its scores grow only if its weights do.
