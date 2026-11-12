@@ -93,6 +93,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `ModeConnectivity`       | linear in weights: no hill between fits; `a * b`: the hill          |
 | `Attention`              | attention averages, so it never spreads tokens; one head = one step |
 | `SignedDistance`         | the theorem's distance is a distance field: slope ≤ 1; safe steps   |
+| `NetworkSlope`           | slope ≤ product of layers; flipping costs score / slope; temperature |
 -/
 -- 1. The theorem
 import SquigglyLine.Theorem.Defs
@@ -150,3 +151,4 @@ import SquigglyLine.Supporting.NetworkShape.NeuralCollapse
 import SquigglyLine.Supporting.NetworkShape.ModeConnectivity
 import SquigglyLine.Supporting.NetworkShape.Attention
 import SquigglyLine.Supporting.NetworkShape.SignedDistance
+import SquigglyLine.Supporting.NetworkShape.NetworkSlope

@@ -32,13 +32,13 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Robustness against accuracy (Tsipras et al. 2019) | `vertical / √(1 + K²) ≤ nearest ≤ vertical`: a line can be near the data only by being steep. | **proved**: `Sandwich.lean` |
-| Slope of a network (Szegedy et al. 2014; Bartlett et al. 2017; Miyato et al. 2018) | A network is no steeper than the product of the slopes of its layers. So its nearness to the data has to be paid for in that product. | **next** |
-| Backpropagation (Rumelhart, Hinton and Williams 1986) | The gradient comes back through the same layers in reverse, so it is bounded by the same product. | **next**, with the row above. Gains per layer: **proved**, `VanishingGradients.lean` |
+| Slope of a network (Szegedy et al. 2014; Bartlett et al. 2017; Miyato et al. 2018) | A network is no steeper than the product of the slopes of its layers. So its nearness to the data has to be paid for in that product. | **proved**: `NetworkSlope.lean` |
+| Backpropagation (Rumelhart, Hinton and Williams 1986) | The gradient comes back through the same layers in reverse, so it is bounded by the same product. | **proved**: `NetworkSlope.lean`, `VanishingGradients.lean` |
 | Vanishing gradients and the LSTM (Hochreiter and Schmidhuber 1997) | A slope below one per layer dies out with depth, above one blows up. | **proved**: `VanishingGradients.lean` |
-| Adversarial examples (Szegedy et al. 2014; Goodfellow et al. 2015) | To flip a classifier of slope `K` you must move the input at least `score / K`. For a linear model, nudging every input by `ε` moves the score by `ε` times the sum of the sizes of the weights. | **next** |
+| Adversarial examples (Szegedy et al. 2014; Goodfellow et al. 2015) | To flip a classifier of slope `K` you must move the input at least `score / K`. For a linear model, nudging every input by `ε` moves the score by `ε` times the sum of the sizes of the weights. | **proved**: `NetworkSlope.lean` |
 | Dimpled manifold (Shamir et al. 2021) | Gentle along the data, steep straight off it. | **proved**: `Dimple.lean` |
-| Wasserstein GAN (Arjovsky et al. 2017) | The critic is held to slope one. The gap it reports between two points is then at most their distance, and a distance field is such a critic. | **next** |
-| Temperature and calibration (Guo et al. 2017; Holtzman et al. 2020) | Dividing the scores by a temperature divides their slope and never changes their order. | **next** |
+| Wasserstein GAN (Arjovsky et al. 2017) | The critic is held to slope one. The gap it reports between two points is then at most their distance, and a distance field is such a critic. | **proved**: `NetworkSlope.lean` |
+| Temperature and calibration (Guo et al. 2017; Holtzman et al. 2020) | Dividing the scores by a temperature divides their slope and never changes their order. | **proved**: `NetworkSlope.lean` |
 | Softmax and cross-entropy | For a yes-or-no label no finite score is best, so the loss keeps asking for a steeper line. | **proved**: `CrossEntropy.lean` |
 | Label smoothing (Szegedy et al. 2016) | With a soft label the best score is finite, so the slope can stop growing. | **next** |
 | Reinforcement learning (Bellman 1957; Mnih et al. 2015) | One sweep of value updates is a map of slope `γ < 1`, so repeated sweeps pull every guess to one answer. | **next** |

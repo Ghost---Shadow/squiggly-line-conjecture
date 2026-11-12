@@ -80,7 +80,7 @@ Dividing by a bound on the slope is the usual fix in sphere tracing
 - **The slope is exactly one.** Away from the line and from its creases the
   field changes at rate exactly one in the direction away from the line.
   This is the eikonal equation. Only "at most one" is proved here. It is on
-  the wishlist in the README.
+  `docs/wishlist.md`.
 - **Closed shapes.** The line here is the graph of a function. A closed
   surface needs a different rule for the sign. The statements without a sign
   hold for any set.
