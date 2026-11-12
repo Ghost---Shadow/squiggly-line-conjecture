@@ -1,7 +1,7 @@
 # Today's Progress: Squiggly Line Conjecture Deep Dive
 
 > **Historical.** Written before the conjecture was resolved. Empirical claims
-> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed.
 
 *Session Date: September 1, 2025*

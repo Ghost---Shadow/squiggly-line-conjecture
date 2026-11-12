@@ -1,7 +1,7 @@
 # [Mathematical Formalization of the Squiggly Line Conjecture](https://claude.ai/share/39f58f0c-70e3-4b12-a087-d32d96efa458)
 
 > **Historical.** Written before the conjecture was resolved. Empirical claims
-> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed. Figures it embeds that plotted the defective metrics
 > have been removed from `graphs/`; they remain in git history.
 
@@ -51,7 +51,7 @@ $$V_\epsilon(p) \approx 2\epsilon \cdot \ell(p)$$
 Therefore: $\mathbb{E}[V_\epsilon(p_{d'})] > \mathbb{E}[V_\epsilon(p_d)]$ for $d' > d$
 
 <div align="center">
-<img src="../graphs/coverage_patterns_vs_distance.png" alt="Coverage Patterns vs Distance" width="50%">
+<img src="../../graphs/coverage_patterns_vs_distance.png" alt="Coverage Patterns vs Distance" width="50%">
 </div>
 
 *Figure 1: Coverage patterns demonstrate how higher-degree polynomials provide better spatial coverage, with distance to random points decreasing as polynomial complexity increases.*
@@ -103,7 +103,7 @@ $$d^* = \arg\min_d \left[ \mathbb{E}[L(p_d, \mathcal{D})] + \lambda \cdot \text{
 where the penalty term accounts for self-intersection and boundary effects.
 
 <div align="center">
-<img src="../graphs/coverage_distance_scaling.png" alt="Coverage Distance Scaling" width="50%">
+<img src="../../graphs/coverage_distance_scaling.png" alt="Coverage Distance Scaling" width="50%">
 </div>
 
 *Figure 2: Distance scaling shows the improvement in coverage with increased polynomial degree, demonstrating the saturation effect predicted by the theory.*

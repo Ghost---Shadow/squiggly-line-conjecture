@@ -70,7 +70,7 @@ This rule and the rule of thumb for double descent look as if they disagree.
 - **Fixed data.** You have a set of examples and cannot get more. The danger
   is the peak, where the model can just barely memorise them. Go well past
   it: about three parameters for each number to fit
-  (`double-descent.md`, `capacity.md`).
+  (`docs/networks/double-descent.md`, `docs/supporting/network-shape/capacity.md`).
 - **Fixed compute, data to spare.** You can always get more data, and each
   example is seen about once. Then balance: grow the model and the data
   together. For language models the measured balance was about twenty tokens
@@ -85,7 +85,7 @@ the model is just big enough to memorise what it has seen.
 
 The model term is the cost of a curve that cannot bend enough. For a function
 of one input it falls as slope over the number of units
-(`universal-approximation.md`). So `A` is a measure of how squiggly the
+(`docs/supporting/network-shape/universal-approximation.md`). So `A` is a measure of how squiggly the
 target is. A squigglier target has a larger `A`, and by the ratio `N / D =
 A / B` it wants more parameters for each piece of data.
 

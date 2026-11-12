@@ -44,7 +44,7 @@ overlap with the new input / (λ + μ)
 ```
 
 (**proved**: `inner_ridgeFit`.) This is the formula from
-`benign-overfitting.md`, where a pile of junk features of strength `c'` gave
+`docs/supporting/new-inputs/benign-overfitting.md`, where a pile of junk features of strength `c'` gave
 `overlap / (λ + c')`. The two are the same with `c' = μ`.
 
 So a big model with many spare features behaves like a small model with
@@ -87,7 +87,7 @@ direction stronger than the floor is learned almost as before.
 
 The floor is a limit on travel. Fitting a weak direction means a long trip in
 parameter space, and a long trip disturbs the function everywhere (see
-`double-descent.md`). Each of the three habits refuses the long trips and
+`docs/networks/double-descent.md`). Each of the three habits refuses the long trips and
 takes the short ones.
 
 ## What is not shown

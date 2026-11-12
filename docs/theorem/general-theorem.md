@@ -1,8 +1,8 @@
 # The squiggly line theorem, without the sines
 
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/Compression.lean` and
-`lean/TentCloser.lean`) or **open**.
+done. Each statement is marked **proved** (in `lean/SquigglyLine/Theorem/Compression.lean` and
+`lean/SquigglyLine/Networks/TentCloser.lean`) or **open**.
 
 ## Why the title was loaded
 

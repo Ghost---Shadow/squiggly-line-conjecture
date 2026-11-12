@@ -1,7 +1,7 @@
 # Three polarizers, and the photon's squiggly line
 
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/ThreePolarizers.lean`),
+done. Each statement is marked **proved** (in `lean/SquigglyLine/Networks/ThreePolarizers.lean`),
 **checked** (by a calculation here), or **recalled** (textbook physics, not
 derived here).
 

@@ -13,7 +13,7 @@ Each problem has a status:
 
 Definitions and proved results are in `lean/SquigglyLine/`, in one folder
 for each group of the README. Plain-language background is in the other
-files of this folder.
+notes under `docs/`, grouped the same way.
 
 ## The network case
 
@@ -49,7 +49,7 @@ files of this folder.
    network with one hidden layer this is now `card_ge_of_zigzag` and
    `depth_separation` in `DepthSeparation.lean`: a unit per up-and-down, so
    fewer than `2^L` units cannot stay within one half of `L + 1` tent layers.
-   See `depth-separation.md`. For deeper networks it needs the bound on
+   See `docs/supporting/network-shape/depth-separation.md`. For deeper networks it needs the bound on
    pieces in the next item.
 
 6. **The general bound on pieces.** (**known, not formalised**)
@@ -120,7 +120,7 @@ files of this folder.
 
 17. **A stack of polarizers is one linear map; a stack of ReLU layers is
     not.** (**known, not formalised**)
-    The contrast is stated in `three-polarizers.md` and proved nowhere.
+    The contrast is stated in `docs/networks/three-polarizers.md` and proved nowhere.
 
 18. **A network whose activation is a polarizer.** (**open**)
     Store a value as a polarization angle. A polarizer then passes `cos²` of
@@ -133,7 +133,7 @@ files of this folder.
     formalised**)
 
 20. **Backprop as the inner chain run backward.** (**known, not formalised**)
-    `chain-of-markov-chains.md` describes training as a chain of chains. Only
+    `docs/networks/chain-of-markov-chains.md` describes training as a chain of chains. Only
     the two chains separately are in Lean.
 
 ## Using the nearness
@@ -155,7 +155,7 @@ files of this folder.
     Rescaling one example after each plate is an amplifier: the light arrives
     at full strength after any turn short of a right angle, and a blocked
     beam stays blocked (`renorm_plate`, `throughNormedPlates_eq`,
-    `renorm_plate_of_crossed` in `SkipAndNorm.lean`; see `skip-and-norm.md`).
+    `renorm_plate_of_crossed` in `SkipAndNorm.lean`; see `docs/supporting/network-shape/skip-and-norm.md`).
     That is closest to layer normalisation. What follows is the earlier note,
     which is about the batch.
     A first reading: gain control. Batch norm rescales and recentres the flock
@@ -171,7 +171,7 @@ files of this folder.
     A plate with a bypass never dims the light, does nothing when crossed, and
     turns the light only part of the way (`norm_le_norm_skipPlate`,
     `skipPlate_of_crossed`, `inner_skipPlate` in `SkipAndNorm.lean`; see
-    `skip-and-norm.md`). What follows is the earlier note.
+    `docs/supporting/network-shape/skip-and-norm.md`). What follows is the earlier note.
     A first reading: a bypass. Split the beam, send one part through the plate
     and one part around it, and add them. The result keeps the part the plate
     would have removed, so nothing is ever fully blocked and nothing merges.

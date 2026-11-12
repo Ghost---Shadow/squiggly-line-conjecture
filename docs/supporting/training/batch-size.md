@@ -62,7 +62,7 @@ correction is zero, and two small steps equal one big step exactly
 
 So the two ways differ only through what the batches have in common. This is
 the same cross kernel that set how much a new task makes the model forget in
-`forgetting.md`. A step on one batch is a small act of forgetting and of
+`docs/supporting/new-inputs/forgetting.md`. A step on one batch is a small act of forgetting and of
 generalising for the other.
 
 ## How this meets the squiggly line

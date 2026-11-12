@@ -36,7 +36,7 @@ plate turned by `θ` from the light keeps `cos θ` of it, so a stack of `L`
 plates with a fixed turn has gain `cos θ` at each one and the light dies
 exponentially (**proved**: `plates_vanish`).
 
-The way out found in `small-steps.md` is to make the turns smaller as the
+The way out found in `docs/supporting/training/small-steps.md` is to make the turns smaller as the
 stack gets deeper. Then the gain at each plate moves towards one fast enough.
 
 ## The gradient comes back through the same plates

@@ -8,8 +8,8 @@ conjecture as defined (more parameters, smaller expected nearest-point distance
 at initialisation) fails for width. §2 also read the straight-line test too
 strongly. Both are corrected in place below, and §7 lists what the review added.
 
-This document supersedes the empirical claims in `docs/day-1.md`,
-`docs/day-2.md`, `docs/consolidated.md`, and the paper draft (`main.tex`, since
+This document supersedes the empirical claims in `docs/history/day-1.md`,
+`docs/history/day-2.md`, `docs/history/consolidated.md`, and the paper draft (`main.tex`, since
 removed; see git history). The notes are kept as a record of how the idea
 developed; they should not be cited for results.
 
@@ -118,7 +118,7 @@ measure at the start.
 descent does not measure", which was too strong. The nearness can be used: a
 shift of the input no larger than the nearest-point scale makes the curve pass
 through a point, and a small warp of the input fits any target
-(`docs/phase-matching.md`). What is false is that the nearness is a lower loss
+(`docs/theorem/phase-matching.md`). What is false is that the nearness is a lower loss
 before anything moves.
 
 Direct confirmation on the object of interest — random ReLU networks, 10 inputs,
@@ -240,7 +240,7 @@ theorem true is not the metric that training minimizes.
   must travel from initialization — rather than initial loss? That is a different
   and still-open question, and closer to what the lottery-ticket literature is
   actually about.
-- The quantum appendix (`scripts/quantum.py`, `docs/day-2-quantum.md`) is
+- The quantum appendix (`scripts/quantum.py`, `docs/history/day-2-quantum.md`) is
   probably circular: for a 1-D box `E ∝ n²`, so `nodes ∝ √E` follows from the
   spectrum by change of variables, and "coverage ∝ √E" follows from that. Worth
   checking before it is repeated anywhere.

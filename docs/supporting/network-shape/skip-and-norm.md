@@ -44,7 +44,7 @@ Call this a plate with a bypass.
 
 That last point is the wind tunnel again. A network with skip connections
 turns its flock a little at each layer, which is the kind of path that loses
-least (see `least-action.md`).
+least (see `docs/supporting/training/least-action.md`).
 
 ## Normalisation is an amplifier
 

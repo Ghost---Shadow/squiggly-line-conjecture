@@ -20,7 +20,7 @@ and it is not the size of the model.
 
 Take the set-up of `benign-overfitting.md`. What is left to fit is a signal
 along a strong direction, of strength `λs`, plus noise along a weak one, of
-strength `λe`. A floor `μ` is added to every direction. By `weight-decay.md`
+strength `λe`. A floor `μ` is added to every direction. By `docs/supporting/training/weight-decay.md`
 the floor can come from weight decay, from stopping early, or from spare
 parameters.
 
@@ -65,7 +65,7 @@ noise direction is very weak, `λe` is tiny, the floor is near zero, and the
 variance `1 / (λe + μ)²` is enormous. That is the peak. Adding more parameters
 raises the floor again, through spare features, and the variance comes back
 down. **argued** from the formula above and the travel peak in
-`double-descent.md`; that a real sweep of model size moves `λe` and `μ` this
+`docs/networks/double-descent.md`; that a real sweep of model size moves `λe` and `μ` this
 way is **measured** there for one model and is not proved.
 
 So there is one trade-off and two ways of moving along it. The old rule

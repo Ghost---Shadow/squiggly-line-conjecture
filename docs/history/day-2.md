@@ -1,7 +1,7 @@
 # [The Squiggly Line Conjecture: A Universal Geometric Principle for Neural Network Initialization](https://claude.ai/share/91316488-aa14-432b-93c8-372ad4e668ef)
 
 > **Historical.** Written before the conjecture was resolved. Empirical claims
-> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed. Figures it embeds that plotted the defective metrics
 > have been removed from `graphs/`; they remain in git history.
 
@@ -85,7 +85,7 @@ The crucial insight is that "squiggliness" corresponds to the dimension of param
 Higher-dimensional parameter spaces provide better coverage of function space.
 
 <div align="center">
-<img src="../graphs/relu_distance_vs_width.png" alt="ReLU Distance vs Width" width="50%">
+<img src="../../graphs/relu_distance_vs_width.png" alt="ReLU Distance vs Width" width="50%">
 </div>
 
 *Figure 3: ReLU neural networks show improved distance to random points with increased width, confirming the squiggly line conjecture for neural architectures.*
@@ -110,7 +110,7 @@ where:
 This suggests a universal geometric principle that transcends specific dimensionality.
 
 <div align="center">
-<img src="../graphs/more_effects_dimension_distance.png" alt="More Effects Dimension Distance" width="50%">
+<img src="../../graphs/more_effects_dimension_distance.png" alt="More Effects Dimension Distance" width="50%">
 </div>
 
 *Figure 4: Dimension independence of the squiggly line effect, showing consistent scaling across different dimensional spaces.*
@@ -161,7 +161,7 @@ We tested the conjecture across multiple dimensions:
 - Crossover point at epochs 40-60
 
 <div align="center">
-<img src="../graphs/more_effects_training_dynamics.png" alt="More Effects Training Dynamics" width="50%">
+<img src="../../graphs/more_effects_training_dynamics.png" alt="More Effects Training Dynamics" width="50%">
 </div>
 
 *Figure 5: Training dynamics show how networks with better initial coverage converge faster and achieve better final performance.*
@@ -174,13 +174,13 @@ The effect is robust to:
 - **Dimension**: Remarkably dimension-independent
 
 <div align="center">
-<img src="../graphs/relu_activation_patterns_vs_width.png" alt="ReLU Activation Patterns vs Width" width="50%">
+<img src="../../graphs/relu_activation_patterns_vs_width.png" alt="ReLU Activation Patterns vs Width" width="50%">
 </div>
 
 *Figure 6: Activation pattern analysis showing how network width affects the complexity and coverage of learned representations.*
 
 <div align="center">
-<img src="../graphs/more_effects_summary.png" alt="More Effects Summary" width="50%">
+<img src="../../graphs/more_effects_summary.png" alt="More Effects Summary" width="50%">
 </div>
 
 *Figure 7: Comprehensive summary of all effects, showing the universal nature of the squiggly line principle across different parameters and conditions.*

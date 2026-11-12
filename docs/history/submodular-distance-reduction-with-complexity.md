@@ -1,7 +1,7 @@
 # Proof: Submodular Distance Reduction with Complexity
 
 > **Historical.** Written before the conjecture was resolved. Empirical claims
-> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed.
 
 ## Setup

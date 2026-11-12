@@ -2,7 +2,7 @@
 
 Notes from 11 Nov 2026. This is the picture behind the ReLU part of the
 conjecture, written down before any of it was proved. The older
-[`wind-tunnel-analogy.md`](wind-tunnel-analogy.md) is kept as history; this
+[`docs/history/wind-tunnel-analogy.md`](../history/wind-tunnel-analogy.md) is kept as history; this
 file replaces its claims.
 
 Each statement below is marked **proved** (in `lean/`), **checked** (by a

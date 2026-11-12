@@ -36,7 +36,7 @@ points from a smooth target, 300 data sets per model size.
 parameters, and falls back. That is double descent. The travel climbs and
 falls with it and peaks at the same place.
 
-![Test error and travel against the number of parameters. Both peak where the model has as many parameters as training points.](../graphs/double_descent.png)
+![Test error and travel against the number of parameters. Both peak where the model has as many parameters as training points.](../../graphs/double_descent.png)
 
 ## Why the two peaks are one peak
 

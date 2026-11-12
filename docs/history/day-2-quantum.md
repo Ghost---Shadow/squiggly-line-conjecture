@@ -1,7 +1,7 @@
 # [Quantum Mechanical Formulation of the Squiggly Line Conjecture](https://claude.ai/share/91316488-aa14-432b-93c8-372ad4e668ef)
 
 > **Historical.** Written before the conjecture was resolved. Empirical claims
-> here are superseded by [`RESOLUTION.md`](RESOLUTION.md). Kept as a record of
+> here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed. Figures it embeds that plotted the defective metrics
 > have been removed from `graphs/`; they remain in git history.
 
@@ -88,7 +88,7 @@ $$\text{Coverage} = N_{nodes} \times (\text{coverage per node}) \propto \sqrt{E}
 The $\sqrt{E}$ scaling emerges from the balance between more nodes (∝√E) and smaller node spacing (∝1/√E), with the amplitude squared contributing an additional E factor. ∎
 
 <div align="center">
-<img src="../graphs/quantum_coverage_by_energy.png" alt="Quantum Coverage by Energy" width="50%">
+<img src="../../graphs/quantum_coverage_by_energy.png" alt="Quantum Coverage by Energy" width="50%">
 </div>
 
 *Figure 8: Quantum coverage scaling with energy levels, demonstrating the fundamental √E relationship predicted by quantum mechanics.*
@@ -126,7 +126,7 @@ where $\sum_i |c_i|^2 = 1$.
 **Proof**: Via quantum interference terms that add constructively for coverage. ∎
 
 <div align="center">
-<img src="../graphs/quantum_entanglement_benefits.png" alt="Quantum Entanglement Benefits" width="50%">
+<img src="../../graphs/quantum_entanglement_benefits.png" alt="Quantum Entanglement Benefits" width="50%">
 </div>
 
 *Figure 9: Quantum entanglement provides exponential advantages in coverage compared to classical systems, showing the power of quantum superposition.*
@@ -212,7 +212,7 @@ Quantum exploration time: $O(\sqrt{2^n})$ via amplitude amplification
 **Coverage Speedup**: Quadratic to exponential depending on the problem structure.
 
 <div align="center">
-<img src="../graphs/quantum_advantage_vs_qubits.png" alt="Quantum Advantage vs Qubits" width="50%">
+<img src="../../graphs/quantum_advantage_vs_qubits.png" alt="Quantum Advantage vs Qubits" width="50%">
 </div>
 
 *Figure 10: Quantum computational advantage scales exponentially with the number of qubits, demonstrating the fundamental superiority of quantum coverage.*
@@ -302,7 +302,7 @@ $$\text{Coverage}(Λ) = \alpha\sqrt{Λ} + \beta + O(Λ^{-1/2})$$
 This appears to be a universal law of nature!
 
 <div align="center">
-<img src="../graphs/quantum_vs_classical_patterns.png" alt="Quantum vs Classical Patterns" width="50%">
+<img src="../../graphs/quantum_vs_classical_patterns.png" alt="Quantum vs Classical Patterns" width="50%">
 </div>
 
 *Figure 11: Direct comparison of quantum and classical coverage patterns, showing the universal √Λ scaling law across different physical systems.*
