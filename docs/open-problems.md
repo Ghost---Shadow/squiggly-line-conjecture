@@ -94,16 +94,19 @@ The Fourier model is a generalized linear model with no link and squared
 error (see `docs/networks/fourier-parameters.md`). These ask what survives a
 change of link or loss. Added 12 Nov 2026.
 
-25. **A budget of movement under any convex loss.** (**known, not
-    formalised**)
+25. **A budget of movement under any convex loss.** (**proved** for
+    cross-entropy with two classes, 12 Nov 2026: `le_totalLogLoss_sub_along`
+    and `totalLogLoss_along_le_max` in `CrossEntropy.lean`; other losses
+    **known, not formalised**)
     `exists_within_budget` says a move of `ε` toward a fit at distance `d`
     removes exactly `ε / d` of the error. For any loss that is convex in the
     weighted sum, which covers the logistic and Poisson losses, the same move
     removes at least `ε / d` of the gap in loss. `no_barrier` extends the same
     way.
 
-26. **Gradient descent reaches the nearest fit, under any link.** (**known,
-    not formalised**)
+26. **Gradient descent reaches the nearest fit, under any link.**
+    (**proved**, 12 Nov 2026: `iterate_errorStep_is_nearest` in
+    `CrossEntropy.lean`)
     `gradientDescent_fit_is_nearest` is proved for squared error. Under any
     link each step is still a weighted sum of the feature vectors, which is
     all the proof uses.

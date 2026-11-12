@@ -59,6 +59,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `WeightDecay`     | weight decay leaves `mu / (lam + mu)`; early stopping matches it |
 | `BatchSize`       | two small steps = one big step minus an `η²` cross-kernel term   |
 | `ComputeBudget`   | `A / N + B / D` with `N D` fixed is least when the terms balance |
+| `CrossEntropy`    | softmax loss pushes by prediction minus label; same kernel       |
 
 ### What a fit does to new inputs
 
@@ -123,6 +124,7 @@ import SquigglyLine.Supporting.Training.SmallSteps
 import SquigglyLine.Supporting.Training.WeightDecay
 import SquigglyLine.Supporting.Training.BatchSize
 import SquigglyLine.Supporting.Training.ComputeBudget
+import SquigglyLine.Supporting.Training.CrossEntropy
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
