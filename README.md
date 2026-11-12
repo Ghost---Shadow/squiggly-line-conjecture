@@ -652,6 +652,10 @@ lift), with every step machine-checked. Each row says what is in the way.
 The papers are recalled from memory and have not been checked against this
 list.
 
+A longer list, one well-known paper at a time with where each stands, is in
+[`docs/wishlist.md`](docs/wishlist.md). The rows marked **next** there are
+being worked through in order.
+
 **The mathematics is known. A machine-checked proof is out of reach here for
 now.** Most of these need facts about large random matrices, which the proof
 library does not have yet. The rest are long.
