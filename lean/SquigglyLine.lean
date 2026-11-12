@@ -42,6 +42,7 @@ In `SquigglyLine/Networks/`.
 | `ExchangeRate`    | tight features: `travel = ‖residual‖ / √c`                            |
 | `Kernel`          | same kernel: same gradient-descent path and same travel               |
 | `DoubleDescent`   | a near fit is tame; travel is large only where the kernel is weak     |
+| `Lift`            | squiggly below is flat above; slope ≤ tilt × stretch; kernel trick   |
 
 ## 3. Supporting material
 
@@ -115,6 +116,7 @@ import SquigglyLine.Networks.LinearModel
 import SquigglyLine.Networks.ExchangeRate
 import SquigglyLine.Networks.Kernel
 import SquigglyLine.Networks.DoubleDescent
+import SquigglyLine.Networks.Lift
 -- 3. Supporting material: how training moves
 import SquigglyLine.Supporting.Training.LeastAction
 import SquigglyLine.Supporting.Training.SpectralBias

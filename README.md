@@ -415,6 +415,7 @@ same way.
 | [`LinearModel`](lean/SquigglyLine/Networks/LinearModel.lean), [`ExchangeRate`](lean/SquigglyLine/Networks/ExchangeRate.lean) | on the straight path to a fit the error shrinks in proportion; adding parameters never moves the nearest fit away; with orthogonal features the travel is `‖residual‖ / √c` |
 | [`Kernel`](lean/SquigglyLine/Networks/Kernel.lean) | a gradient step sends the error `r` to `r − η·K·r`; two models with the same kernel have the same training path and the same travel |
 | [`DoubleDescent`](lean/SquigglyLine/Networks/DoubleDescent.lean) | a fit near the start is tame everywhere; along a direction of strength `λ` the travel is exactly `‖residual‖ / √λ` |
+| [`Lift`](lean/SquigglyLine/Networks/Lift.lean) | a model linear in its weights is a flat plane seen through a lift: a point is on the squiggly line exactly when its lift is on the plane; the slope is at most the size of the weights times the stretch of the lift; weights moved along the lifted data predict through the kernel alone ([note](docs/networks/kernel-trick.md)) |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the
@@ -544,6 +545,7 @@ them proves the phenomenon for real networks.
 | Implicit bias of gradient descent | It reaches the nearest fit: `gradientDescent_fit_is_nearest` in [`LeastAction`](lean/SquigglyLine/Supporting/Training/LeastAction.lean). |
 | Robustness against accuracy | The slope sandwich of [section 3](#3-why-it-is-true), and the [dimpled manifold](docs/supporting/new-inputs/dimpled-manifold.md). |
 | Memorising random labels | The travel table of [section 5](#5-where-the-idea-is-right) uses random labels, and [benign overfitting](docs/supporting/new-inputs/benign-overfitting.md) says when that is harmless. |
+| Kernel trick, support vector machines | A squiggly line or boundary is a flat plane after a lift, and prediction needs only the kernel: [`Lift`](lean/SquigglyLine/Networks/Lift.lean), [note](docs/networks/kernel-trick.md). |
 | Random Fourier features | The model of [section 5](#5-where-the-idea-is-right). |
 | Dying ReLU | "Dead stays dead" in [`MarkovChains`](lean/SquigglyLine/Networks/MarkovChains.lean). |
 | Grokking, and double descent over training time | Argued from the clocks in [spectral bias](docs/supporting/training/spectral-bias.md). Not proved. |
