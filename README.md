@@ -61,6 +61,7 @@ theorem. They are collected under [supporting material](#8-supporting-material).
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
 - Slides: [Google Slides](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing)
 - Findings in full: [`docs/RESOLUTION.md`](docs/RESOLUTION.md)
+- What the proofs have in common: [`docs/insights.md`](docs/insights.md)
 
 > **Looking for an arXiv endorsement.** I would like to post the paper on arXiv
 > and I am not affiliated with an institution, so I need an endorsement for
@@ -615,6 +616,11 @@ note says what it does **not** show.
 The full list is in
 [`docs/supporting-proofs.md`](docs/supporting-proofs.md), topic by topic
 and paper by paper.
+
+What the proofs have in common, read across all of them, is in
+[`docs/insights.md`](docs/insights.md): one factor applied again and again,
+three ways to combine slope, and one dial behind frequency, width, stride
+and temperature.
 
 ## Running the experiments
 

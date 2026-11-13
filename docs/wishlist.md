@@ -1,6 +1,6 @@
 # Wishlist
 
-**Proofs:** [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`Lift.lean`](../lean/SquigglyLine/Networks/Lift.lean), [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Perceptron.lean`](../lean/SquigglyLine/Supporting/Training/Perceptron.lean), [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean).
+**Proofs:** [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`Lift.lean`](../lean/SquigglyLine/Networks/Lift.lean), [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`Mixtures.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean), [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Perceptron.lean`](../lean/SquigglyLine/Supporting/Training/Perceptron.lean), [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean).
 
 Written 12 Nov 2026. The aim is to say all of deep learning in the terms of
 the squiggly line, with every step machine-checked. This file lists
@@ -63,7 +63,7 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
+| Where a transformer makes its squiggle | Attention is an average, so it cannot push tokens apart. It can still be steep as a function of its input: a gate adds slope through the spread of what it blends, times how fast the gate changes. Folds come only from the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Mixtures.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
 | Averaging the weights over time (Polyak and Juditsky 1992) | A running average of the weights is an average of lines, for a model linear in its weights. | Argued from [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 
 ## No link to the squiggly line yet
@@ -98,6 +98,7 @@ The rest are long.
 | The error on new data is close to the error on the training data, for a model picked from a finite set. | Valiant 1984; the classical counting bound | A tail bound for a sum of independent terms, used once for every model in the set. The library has the pieces; not attempted. |
 | The ideal denoiser points up the slope of the log of the data's density (Tweedie's formula). | Classical; here only that it is an average | Derivatives of a mixture of bell curves. |
 | A wide random network, before training, is a Gaussian process. | Neal 1996; Lee et al. 2018 | Limits of wide random layers. |
+| How to scale the weights and step sizes with width so that every layer keeps learning features (maximal update parametrisation). | Yang and Hu 2021; here only that rescaling changes flatness and travel and leaves the line alone ([`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean)) | Limits of wide random layers after a training step. |
 | A few random directions keep all the distances between many points (Johnson–Lindenstrauss). | Classical | A concentration bound for random matrices. |
 
 ## Out of reach: nobody knows yet
