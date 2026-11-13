@@ -58,6 +58,7 @@ In `SquigglyLine/Networks/`.
 | `DoubleDescent`   | a near fit is tame; travel is large only where the kernel is weak     |
 | `Lift`            | squiggly below is flat above; slope ≤ tilt × stretch; kernel trick   |
 | `FourierLift`     | the Fourier lift stretches by at most `w`; its kernel sees only gaps  |
+| `RadialBasis`     | a bump of width `σ` has slope ≤ `1 / σ`; narrow bumps fit anything   |
 
 ## 3. Supporting material
 
@@ -114,6 +115,9 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `SignedDistance`         | the theorem's distance is a distance field: slope ≤ 1; safe steps   |
 | `NetworkSlope`           | slope ≤ product of layers; flipping costs score / slope; temperature |
 | `Gain`                   | a fold keeps half (He initialisation); a Bellman sweep has slope `γ` |
+| `Eikonal`                | toward the nearest point the distance falls at rate exactly one     |
+| `AttentionRate`          | bounded scores: each layer shrinks the spread by `1 − exp(−2B)`     |
+| `KolmogorovArnold`       | a node of edge curves is within `2 × slope / n` of a ReLU layer     |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -146,6 +150,7 @@ import SquigglyLine.Networks.Kernel
 import SquigglyLine.Networks.DoubleDescent
 import SquigglyLine.Networks.Lift
 import SquigglyLine.Networks.FourierLift
+import SquigglyLine.Networks.RadialBasis
 -- 3. Supporting material: how training moves
 import SquigglyLine.Supporting.Training.LeastAction
 import SquigglyLine.Supporting.Training.SpectralBias
@@ -182,3 +187,6 @@ import SquigglyLine.Supporting.NetworkShape.Attention
 import SquigglyLine.Supporting.NetworkShape.SignedDistance
 import SquigglyLine.Supporting.NetworkShape.NetworkSlope
 import SquigglyLine.Supporting.NetworkShape.Gain
+import SquigglyLine.Supporting.NetworkShape.Eikonal
+import SquigglyLine.Supporting.NetworkShape.AttentionRate
+import SquigglyLine.Supporting.NetworkShape.KolmogorovArnold

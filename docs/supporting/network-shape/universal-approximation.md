@@ -1,6 +1,6 @@
 # Universal approximation, and what it costs
 
-**Proofs:** [`UniversalApproximation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean).
+**Proofs:** [`KolmogorovArnold.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean), [`UniversalApproximation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -57,6 +57,27 @@ layer can double the turns.
 
 So the universal approximation theorem is true and is not the comfort it
 sounds like. Anything can be drawn. The bill is the slope.
+
+## Kolmogorov–Arnold networks
+
+Notes from 13 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean).
+
+A Kolmogorov–Arnold network puts a learnable curve on every edge. A node
+adds up the curves that come into it:
+
+    node(inputs) = curve_1(input_1) + curve_2(input_2) + ...
+
+Each curve is a function of one number, so the result above applies to each
+edge on its own. Replace every edge curve by its ReLU network with `n`
+pieces. On the unit cube the node changes by at most `2 * (total slope) / n`,
+where the total slope is the sum of the slope limits of its curves
+(**proved**: `abs_kanNode_sub_le`). So for any tolerance some number of
+pieces is enough (**proved**: `exists_pieces_kanNode_close`).
+
+A learnable curve on an edge is therefore a few folds, and how many is set
+by slope over error, as everywhere in this note. A node with steep curves
+needs more folds in proportion.
 
 ## What is not shown
 

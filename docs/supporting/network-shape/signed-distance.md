@@ -1,6 +1,6 @@
 # Signed distance functions
 
-**Proofs:** [`Coverage.lean`](../../../lean/SquigglyLine/Theorem/Coverage.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean).
+**Proofs:** [`Coverage.lean`](../../../lean/SquigglyLine/Theorem/Coverage.lean), [`Eikonal.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -64,6 +64,35 @@ is safe again (**proved**: `notMem_curve_of_dist_lt_verticalDist_div`).
 Dividing by a bound on the slope is the usual fix in sphere tracing
 (**recalled**: Hart 1996).
 
+## On the way in, the slope is exactly one
+
+Notes from 13 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean).
+
+"At most one" cannot be improved. Stand at any point of space, and walk in a
+straight line toward a nearest point of the line. A fraction `t` of the way
+there, the field is the fraction `1 - t` of what it was (**proved**:
+`infDist_toward_nearest`, and `distanceField_toward_nearest` for the
+squiggly line). So the field falls by exactly the distance walked
+(**proved**: `infDist_sub_infDist_toward_nearest`).
+
+Two things follow.
+
+- **No smaller slope limit holds.** If any point off the set has a nearest
+  point in it, the field has no slope limit below one (**proved**:
+  `not_lipschitzWith_infDist_of_lt_one`).
+- **A sphere-tracing step is as long as it can be.** A step of the full
+  field value, taken toward the nearest point, lands on the line. A longer
+  safe step does not exist.
+
+A nearest point exists for every point when the set is closed and the space
+is one where closed balls are compact, such as the plane (**proved**:
+`exists_nearest_with_unit_rate`).
+
+This is the part of the eikonal equation that needs no derivative. The
+steepness of the line does not enter: the field of a very squiggly line and
+the field of a flat one both fall at rate one.
+
 ## How this meets the squiggly line
 
 - **The conjecture's loss is the mean size of the field at the data.** A
@@ -79,10 +108,10 @@ Dividing by a bound on the slope is the usual fix in sphere tracing
 
 ## What is not shown
 
-- **The slope is exactly one.** Away from the line and from its creases the
-  field changes at rate exactly one in the direction away from the line.
-  This is the eikonal equation. Only "at most one" is proved here. It is on
-  `docs/wishlist.md`.
+- **The eikonal equation as an equation.** The rate is exactly one along the
+  straight path to a nearest point, and that is proved. That the field has a
+  gradient of length one wherever it has a gradient at all is not stated in
+  Lean.
 - **Closed shapes.** The line here is the graph of a function. A closed
   surface needs a different rule for the sign. The statements without a sign
   hold for any set.

@@ -40,6 +40,7 @@ machine-checked statements about well-known puzzles of deep learning:
 [signed distance functions](docs/supporting/network-shape/signed-distance.md),
 [the kernel trick](docs/networks/kernel-trick.md),
 [Fourier features and position signals](docs/networks/fourier-lift.md),
+[radial basis functions](docs/networks/radial-basis.md),
 [the perceptron, XOR and no free lunch](docs/supporting/training/perceptron.md),
 [adversarial examples and temperature](docs/supporting/network-shape/network-slope.md),
 [ensembles and diffusion](docs/supporting/new-inputs/averaging.md),
@@ -526,6 +527,7 @@ checks that each restyled statement says what its original said.
 | [`DoubleDescent`](lean/SquigglyLine/Networks/DoubleDescent.lean) | a fit near the start is tame everywhere; along a direction of strength `λ` the travel is exactly `‖residual‖ / √λ` |
 | [`Lift`](lean/SquigglyLine/Networks/Lift.lean) | a model linear in its weights is a flat plane seen through a lift: a point is on the squiggly line exactly when its lift is on the plane; the slope is at most the size of the weights times the stretch of the lift; weights moved along the lifted data predict through the kernel alone ([note](docs/networks/kernel-trick.md)) |
 | [`FourierLift`](lean/SquigglyLine/Networks/FourierLift.lean) | winding the input round a circle at frequency `w` stretches distances by at most `w`, so a wave is no steeper than its weights times its frequency; the kernel is `cos(w(x − x′))`, which sees only the gap, so shifting data and question together changes no answer ([note](docs/networks/fourier-lift.md)) |
+| [`RadialBasis`](lean/SquigglyLine/Networks/RadialBasis.lean) | a Gaussian bump of width `σ` is the unit bump squeezed by `1 / σ`, so it has slope at most `1 / σ`; a network of bumps is no steeper than its heights over its width, is a flat model on the lift by bumps, and fits any labels once the bumps hardly overlap |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the
@@ -655,6 +657,9 @@ them proves the phenomenon for real networks.
 | Signed distance functions | The theorem's distance is the distance field of the line, read at the data. The field never changes faster than one, however steep the line. A step shorter than the field cannot reach the line. The height above the line overstates the signed distance by at most `√(1 + K²)`. | [note](docs/supporting/network-shape/signed-distance.md) | [`SignedDistance`](lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean) |
 | Slope of a network, adversarial examples, temperature | A network is no steeper than the product of its layers, and the gradient comes back through the same product. Flipping a classifier of slope `K` takes a move of at least `score / K`. Temperature changes the slope of the scores and never their order. A critic of slope one reports at most the distance. | [note](docs/supporting/network-shape/network-slope.md) | [`NetworkSlope`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
 | He initialisation, the Bellman update | A fold keeps exactly half the mean squared size of a signal that is as often negative as positive, which is the factor two in He initialisation. One sweep of value updates has slope at most the discount `γ`, so `n` sweeps bring any two guesses within `γ^n`. | [note](docs/supporting/network-shape/gain.md) | [`Gain`](lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) |
+| The eikonal equation | Walking straight to a nearest point of the line, the distance field falls by exactly the distance walked. So the slope limit of one cannot be improved, whatever the line. | [note](docs/supporting/network-shape/signed-distance.md) | [`Eikonal`](lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean) |
+| Attention loses rank with depth | With scores at most `B` in size, every token gets a share of at least `exp(−2B) / n`, so one layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)` and `L` layers by that to the power `L`. | [note](docs/supporting/network-shape/attention.md) | [`AttentionRate`](lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
+| Kolmogorov–Arnold networks | A node that adds one learnable curve per input is within `2 × total slope / n` of a ReLU layer with `n` pieces per edge. | [note](docs/supporting/network-shape/universal-approximation.md) | [`KolmogorovArnold`](lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean) |
 
 **Known results that are here under another name**
 

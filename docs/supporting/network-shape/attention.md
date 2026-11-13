@@ -1,6 +1,6 @@
 # Attention: a weighted average, and one step of training
 
-**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`AttentionRate.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -47,6 +47,33 @@ definition). An attention layer is one step of that chain, and chains of this
 kind pull their states together. A transformer made of attention alone is
 known to lose the differences between its tokens very fast with depth
 (**recalled**: Dong, Cordonnier and Loukas 2021).
+
+## How fast the tokens merge
+
+Notes from 13 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean). The tokens
+here are numbers: read them as one coordinate of the tokens, or as any one
+read-out of them.
+
+"Cannot spread" has a rate when the scores are bounded.
+
+- **Every token gets a share.** If every score is at most `B` in size, every
+  share of the softmax is at least `exp(-2B) / n`, for `n` tokens
+  (**proved**: `exp_neg_div_card_le_softmax`).
+- **Two queries agree on that much.** Two averages whose weights all sit
+  above a floor `m` differ by at most `1 - n * m` times the range of the
+  values (**proved**: `abs_sum_mul_sub_sum_mul_le`). The floor is the part of
+  the two averages that is the same.
+- **One layer shrinks the spread.** With the floor `exp(-2B) / n`, two
+  queries give answers that differ by at most `1 - exp(-2B)` times the range
+  of the values (**proved**: `abs_attend_sub_attend_le`).
+- **Depth merges at a geometric rate.** After `L` layers of attention alone,
+  any two tokens differ by at most `(1 - exp(-2B))^L` times the range they
+  started in (**proved**: `abs_iterate_attentionLayer_sub_le`).
+
+So attention alone loses the differences between its tokens geometrically
+in depth. The rate depends only on how large the scores are allowed to be.
+Sharp attention (large scores) merges slowly; flat attention merges at once.
 
 ## Attention is one step of training
 
@@ -96,6 +123,9 @@ whose examples lie along weak directions of the kernel needs more layers.
   attention (**recalled**: von Oswald et al. 2023; Zhang, Frei and Bartlett
   2024) and is not shown here.
 - **In-context learning with the softmax kept.** **open** here.
-- **How fast the tokens merge.** Only that they cannot spread.
+- **How fast the tokens merge, for vector tokens and with skips.** The rate
+  is proved for number-valued tokens and attention alone. A skip connection
+  or a feed-forward layer can put the differences back, and that is not
+  modelled.
 - **Everything else in a transformer.** Several heads, position signals, the
   feed-forward layers and normalisation are not modelled.

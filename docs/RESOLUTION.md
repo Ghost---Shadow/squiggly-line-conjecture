@@ -1,6 +1,6 @@
 # Resolution of the Squiggly Line Conjecture
 
-**Proofs:** [`SquigglyLineTheorem.lean`](../lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) for sines, [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean) for any function, and the rest of [`lean/SquigglyLine/Theorem/`](../lean/SquigglyLine/Theorem).
+**Proofs:** [`Conjecture.lean`](../lean/SquigglyLine/Theorem/Conjecture.lean), [`Coverage.lean`](../lean/SquigglyLine/Theorem/Coverage.lean), [`Marginal.lean`](../lean/SquigglyLine/Theorem/Marginal.lean), [`Oscillation.lean`](../lean/SquigglyLine/Theorem/Oscillation.lean), [`Sandwich.lean`](../lean/SquigglyLine/Theorem/Sandwich.lean), [`SineCloser.lean`](../lean/SquigglyLine/Theorem/SineCloser.lean), [`SquigglyLineTheorem.lean`](../lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean), [`Verdict.lean`](../lean/SquigglyLine/Theorem/Verdict.lean).
 
 **Status: settled. The geometry is true, the parameter claim is false for width, and the learning claim is false.**
 
