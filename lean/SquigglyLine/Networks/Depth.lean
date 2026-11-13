@@ -1,71 +1,138 @@
 /-
 Depth multiplies the turns.
 
-`APPLY_TENT` is one layer with two neurons. It folds the interval `[0, 1]` in half:
-up from 0 to 1, then down from 1 to 0.
+`APPLY_TENT` is one layer with two neurons. It folds the interval `[0, 1]` in
+half: up from 0 to 1, then down from 1 to 0.
 
-Stack `L` of these layers. On the grid of `2 ^ L + 1` evenly spaced inputs the
-output alternates 0, 1, 0, 1, … : zero at the even grid points and one at the
-odd ones. So `2L` neurons draw `2 ^ L` straight pieces and turn `2 ^ L - 1`
-times. Each layer folds everything the earlier layers made.
+Stack `layer_count` of these layers. On the grid of `2 ^ layer_count + 1`
+evenly spaced inputs the output alternates 0, 1, 0, 1, ... : zero at the even
+grid points and one at the odd ones. So `2 * layer_count` neurons draw
+`2 ^ layer_count` straight pieces and turn `2 ^ layer_count - 1` times. Each
+layer folds everything the earlier layers made.
 
 This is the precise form of "deeper allows more squiggliness". With one neuron
 per layer the count stays at zero (`NarrowChain.lean`).
+
+| Name                  | Meaning                                         |
+|-----------------------|-------------------------------------------------|
+| `APPLY_TENT`          | one layer: `2 * relu(x) - 4 * relu(x - 1/2)`    |
+| `tent_of_le_half`     | on `[0, 1/2]` the tent is `2 * x`               |
+| `tent_of_half_le`     | from `1/2` on the tent is `2 - 2 * x`           |
+| `iterate_tent_dyadic` | stacked tents zigzag between 0 and 1 on the grid|
+
+How to read the notation:
+
+* `max value 0` is ReLU. Python: `max(value, 0)`.
+* `APPLY_TENT^[layer_count]` is `APPLY_TENT` applied `layer_count` times, one
+  after the other: a network that many layers deep.
 -/
 import Mathlib.Algebra.Group.Nat.Even
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Tactic.IntervalCases
+import SquigglyLine.Style
 
 namespace SquigglyLine
 
-/-- One layer with two neurons: the tent `2 relu(x) - 4 relu(x - 1/2)`. -/
-noncomputable def APPLY_TENT (x : ℝ) : ℝ :=
-  2 * max x 0 - 4 * max (x - 1 / 2) 0
+/-- One layer with two neurons: the tent `2 relu(x) - 4 relu(x - 1/2)`.
+Python: `2 * max(input, 0) - 4 * max(input - 1 / 2, 0)`. -/
+noncomputable def APPLY_TENT
+    (input : ℝ) : ℝ :=
+  let first_neuron  := max input 0            -- ReLU: zero until the input passes 0
+  let second_neuron := max (input - 1 / 2) 0  -- ReLU: zero until the input passes the fold at 1/2
+  2 * first_neuron - 4 * second_neuron        -- slope 2 before the fold, and 2 - 4 = -2 after it
 
-theorem tent_of_le_half {x : ℝ} (h0 : 0 ≤ x) (h : x ≤ 1 / 2) : APPLY_TENT x = 2 * x := by
-  rw [APPLY_TENT, max_eq_left h0, max_eq_right (by linarith)]
+/-- Left of the fold the tent rises: it doubles its input. -/
+theorem tent_of_le_half
+    {input : ℝ}
+    (input_nonneg : 0 ≤ input)
+    (input_le_half : input ≤ 1 / 2) :
+    let tent_output := APPLY_TENT input
+    let rising_line := 2 * input  -- only the first neuron is on, and it has slope 2
+    tent_output = rising_line := by
+  unfold_named_pieces
+  -- The first neuron is on and the second one is off.
+  show 2 * max input 0 - 4 * max (input - 1 / 2) 0 = 2 * input
+  rw [max_eq_left input_nonneg, max_eq_right (by linarith)]
   ring
 
-theorem tent_of_half_le {x : ℝ} (h : 1 / 2 ≤ x) : APPLY_TENT x = 2 - 2 * x := by
-  rw [APPLY_TENT, max_eq_left (by linarith), max_eq_left (by linarith)]
+/-- Right of the fold the tent falls: from 1 at the fold back to 0 at 1. -/
+theorem tent_of_half_le
+    {input : ℝ}
+    (half_le_input : 1 / 2 ≤ input) :
+    let tent_output  := APPLY_TENT input
+    let falling_line := 2 - 2 * input  -- both neurons on: 2 * x - 4 * (x - 1/2) = 2 - 2 * x
+    tent_output = falling_line := by
+  unfold_named_pieces
+  -- Both neurons are on.
+  show 2 * max input 0 - 4 * max (input - 1 / 2) 0 = 2 - 2 * input
+  rw [max_eq_left (by linarith), max_eq_left (by linarith)]
   ring
 
-/-- **Depth doubles the turns.** `L` tent layers send the `k`-th of `2 ^ L + 1` evenly spaced
-inputs to 0 when `k` is even and to 1 when `k` is odd. -/
-theorem iterate_tent_dyadic (L k : ℕ) (hk : k ≤ 2 ^ L) :
-    APPLY_TENT^[L] ((k : ℝ) / 2 ^ L) = if Even k then 0 else 1 := by
-  induction L generalizing k with
+/-- **Depth doubles the turns.** `layer_count` tent layers send grid point
+number `grid_index`, of `2 ^ layer_count + 1` evenly spaced inputs, to 0 when
+`grid_index` is even and to 1 when it is odd. -/
+theorem iterate_tent_dyadic
+    (layer_count : ℕ)
+    (grid_index : ℕ)
+    (index_is_on_grid : grid_index ≤ 2 ^ layer_count) :
+    let grid_point : ℝ := (grid_index : ℝ) / 2 ^ layer_count    -- the grid cuts [0, 1] into 2 ^ layer_count equal steps
+    let network_output := APPLY_TENT^[layer_count] grid_point   -- `^[layer_count]`: the tent, applied that many times
+    let zigzag_value : ℝ := if Even grid_index then 0 else 1    -- 0, 1, 0, 1, ... along the grid
+    network_output = zigzag_value := by
+  unfold_named_pieces
+  induction layer_count generalizing grid_index with
   | zero =>
-    simp only [pow_zero] at hk
-    interval_cases k <;> simp
-  | succ L ih =>
+    -- No layers: the grid is just 0 and 1, and the output is the input.
+    simp only [pow_zero] at index_is_on_grid
+    interval_cases grid_index <;> simp
+  | succ layer_count zigzag_on_coarser_grid =>
+    -- The first layer folds the fine grid onto the grid with half as many
+    -- steps. The other layers then zigzag on that coarser grid.
     rw [Function.iterate_succ_apply]
-    have hpow : (0 : ℝ) < 2 ^ L := by positivity
-    rcases le_total k (2 ^ L) with hle | hge
-    · have hkL : (k : ℝ) ≤ 2 ^ L := by exact_mod_cast hle
-      have hhalf : (k : ℝ) / 2 ^ (L + 1) ≤ 1 / 2 := by
+    have coarse_step_count_pos : (0 : ℝ) < 2 ^ layer_count := by positivity
+    rcases le_total grid_index (2 ^ layer_count) with
+      index_in_left_half | index_in_right_half
+    · -- Left half: the tent doubles the input, so the grid point keeps its
+      -- number on the coarser grid.
+      have index_le_half : (grid_index : ℝ) ≤ 2 ^ layer_count := by
+        exact_mod_cast index_in_left_half
+      have point_le_half :
+          (grid_index : ℝ) / 2 ^ (layer_count + 1) ≤ 1 / 2 := by
         rw [pow_succ, div_le_iff₀ (by positivity)]
         linarith
-      have hx : APPLY_TENT ((k : ℝ) / 2 ^ (L + 1)) = (k : ℝ) / 2 ^ L := by
-        rw [tent_of_le_half (by positivity) hhalf, pow_succ]
+      have first_layer_output :
+          APPLY_TENT ((grid_index : ℝ) / 2 ^ (layer_count + 1))
+            = (grid_index : ℝ) / 2 ^ layer_count := by
+        rw [tent_of_le_half (by positivity) point_le_half, pow_succ]
         field_simp
-      rw [hx, ih k hle]
-    · have hkL : (2 : ℝ) ^ L ≤ k := by exact_mod_cast hge
-      have hk' : 2 ^ (L + 1) - k ≤ 2 ^ L := by
+      rw [first_layer_output,
+        zigzag_on_coarser_grid grid_index index_in_left_half]
+    · -- Right half: the tent mirrors the input, so the grid point gets the
+      -- mirrored number. Mirroring keeps even numbers even and odd ones odd.
+      have half_le_index : (2 : ℝ) ^ layer_count ≤ grid_index := by
+        exact_mod_cast index_in_right_half
+      have mirrored_index_is_on_grid :
+          2 ^ (layer_count + 1) - grid_index ≤ 2 ^ layer_count := by
         rw [pow_succ]
         omega
-      have hhalf : 1 / 2 ≤ (k : ℝ) / 2 ^ (L + 1) := by
+      have half_le_point :
+          1 / 2 ≤ (grid_index : ℝ) / 2 ^ (layer_count + 1) := by
         rw [pow_succ, le_div_iff₀ (by positivity)]
         linarith
-      have hx : APPLY_TENT ((k : ℝ) / 2 ^ (L + 1)) = ((2 ^ (L + 1) - k : ℕ) : ℝ) / 2 ^ L := by
-        rw [tent_of_half_le hhalf, Nat.cast_sub hk]
+      have first_layer_output :
+          APPLY_TENT ((grid_index : ℝ) / 2 ^ (layer_count + 1))
+            = ((2 ^ (layer_count + 1) - grid_index : ℕ) : ℝ)
+              / 2 ^ layer_count := by
+        rw [tent_of_half_le half_le_point, Nat.cast_sub index_is_on_grid]
         push_cast
         rw [pow_succ]
         field_simp
-      have hpar : Even (2 ^ (L + 1) - k) ↔ Even k := by
-        rw [Nat.even_sub hk]
+      have mirroring_keeps_evenness :
+          Even (2 ^ (layer_count + 1) - grid_index) ↔ Even grid_index := by
+        rw [Nat.even_sub index_is_on_grid]
         simp [Nat.even_pow]
-      rw [hx, ih _ hk']
-      simp only [hpar]
+      rw [first_layer_output,
+        zigzag_on_coarser_grid _ mirrored_index_is_on_grid]
+      simp only [mirroring_keeps_evenness]
 
 end SquigglyLine

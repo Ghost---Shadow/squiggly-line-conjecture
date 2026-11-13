@@ -1,14 +1,24 @@
 /-
 Chinchilla: how to split a compute budget.
 
-The loss above the floor is `A / N + B / D`, with `N` parameters and `D` data.
-The budget fixes `N * D`.
+The loss above the floor is
 
-* `four_mul_div_le_sq` : for any split, the loss above the floor squared is at
-  least `4 A B / (N D)`.
-* `balanced_loss_sq` : a split with `A / N = B / D` reaches that bound.
+    param_cost / param_count + data_cost / data_count
+
+with `param_count` parameters and `data_count` data. The budget fixes
+`param_count * data_count`.
+
+| Name                   | Meaning                                         |
+|------------------------|-------------------------------------------------|
+| `GET_LOSS_ABOVE_FLOOR` | the two terms of the loss, added                |
+| `IS_BALANCED_SPLIT`    | the two terms of the loss are equal             |
+
+* `four_mul_div_le_sq` : for any split, the loss above the floor squared is
+  at least `4 * param_cost * data_cost / (param_count * data_count)`.
+* `balanced_loss_sq` : a balanced split reaches that bound.
 * `balanced_is_optimal` : so no split with the same budget does better.
-* `balanced_ratio` : at the best split `N / D = A / B`, whatever the budget.
+* `balanced_ratio` : at the best split `param_count / data_count` is
+  `param_cost / data_cost`, whatever the budget.
 * `balanced_scale` : scaling parameters and data by the same factor keeps the
   split balanced.
 * `chinchilla_optimal` : the same with the floor added.
@@ -16,65 +26,225 @@ The budget fixes `N * D`.
   power of their size.
 -/
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import SquigglyLine.Style
 
 namespace SquigglyLine
 
-variable {A B N D N₀ D₀ : ℝ}
+/-! ## Helper functions -/
 
-/-- **A sum with a fixed product.** For any split of the budget, the loss above the floor
-squared is at least `4 A B / (N D)`. -/
-theorem four_mul_div_le_sq (A B N D : ℝ) : 4 * (A * B / (N * D)) ≤ (A / N + B / D) ^ 2 :=
-  calc 4 * (A * B / (N * D)) = 4 * (A / N) * (B / D) := by
+/-- The loss above the floor for one split of the budget. One term falls as
+the parameters grow, the other as the data grows.
+Python: `param_cost / param_count + data_cost / data_count`. -/
+noncomputable abbrev GET_LOSS_ABOVE_FLOOR
+    (param_cost data_cost : ℝ)
+    (param_count data_count : ℝ) : ℝ :=
+  param_cost / param_count + data_cost / data_count
+
+/-- A split is balanced when the two terms of the loss are equal.
+Python: `param_cost / param_count == data_cost / data_count`. -/
+abbrev IS_BALANCED_SPLIT
+    (param_cost data_cost : ℝ)
+    (param_count data_count : ℝ) : Prop :=
+  param_cost / param_count = data_cost / data_count
+
+/-! ## The theorems -/
+
+/-- **A sum with a fixed product.** For any split of the budget, the loss
+above the floor squared is at least `4 * param_cost * data_cost` over the
+budget. -/
+theorem four_mul_div_le_sq
+    (param_cost data_cost : ℝ)
+    (param_count data_count : ℝ) :
+    let loss_above_floor :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost param_count data_count
+    let budget      := param_count * data_count               -- compute spent: every parameter sees every piece of data
+    let lower_bound := 4 * (param_cost * data_cost / budget)  -- the product of the two terms, times 4: (a + b)² ≥ 4ab
+    lower_bound ≤ loss_above_floor ^ 2 :=
+  -- A sum of two numbers, squared, is at least four times their product.
+  calc 4 * (param_cost * data_cost / (param_count * data_count))
+      = 4 * (param_cost / param_count) * (data_cost / data_count) := by
         rw [← div_mul_div_comm, mul_assoc]
-    _ ≤ (A / N + B / D) ^ 2 := four_mul_le_sq_add _ _
+    _ ≤ (param_cost / param_count + data_cost / data_count) ^ 2 :=
+        four_mul_le_sq_add _ _
 
-/-- **What the best split buys.** With the two terms balanced, the loss above the floor
-squared is `4 A B` over the budget. -/
-theorem balanced_loss_sq (hbal : A / N₀ = B / D₀) :
-    (A / N₀ + B / D₀) ^ 2 = 4 * (A * B / (N₀ * D₀)) := by
-  rw [← div_mul_div_comm, ← hbal]
+/-- **What the best split buys.** With the two terms balanced, the loss above
+the floor squared is `4 * param_cost * data_cost` over the budget. -/
+theorem balanced_loss_sq
+    {param_cost data_cost : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        balanced_param_count balanced_data_count) :
+    let loss_above_floor :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost
+        balanced_param_count balanced_data_count
+    let budget      := balanced_param_count * balanced_data_count
+    let lower_bound := 4 * (param_cost * data_cost / budget)  -- the bound of `four_mul_div_le_sq`: (a + b)² = 4ab when a = b
+    loss_above_floor ^ 2 = lower_bound := by
+  unfold_named_pieces
+  unfold GET_LOSS_ABOVE_FLOOR
+  unfold IS_BALANCED_SPLIT at split_is_balanced
+  rw [← div_mul_div_comm, ← split_is_balanced]
   ring
 
-/-- **The best split balances the two terms.** If `A / N₀ = B / D₀`, no other split with
-the same budget has a smaller loss. -/
-theorem balanced_is_optimal (hA : 0 ≤ A) (hB : 0 ≤ B) (hN₀ : 0 < N₀) (hD₀ : 0 < D₀)
-    (hN : 0 < N) (hD : 0 < D) (hbal : A / N₀ = B / D₀) (hbudget : N₀ * D₀ = N * D) :
-    A / N₀ + B / D₀ ≤ A / N + B / D := by
-  have hbest : 0 ≤ A / N₀ + B / D₀ := add_nonneg (div_nonneg hA hN₀.le) (div_nonneg hB hD₀.le)
-  have hother : 0 ≤ A / N + B / D := add_nonneg (div_nonneg hA hN.le) (div_nonneg hB hD.le)
-  refine (sq_le_sq₀ hbest hother).mp ?_
-  calc (A / N₀ + B / D₀) ^ 2 = 4 * (A * B / (N₀ * D₀)) := balanced_loss_sq hbal
-    _ = 4 * (A * B / (N * D)) := by rw [hbudget]
-    _ ≤ (A / N + B / D) ^ 2 := four_mul_div_le_sq A B N D
+/-- **The best split balances the two terms.** If a split is balanced, no
+other split with the same budget has a smaller loss. -/
+theorem balanced_is_optimal
+    {param_cost data_cost : ℝ}
+    {param_count data_count : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (param_cost_nonneg : 0 ≤ param_cost)
+    (data_cost_nonneg : 0 ≤ data_cost)
+    (balanced_param_count_pos : 0 < balanced_param_count)
+    (balanced_data_count_pos : 0 < balanced_data_count)
+    (param_count_pos : 0 < param_count)
+    (data_count_pos : 0 < data_count)
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        balanced_param_count balanced_data_count)
+    (same_budget :
+      balanced_param_count * balanced_data_count = param_count * data_count) :
+    let balanced_loss :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost
+        balanced_param_count balanced_data_count
+    let other_loss :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost param_count data_count
+    balanced_loss ≤ other_loss := by
+  unfold_named_pieces
+  unfold GET_LOSS_ABOVE_FLOOR
+  have balanced_loss_nonneg :
+      0 ≤ param_cost / balanced_param_count
+        + data_cost / balanced_data_count :=
+    add_nonneg (div_nonneg param_cost_nonneg balanced_param_count_pos.le)
+      (div_nonneg data_cost_nonneg balanced_data_count_pos.le)
+  have other_loss_nonneg :
+      0 ≤ param_cost / param_count + data_cost / data_count :=
+    add_nonneg (div_nonneg param_cost_nonneg param_count_pos.le)
+      (div_nonneg data_cost_nonneg data_count_pos.le)
+  -- Both losses are nonnegative, so it is enough to compare their squares.
+  refine (sq_le_sq₀ balanced_loss_nonneg other_loss_nonneg).mp ?_
+  -- The balanced split meets the lower bound that every split obeys.
+  calc (param_cost / balanced_param_count
+          + data_cost / balanced_data_count) ^ 2
+      = 4 * (param_cost * data_cost
+          / (balanced_param_count * balanced_data_count)) :=
+        balanced_loss_sq split_is_balanced
+    _ = 4 * (param_cost * data_cost / (param_count * data_count)) := by
+        rw [same_budget]
+    _ ≤ (param_cost / param_count + data_cost / data_count) ^ 2 :=
+        four_mul_div_le_sq param_cost data_cost param_count data_count
 
-/-- **A fixed ratio.** At the best split, parameters over data is `A / B`, whatever the
-budget. -/
-theorem balanced_ratio (hB : B ≠ 0) (hN₀ : N₀ ≠ 0) (hD₀ : D₀ ≠ 0) (hbal : A / N₀ = B / D₀) :
-    N₀ / D₀ = A / B := by
-  rw [div_eq_div_iff hN₀ hD₀] at hbal
-  rw [div_eq_div_iff hD₀ hB]
+/-- **A fixed ratio.** At the best split, parameters over data is
+`param_cost / data_cost`, whatever the budget. -/
+theorem balanced_ratio
+    {param_cost data_cost : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (data_cost_ne_zero : data_cost ≠ 0)
+    (balanced_param_count_ne_zero : balanced_param_count ≠ 0)
+    (balanced_data_count_ne_zero : balanced_data_count ≠ 0)
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        balanced_param_count balanced_data_count) :
+    let params_per_data := balanced_param_count / balanced_data_count
+    let cost_ratio      := param_cost / data_cost  -- the budget is not in it: the ratio is the same at every size
+    params_per_data = cost_ratio := by
+  unfold_named_pieces
+  unfold IS_BALANCED_SPLIT at split_is_balanced
+  -- Clear the fractions on both sides; what is left is the same equation.
+  rw [div_eq_div_iff balanced_param_count_ne_zero
+    balanced_data_count_ne_zero] at split_is_balanced
+  rw [div_eq_div_iff balanced_data_count_ne_zero data_cost_ne_zero]
   linarith
 
-/-- **They grow together.** Scaling parameters and data by the same factor keeps the split
-balanced. -/
-theorem balanced_scale (s : ℝ) (hbal : A / N₀ = B / D₀) : A / (s * N₀) = B / (s * D₀) := by
-  rw [mul_comm s N₀, mul_comm s D₀, ← div_div, ← div_div, hbal]
+/-- **They grow together.** Scaling parameters and data by the same factor
+keeps the split balanced. -/
+theorem balanced_scale
+    {param_cost data_cost : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (scale : ℝ)
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        balanced_param_count balanced_data_count) :
+    let scaled_param_count := scale * balanced_param_count
+    let scaled_data_count  := scale * balanced_data_count  -- the same factor on both: each term is divided by it
+    IS_BALANCED_SPLIT param_cost data_cost
+      scaled_param_count scaled_data_count := by
+  unfold_named_pieces
+  unfold IS_BALANCED_SPLIT at split_is_balanced ⊢
+  rw [mul_comm scale balanced_param_count,
+    mul_comm scale balanced_data_count, ← div_div, ← div_div,
+    split_is_balanced]
 
-/-- **With the floor.** The whole loss `E + A / N + B / D` is smallest at the balanced
-split. -/
-theorem chinchilla_optimal (E : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B) (hN₀ : 0 < N₀) (hD₀ : 0 < D₀)
-    (hN : 0 < N) (hD : 0 < D) (hbal : A / N₀ = B / D₀) (hbudget : N₀ * D₀ = N * D) :
-    E + A / N₀ + B / D₀ ≤ E + A / N + B / D := by
-  linarith [balanced_is_optimal hA hB hN₀ hD₀ hN hD hbal hbudget]
+/-- **With the floor.** The whole loss, floor included, is smallest at the
+balanced split. -/
+theorem chinchilla_optimal
+    {param_cost data_cost : ℝ}
+    {param_count data_count : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (loss_floor : ℝ)
+    (param_cost_nonneg : 0 ≤ param_cost)
+    (data_cost_nonneg : 0 ≤ data_cost)
+    (balanced_param_count_pos : 0 < balanced_param_count)
+    (balanced_data_count_pos : 0 < balanced_data_count)
+    (param_count_pos : 0 < param_count)
+    (data_count_pos : 0 < data_count)
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        balanced_param_count balanced_data_count)
+    (same_budget :
+      balanced_param_count * balanced_data_count = param_count * data_count) :
+    let balanced_param_term := param_cost / balanced_param_count
+    let balanced_data_term  := data_cost / balanced_data_count
+    let param_term          := param_cost / param_count
+    let data_term           := data_cost / data_count
+    let balanced_loss :=
+      loss_floor + balanced_param_term + balanced_data_term  -- the floor is what no amount of compute removes
+    let other_loss := loss_floor + param_term + data_term
+    balanced_loss ≤ other_loss := by
+  unfold_named_pieces
+  -- The floor is the same on both sides, so only the part above it matters.
+  have balanced_is_best :
+      param_cost / balanced_param_count + data_cost / balanced_data_count
+        ≤ param_cost / param_count + data_cost / data_count :=
+    balanced_is_optimal param_cost_nonneg data_cost_nonneg
+      balanced_param_count_pos balanced_data_count_pos param_count_pos
+      data_count_pos split_is_balanced same_budget
+  linarith [balanced_is_best]
 
-/-- **Any common power.** The same holds when both terms fall as the same power `a` of
-their size. -/
-theorem balanced_is_optimal_rpow (a : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B) (hN₀ : 0 < N₀)
-    (hD₀ : 0 < D₀) (hN : 0 < N) (hD : 0 < D) (hbal : A / N₀ ^ a = B / D₀ ^ a)
-    (hbudget : N₀ * D₀ = N * D) :
-    A / N₀ ^ a + B / D₀ ^ a ≤ A / N ^ a + B / D ^ a :=
-  balanced_is_optimal hA hB (Real.rpow_pos_of_pos hN₀ a) (Real.rpow_pos_of_pos hD₀ a)
-    (Real.rpow_pos_of_pos hN a) (Real.rpow_pos_of_pos hD a) hbal
-    (by rw [← Real.mul_rpow hN₀.le hD₀.le, ← Real.mul_rpow hN.le hD.le, hbudget])
+/-- **Any common power.** The same holds when both terms fall as the same
+power `exponent` of their size. -/
+theorem balanced_is_optimal_rpow
+    {param_cost data_cost : ℝ}
+    {param_count data_count : ℝ}
+    {balanced_param_count balanced_data_count : ℝ}
+    (exponent : ℝ)
+    (param_cost_nonneg : 0 ≤ param_cost)
+    (data_cost_nonneg : 0 ≤ data_cost)
+    (balanced_param_count_pos : 0 < balanced_param_count)
+    (balanced_data_count_pos : 0 < balanced_data_count)
+    (param_count_pos : 0 < param_count)
+    (data_count_pos : 0 < data_count)
+    (split_is_balanced :
+      IS_BALANCED_SPLIT param_cost data_cost
+        (balanced_param_count ^ exponent) (balanced_data_count ^ exponent))
+    (same_budget :
+      balanced_param_count * balanced_data_count = param_count * data_count) :
+    let balanced_loss :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost
+        (balanced_param_count ^ exponent) (balanced_data_count ^ exponent)  -- each size enters through its power
+    let other_loss :=
+      GET_LOSS_ABOVE_FLOOR param_cost data_cost
+        (param_count ^ exponent) (data_count ^ exponent)
+    balanced_loss ≤ other_loss :=
+  -- The powers are sizes too: positive, and with the same product on both
+  -- sides, because a power of a product is the product of the powers.
+  balanced_is_optimal param_cost_nonneg data_cost_nonneg
+    (Real.rpow_pos_of_pos balanced_param_count_pos exponent)
+    (Real.rpow_pos_of_pos balanced_data_count_pos exponent)
+    (Real.rpow_pos_of_pos param_count_pos exponent)
+    (Real.rpow_pos_of_pos data_count_pos exponent) split_is_balanced
+    (by rw [← Real.mul_rpow balanced_param_count_pos.le
+          balanced_data_count_pos.le,
+        ← Real.mul_rpow param_count_pos.le data_count_pos.le, same_budget])
 
 end SquigglyLine
