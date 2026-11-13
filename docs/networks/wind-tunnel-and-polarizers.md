@@ -1,9 +1,7 @@
 # The wind tunnel, in plain words
 
 Notes from 11 Nov 2026. This is the picture behind the ReLU part of the
-conjecture, written down before any of it was proved. The older
-[`docs/history/wind-tunnel-analogy.md`](../history/wind-tunnel-analogy.md) is kept as history; this
-file replaces its claims.
+conjecture, written down before any of it was proved.
 
 Each statement below is marked **proved** (in `lean/`), **checked** (by a
 simulation or a calculation here), or **recalled** (from the literature, not

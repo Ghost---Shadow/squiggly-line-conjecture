@@ -240,7 +240,7 @@ def main():
     print(f"slope 1.0 inside every 95% CI: {holds}")
     if not holds:
         print("d-dimensional extension not run: it is conditional on the 1-D")
-        print("prediction holding (TASKS.md, task 9).")
+        print("prediction holding.")
 
     if HAVE_PLT:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))

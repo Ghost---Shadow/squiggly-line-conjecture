@@ -15,7 +15,7 @@ For the person (or agent) who starts the next experiments in this repository.
 
 So "start the experiments" does not mean "test the conjecture". That is done. It means the open threads in section 4.
 
-All tasks in [`TASKS.md`](TASKS.md) are complete, as far as the git history shows (last commit `5455f19`).
+The clean-up tasks that were queued are complete.
 
 ## 2. What the November 2026 session produced
 

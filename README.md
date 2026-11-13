@@ -623,7 +623,6 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/supporting/` | the notes for the supporting material, in `training/`, `new-inputs/` and `network-shape/` |
 | `docs/open-problems.md` | what this repository leaves open, each item marked open, known but not formalised, or measured |
 | `docs/EXPERIMENT_LOG.md`, `docs/literature-survey.md` | a re-run of every script with raw output; related work |
-| `docs/history/` | development notes from before the conjecture was resolved, kept as history |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
 | `scripts/` (experiments) | the scripts listed above |
 | `scripts/` (other) | the first exploratory code, kept as a record |
