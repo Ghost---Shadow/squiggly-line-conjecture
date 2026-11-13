@@ -139,14 +139,18 @@ The rules:
   itself gets none. Code stays within 80 columns; a comment may run past.
 - **Python beside the Lean.** Each statement comes with the same thing
   written as plain Python.
-- **Tested.** Each restyled statement is checked against its original text
-  in [`Tests/`](lean/SquigglyLine/Tests), so a restyle cannot change the
-  mathematics without failing the build. A misspelt name is a build error.
+- **Tested.** The move to this style was checked by fingerprint: every
+  theorem and definition is hashed with names, `let`s and layout ignored,
+  and the hash before and after must agree
+  ([`StatementFingerprint.lean`](lean/tools/StatementFingerprint.lean)). The
+  headline theorem is also checked against its original text in
+  [`Tests/`](lean/SquigglyLine/Tests). A misspelt name is a build error.
 
-So far the headline theorem is written this way:
-[`SquigglyLineTheorem.lean`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean).
-The other files are being moved over one at a time, and until then they use
-Mathlib's short names.
+Every Lean file in the project is written this way. The rules are in
+[`lean/STYLE.md`](lean/STYLE.md), the model file is
+[`SquigglyLineTheorem.lean`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean),
+and [`lean/RENAMES.txt`](lean/RENAMES.txt) lists the old and new name of
+every definition, for readers who come from the paper.
 
 ## How does this help me?
 
@@ -693,6 +697,10 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 |---|---|
 | `lean/SquigglyLine/Theorem/` | the proof of the theorem |
 | `lean/SquigglyLine/Tests/` | checks that each restyled statement says what its original said |
+| `lean/STYLE.md` | how every statement is written |
+| `lean/SquigglyLine/Style.lean` | the proof step `unfold_named_pieces`, and the names `RealFunction` and `PI` |
+| `lean/tools/StatementFingerprint.lean` | the check that a restyle changed no statement |
+| `lean/RENAMES.txt` | old and new names of the definitions |
 | `lean/SquigglyLine/Networks/` | the proofs for networks and parameter space |
 | `lean/SquigglyLine/Supporting/` | the proofs of the supporting material, in `Training/`, `NewInputs/` and `NetworkShape/` |
 | `paper/` | a NeurIPS-format draft of the paper |
