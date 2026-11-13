@@ -9,6 +9,9 @@ A file of definitions and small lemmas in the same style is
 
 A restyle changes names and layout. It never changes the mathematics.
 
+New proofs are found in typical Mathlib style first and then ported. The
+standing brief for that port is [`PORTING.md`](PORTING.md).
+
 ## Names
 
 | Kind | Case | Examples |
