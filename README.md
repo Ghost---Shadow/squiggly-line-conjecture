@@ -627,7 +627,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
 | `scripts/` (experiments) | the scripts listed above |
 | `scripts/` (other) | the first exploratory code, kept as a record |
-| `graphs/`, `diagrams/` | figures |
+| `graphs/` | figures |
 | `handoff.md` | open experiments, with a prediction and a stop rule for each |
 
 ## What went wrong the first time

@@ -37,9 +37,6 @@ Deliberately **not** in that list, decide separately:
 
 - `docs/literature-survey.md` — paper-adjacent, but it is the only written record
   of the related work, and the Hanin result matters to the resolution. See task 6.
-- `diagrams/` — conceptual illustrations (`core_idea_1..4`, `arc_length`,
-  `the_wall`, `diminishing_returns`), not LaTeX figures. Several are still
-  accurate.
 
 ## 3. Neutralize the hardcoded conclusion blocks
 

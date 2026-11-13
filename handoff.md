@@ -28,19 +28,19 @@ This work is outside the repository, except for one script.
 | Blog post (published 10 Nov 2026) | https://ad-absurdum.me/blog/squiggly-line-conjecture |
 | Random ReLU length check | [`scripts/random_relu_length.py`](scripts/random_relu_length.py) |
 
-**The session found this repository late.** The first version of the slide deck and of the blog post was written from the owner's early notes only. After the owner approved it, the results of `RESOLUTION.md` were added to both (deck slide "My experiments: the geometry holds, the learning claim does not", and the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
+**The session found this repository late.** The first version of the blog post was written from the owner's early notes only. After the owner approved it, the results of `RESOLUTION.md` were added (the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
 
-The idea is from 2022. The first scripts are from August 2025. The slide deck was rebuilt from scratch on 12 Nov 2026.
+The idea is from 2022. The first scripts are from August 2025.
 
 ## 3. New findings from the session
 
 ### 3.1 Sign error in the original derivation
 
-Slide "Optimal amount of squigglyness (7 / 9)", also `diagrams/marginal_benefit_analysis.png`.
+This is about the first derivation of diminishing returns in the early notes.
 
-- The slide uses `E[dist] ~ (1 - L*k*eps^(d-1)/V)^(1/d)` and says that the second derivative in `L` is positive.
+- The derivation uses `E[dist] ~ (1 - L*k*eps^(d-1)/V)^(1/d)` and says that the second derivative in `L` is positive.
 - For `d > 1` the second derivative is negative. The factor `(1-d)/d^2` is negative, and `(1 - x)^(1/d - 2)` is positive. A negative exponent does not change the sign.
-- So that formula gives increasing returns to length, the opposite of the slide's conclusion. Checked numerically for d = 2, 3, 10.
+- So that formula gives increasing returns to length, the opposite of its conclusion. Checked numerically for d = 2, 3, 10.
 
 ### 3.2 The graph is a surface, not a curve
 
