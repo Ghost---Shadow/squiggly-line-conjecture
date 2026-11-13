@@ -1,6 +1,6 @@
 # The Fourier lift: Fourier features, position signals and convolution
 
-**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean).
+**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean), [`Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -78,6 +78,39 @@ question by the same amount, and the answer is the same (**proved**:
 A convolution layer builds this in by using the same weights at every place
 (**recalled**: LeCun et al. 1989). In the terms used here it is a choice of
 lift whose kernel sees only gaps.
+
+## Four position embeddings
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Networks/Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean).
+
+- **Sinusoidal, all frequencies together.** Give each position one cosine
+  and one sine for every frequency. The overlap of the signals of two
+  positions is a sum of cosines of the gap between them (**proved**:
+  `positionOverlap_eq_sum_cos`). So it depends only on the gap (**proved**:
+  `positionOverlap_shift`), and no two positions overlap more than a
+  position does with itself (**proved**: `positionOverlap_le_card`,
+  `positionOverlap_self`). This is the lift of the section above, with many
+  frequencies at once.
+- **Rotary.** Do not add a signal. Turn the query and the key, each by an
+  angle set by its position. The dot product of the two is that of the query
+  turned by the difference of the angles, with the key left alone
+  (**proved**: `planeDot_rotate_rotate`). So the score depends on the two
+  positions only through their gap (**proved**: `planeDot_rotate_shift`),
+  and no vector changes length (**proved**: `planeDot_rotate_self`). The
+  proof is for one pair of coordinates; a real model turns every pair, each
+  at its own frequency.
+- **Relative position bias.** Add to each score a number looked up by the
+  gap. Shifting the whole sequence changes no gap, so it changes no bias
+  (**proved**: `relativeBias_shift`).
+- **Learned table.** Give each position a free vector. Changing the vector
+  of one position changes nothing at any other (**proved**:
+  `update_table_of_ne`). The table is a lookup, a lift that can fit
+  anything, and it says nothing about a position it has not seen.
+
+The first three build in the fact that only the gap matters. The table has
+to learn it from data, and cannot use it past the longest sequence it was
+trained on (**argued**).
 
 ## How this meets the squiggly line
 

@@ -529,6 +529,7 @@ checks that each restyled statement says what its original said.
 | [`Lift`](lean/SquigglyLine/Networks/Lift.lean) | a model linear in its weights is a flat plane seen through a lift: a point is on the squiggly line exactly when its lift is on the plane; the slope is at most the size of the weights times the stretch of the lift; weights moved along the lifted data predict through the kernel alone ([note](docs/networks/kernel-trick.md)) |
 | [`FourierLift`](lean/SquigglyLine/Networks/FourierLift.lean) | winding the input round a circle at frequency `w` stretches distances by at most `w`, so a wave is no steeper than its weights times its frequency; the kernel is `cos(w(x − x′))`, which sees only the gap, so shifting data and question together changes no answer ([note](docs/networks/fourier-lift.md)) |
 | [`RadialBasis`](lean/SquigglyLine/Networks/RadialBasis.lean) | a Gaussian bump of width `σ` is the unit bump squeezed by `1 / σ`, so it has slope at most `1 / σ`; a network of bumps is no steeper than its heights over its width, is a flat model on the lift by bumps, and fits any labels once the bumps hardly overlap |
+| [`Positions`](lean/SquigglyLine/Networks/Positions.lean) | position embeddings: the overlap of two sinusoidal position signals is a sum of cosines of their gap; with rotary positions the score depends on the positions only through the gap and no length changes; a relative bias survives a shift of the sequence; a learned table ties no two positions together |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the
@@ -873,6 +874,10 @@ from memory and have not been checked.
 | Rethinking generalisation (Zhang et al. 2017) | A lift into `m` dimensions fits any labels on `m` points. | [`Capacity.lean`](lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean) |
 | In-context learning (von Oswald et al. 2023) | One attention head scoring by the kernel is one step of travel on the prompt. | [`Attention.lean`](lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
 | The condition number sets the speed of gradient descent | The best single step size is `2 / (strongest + weakest)`. With it the slowest direction shrinks by `(κ − 1) / (κ + 1)` a step, where `κ` is strongest over weakest. | [`Optimisers.lean`](lean/SquigglyLine/Supporting/Training/Optimisers.lean) |
+| Sinusoidal positions, all frequencies together (Vaswani et al. 2017) | With many frequencies the overlap of two positions is a sum of cosines of the gap between them. It still depends only on the gap, and it is largest at gap zero. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean) |
+| Rotary positions (Su et al. 2021) | Turn the query and the key by angles set by their positions. The score then depends on the two positions only through the gap, and no vector changes length. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean), for one pair of coordinates |
+| Relative position bias (Shaw et al. 2018; Raffel et al. 2020) | Add to each score a number that depends only on the gap. Shifting the whole sequence then changes no attention weight. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean) |
+| Learned position table (Devlin et al. 2019; Radford et al. 2019) | One free vector per position is a lookup: a lift that can give any position anything. It ties no two positions together and says nothing about a position it has not seen. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean) |
 
 ### Folds
 
