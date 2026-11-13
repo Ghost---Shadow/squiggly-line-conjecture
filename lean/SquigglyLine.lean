@@ -132,6 +132,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `Activations`            | sigmoid slope ≤ 1/4; leaky ReLU; max pooling; spectral normalisation |
 | `Convolution`            | conv slope ≤ summed kernel; local window `L n`; stride is squeezing  |
 | `Mixtures`               | gates add slope via expert spread; VAE penalty; softmax bottleneck   |
+| `HardChoices`            | straight-through trick; a cold softmax picks; Hopfield recall       |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -191,6 +192,7 @@ import SquigglyLine.Supporting.NetworkShape.Residual
 import SquigglyLine.Supporting.NetworkShape.Activations
 import SquigglyLine.Supporting.NetworkShape.Convolution
 import SquigglyLine.Supporting.NetworkShape.Mixtures
+import SquigglyLine.Supporting.NetworkShape.HardChoices
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting

@@ -1,6 +1,6 @@
 # Attention: a weighted average, and one step of training
 
-**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`AttentionRate.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`AttentionRate.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean), [`HardChoices.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/HardChoices.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -101,6 +101,39 @@ the simplest account of in-context learning (**recalled**: von Oswald et al.
 With the softmax kept, the head is a weighted average of the labels of the
 examples most like the query. Statisticians call that kernel smoothing
 (**recalled**: Nadaraya 1964, Watson 1964).
+
+## Hard choices: straight-through, a cold softmax, Hopfield recall
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/HardChoices.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/HardChoices.lean).
+
+Some layers have to pick: round a number, or take the top score. A pick is
+a step, and a step is the limit of a squiggle: all its slope is at the jump.
+
+- **A hard step sends no gradient back.** Away from its jump the step
+  function has slope zero (**proved**: `hasDerivAt_step_of_pos`). Training
+  by gradient cannot see through it.
+- **The straight-through trick.** Write
+  `(hard - soft).detach() + soft`, where `soft` is a gentle stand-in for the
+  hard step and `detach` means "treat as a fixed number". Forward, this is
+  the hard step (**proved**: `straightThrough_self`). Backward, it has the
+  slope of the stand-in (**proved**: `hasDerivAt_straightThrough`). The
+  value of a step is kept and the slope of a line is borrowed.
+- **A cold softmax picks.** A softmax at temperature `τ` is the usual
+  stand-in for taking the top score. If the top score leads the rest by
+  `gap`, its share is within `(n - 1) * exp(-gap / τ)` of one (**proved**:
+  `one_sub_softmax_div_le`). So as `τ` falls the softmax tends to the pick
+  itself. Dividing the scores by `τ` multiplies their slope by `1 / τ`
+  (`network-slope.md`), so the nearer to a pick, the steeper. That is the
+  trade in Gumbel-softmax. The Gumbel noise, which makes the pick a random
+  draw from the softmax, is not shown.
+- **Hopfield recall.** A modern Hopfield network stores patterns and
+  updates its state to an attention-weighted average of them, scored by
+  overlap with the state. For patterns and a state of length one that
+  update is the ideal denoiser of `averaging.md` (**proved**:
+  `hopfield_eq_denoiser`). Recall is denoising: the state moves toward the
+  stored patterns nearest to it and never leaves the region they span. The
+  classic network of 1982, with its energy that only falls, is not shown.
 
 ## How this meets the squiggly line
 

@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 4 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 1 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,8 +38,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Straight-through estimator (Bengio et al. 2013) | A hard step such as rounding has slope zero almost everywhere, so no gradient comes back through it. The trick keeps the value of the hard step and borrows the slope of a gentle stand-in. | **next** |
-| Gumbel-softmax (Jang et al. 2017; Maddison et al. 2017) | A softmax at temperature `τ` is a gentle stand-in for picking the top score. As `τ` falls it tends to the pick itself, and its slope grows without limit. | **next** for the limit. That the top score after adding Gumbel noise is a draw from the softmax needs integrals the library may not have: **out of reach** for now |
 
 ## Nearness
 
@@ -68,7 +66,6 @@ The papers and years are recalled from memory and have not been checked.
 |---|---|---|
 | Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
 | Averaging the weights over time (Polyak and Juditsky 1992) | A running average of the weights is an average of lines, for a model linear in its weights. | Argued from [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
-| Hopfield networks (Hopfield 1982; Ramsauer et al. 2021) | A stored pattern is a resting point: each update lowers an energy, so the state settles and cannot wander. In the modern form the update is an attention head over the stored patterns, so it is the ideal denoiser of [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). | **next** |
 
 ## No link to the squiggly line yet
 
