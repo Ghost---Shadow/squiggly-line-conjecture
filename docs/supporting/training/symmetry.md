@@ -1,6 +1,6 @@
 # Symmetries: changes to the weights that leave the line alone
 
-**Proofs:** [`Symmetry.lean`](../../../lean/SquigglyLine/Supporting/Training/Symmetry.lean).
+**Proofs:** [`RmsNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/RmsNorm.lean), [`Symmetry.lean`](../../../lean/SquigglyLine/Supporting/Training/Symmetry.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -46,6 +46,40 @@ directly.
 every step. The same step then turns them through a smaller angle. Weight
 decay pulls them back and keeps the angle from shrinking (**argued**;
 **recalled**: van Laarhoven 2017; Hoffer et al. 2018).
+
+## RMSNorm and pre-norm
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/RmsNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/RmsNorm.lean).
+
+RMSNorm divides a vector by its root mean square: the root of the mean of
+the squares of its entries (**proved**: `rootMeanSquare_eq`). It does not
+subtract the mean, as layer normalisation does.
+
+- **It forgets the scale.** Multiply the vector by any positive number and
+  the output is the same (**proved**: `normalizeByRms_smul`). The output has
+  root mean square one (**proved**: `rootMeanSquare_normalizeByRms`).
+- **So everything above applies.** Any loss read through an RMSNorm is scale
+  invariant (**proved**: `isScaleInvariant_comp_normalizeByRms`), and its
+  gradient is at right angles to the weights (**proved**:
+  `inner_gradient_self_eq_zero_of_rmsNorm`). Subtracting the mean was not
+  needed for this.
+
+Where the normalisation sits in a residual block matters.
+
+- **Pre-norm**: the branch reads the normalised stream and its output is
+  added to the stream as it was. Scale the stream, and the skip path carries
+  the scale through while the branch adds exactly what it added before
+  (**proved**: `preNormBlock_smul`, `preNormBlock_sub_smul`). The skip path
+  is left alone.
+- **Post-norm**: the sum is normalised. The output always has root mean
+  square one (**proved**: `rootMeanSquare_postNormBlock`), so the skip path
+  is rescaled at every block and there is no untouched path from input to
+  output.
+
+That is the usual reason given for why pre-norm transformers train more
+easily at depth (**recalled**: Xiong et al. 2020). How fast either one
+trains is not shown here.
 
 ## Deep linear networks: rescaling one layer against the next
 

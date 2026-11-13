@@ -82,6 +82,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `Perceptron`      | margin is nearness; at most `(R / γ)²` mistakes; XOR; no free lunch |
 | `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
 | `StepRules`       | Adam's step is a sign; clipping caps travel; subspaces; rounding    |
+| `AdamW`           | decay inside Adam is rescaled away; outside it shrinks by `1 − η μ` |
 
 ### What a fit does to new inputs
 
@@ -119,6 +120,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `Eikonal`                | toward the nearest point the distance falls at rate exactly one     |
 | `AttentionRate`          | bounded scores: each layer shrinks the spread by `1 − exp(−2B)`     |
 | `KolmogorovArnold`       | a node of edge curves is within `2 × slope / n` of a ReLU layer     |
+| `RmsNorm`                | RMSNorm forgets the scale; pre-norm leaves the skip path alone     |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -167,6 +169,8 @@ import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry
 import SquigglyLine.Supporting.Training.StepRules
+import SquigglyLine.Supporting.Training.AdamW
+import SquigglyLine.Supporting.NetworkShape.RmsNorm
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting

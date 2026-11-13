@@ -1,6 +1,6 @@
 # Rules for the step: Adam, clipping, low-rank training and rounding
 
-**Proofs:** [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean), [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`StepRules.lean`](../../../lean/SquigglyLine/Supporting/Training/StepRules.lean).
+**Proofs:** [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean), [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`AdamW.lean`](../../../lean/SquigglyLine/Supporting/Training/AdamW.lean), [`StepRules.lean`](../../../lean/SquigglyLine/Supporting/Training/StepRules.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -37,6 +37,45 @@ functions first. In the terms of the line: the squiggly parts of the fit,
 which lie along weak directions, are no longer made to wait. That is a
 reason Adam trains faster, and a reason it can fit noise sooner.
 (**argued** from the two proved rates)
+
+## AdamW: where the weight decay goes
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/Training/AdamW.lean`](../../../lean/SquigglyLine/Supporting/Training/AdamW.lean). As above, this is one
+coordinate of Adam with no memory.
+
+Weight decay pulls each weight toward zero with a strength `μ`. There are
+two places to put that pull.
+
+**Inside the gradient.** Add `μ * weight` to the gradient and let Adam
+rescale the sum. Adam divides by the size of what it is given, so the size
+of the pull is divided away with everything else.
+
+- The weight moves by exactly `η`, whatever `μ` is (**proved**:
+  `abs_adamL2Step_sub`).
+- With no gradient from the loss, a large weight and a small one both lose
+  the same amount `η` (**proved**: `adamL2Step_of_no_gradient`). The decay
+  is no longer in proportion to the weight.
+- Making the loss `c` times larger is the same as making the decay `c` times
+  weaker (**proved**: `adamL2Step_mul`). The decay has no strength of its
+  own.
+
+**Outside the rescaling (AdamW).** Take Adam's step on the gradient of the
+loss alone, then shrink the weight.
+
+- The step is the weight times `1 - η μ`, minus Adam's step (**proved**:
+  `adamWStep_eq`).
+- With no gradient from the loss every weight shrinks at the same rate, and
+  after `n` steps is `(1 - η μ)^n` of what it was (**proved**:
+  `adamWStep_of_no_gradient`, `iterate_adamWStep_of_no_gradient`).
+- The size of the loss does not change the decay (**proved**:
+  `adamWStep_mul`).
+
+In the terms of `docs/supporting/training/weight-decay.md`, weight decay is
+a floor on travel: directions weaker than the floor are not learned. Inside
+Adam that floor has no fixed height. Only the outside form keeps it. That is
+the reason AdamW replaced Adam with a penalty (**recalled**: Loshchilov and
+Hutter 2019).
 
 ## Gradient clipping
 

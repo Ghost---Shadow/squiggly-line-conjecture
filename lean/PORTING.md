@@ -97,3 +97,11 @@ could not follow a rule and why. That folder is not committed.
 
 Then reply in at most six lines: for each file, built or not, and whether
 its log has anything the author must look at.
+
+## Waiting to be ported
+
+These files are in typical Mathlib style. Each says so in its opening
+comment. Remove a file from this list when it is ported.
+
+- `SquigglyLine/Supporting/Training/AdamW.lean`
+- `SquigglyLine/Supporting/NetworkShape/RmsNorm.lean`
