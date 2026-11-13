@@ -97,11 +97,11 @@ It is also hard to maintain, because nobody can safely change a line they
 cannot read. The position taken here is that named, chunked statements beat
 it: they are easier to check, easier to change and open to far more readers.
 
-![The squiggly line theorem side by side. On the left, the statement as first written, with 13 single-letter and Greek names marked. On the right, the same statement with named givens, one quantity per line and one named claim per block.](graphs/readme_before_and_after.png)
+![The squiggly line theorem side by side. On the left, the statement as first written, with 13 single-letter and Greek names marked. On the right, the same statement with named givens, one quantity per line, a short comment where a line needs a reason, and one named claim per block.](graphs/readme_before_and_after.png)
 
-The picture shows the first restyle (commit `edbec22`). The global names
-have since become verbs, as in the second block below; the layout is the
-same.
+The picture is drawn from the repository by
+[`scripts/readme_before_after.py`](scripts/readme_before_after.py): the left
+side from git history, the right side from the file as it is now.
 
 Here is one claim of the theorem, in traditional notation and in this
 style. Lean checks that the two say the same thing.

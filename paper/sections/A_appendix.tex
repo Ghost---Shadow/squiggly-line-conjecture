@@ -335,7 +335,10 @@ distance is $-0.76$.
 \begingroup\raggedright
 The Lean project is in the folder \texttt{lean/} of the repository, built with
 Lean 4.36.0-rc1 and the Mathlib commit recorded in
-\texttt{lean/lake-manifest.json}. Each file is \texttt{lean/SquigglyLine/<name>.lean}.
+\texttt{lean/lake-manifest.json}. Each file named below is \texttt{<name>.lean} in \texttt{lean/SquigglyLine/Theorem/} or
+\texttt{lean/SquigglyLine/Networks/}. Since this appendix was first written the definitions
+have been given longer names (for example \texttt{CoversWithin} is now
+\lean{COVERS\_WITHIN}); \texttt{lean/RENAMES.txt} lists them. Theorem names did not change.
 
 \begin{itemize}\setlength{\itemsep}{1pt}
 \item \cref{thm:sandwich}: \texttt{Sandwich}, \lean{nearestDist\_le\_verticalDist},
@@ -352,7 +355,7 @@ Lean 4.36.0-rc1 and the Mathlib commit recorded in
 \lean{expected\_nearestDist\_le}; \cref{cor:warp}:
 \lean{exists\_warp\_of\_coversWithin}, \lean{sineWave\_exists\_warp},
 \lean{sin\_exists\_phaseShift}.
-\item \cref{thm:general}: \texttt{Compression}, \lean{CoversWithin.compress},
+\item \cref{thm:general}: \texttt{Compression}, \lean{COVERS\_WITHIN.compress},
 \lean{lipschitzWith\_compress}, \lean{marginal\_compress\_eq},
 \lean{squiggly\_line\_theorem\_general}.
 \item \cref{thm:sine}: \texttt{SineCloser},
@@ -368,9 +371,9 @@ Lean 4.36.0-rc1 and the Mathlib commit recorded in
 \lean{travel\_le\_of\_le\_kernel}, \lean{travel\_eq\_of\_eigen},
 \lean{le\_travel\_of\_eigen\_le}, \lean{not\_exists\_fit\_of\_kernel\_eq\_zero},
 \lean{travel\_one\_point}.
-\item \cref{cor:rate}: \texttt{ExchangeRate}, \lean{TightFeatures.travel\_eq};
-\texttt{MarkovChains}, \lean{TightFeatures.residual\_iterate\_gradientStep},
-\lean{TightFeatures.residual\_gradientStep\_inv}.
+\item \cref{cor:rate}: \texttt{ExchangeRate}, \lean{HAS\_TIGHT\_FEATURES.travel\_eq};
+\texttt{MarkovChains}, \lean{HAS\_TIGHT\_FEATURES.residual\_iterate\_gradientStep},
+\lean{HAS\_TIGHT\_FEATURES.residual\_gradientStep\_inv}.
 \item \cref{app:chains}: \texttt{NarrowChain}, \lean{narrowChain\_neverTurns};
 \texttt{Depth}, \lean{iterate\_tent\_dyadic}; \texttt{TentCloser},
 \lean{iterate\_tent\_covers}, \lean{nearestDist\_iterate\_tent\_le}; \texttt{Bridge},
