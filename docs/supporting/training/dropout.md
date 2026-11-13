@@ -1,8 +1,10 @@
 # Dropout is weight decay
 
+**Proofs:** [`Dropout.lean`](../../../lean/SquigglyLine/Supporting/Training/Dropout.lean), [`WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/Dropout.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/Dropout.lean`](../../../lean/SquigglyLine/Supporting/Training/Dropout.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -80,7 +82,7 @@ keeps the line from getting squigglier than the data pays for. (**argued**)
 ## What is not shown
 
 - **Decay toward zero.** The dropout penalty pulls the weights toward zero.
-  `WeightDecay.lean` pulls them toward where they started. The two agree for
+  [`WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean) pulls them toward where they started. The two agree for
   a start at zero.
 - **Other losses.** The identity is exact for squared error. For
   cross-entropy it holds to second order only (**recalled**: Wager, Wang and

@@ -1,8 +1,10 @@
 # The squiggly line theorem, without the sines
 
+**Proofs:** [`Compression.lean`](../../lean/SquigglyLine/Theorem/Compression.lean), [`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean), [`TentCloser.lean`](../../lean/SquigglyLine/Networks/TentCloser.lean).
+
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/SquigglyLine/Theorem/Compression.lean` and
-`lean/SquigglyLine/Networks/TentCloser.lean`) or **open**.
+done. Each statement is marked **proved** (in [`lean/SquigglyLine/Theorem/Compression.lean`](../../lean/SquigglyLine/Theorem/Compression.lean) and
+[`lean/SquigglyLine/Networks/TentCloser.lean`](../../lean/SquigglyLine/Networks/TentCloser.lean)) or **open**.
 
 ## Why the title was loaded
 
@@ -44,7 +46,7 @@ special case where the function is a sine with a random phase.
 
 The ReLU side has a family where "more parameters, closer" holds outright.
 
-Take the fold from `Depth.lean`: one layer with two neurons that folds the
+Take the fold from [`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean): one layer with two neurons that folds the
 interval from 0 to 1 in half. Stack `L` of them. The network has `2L` neurons.
 
 > For every point of the unit square, the curve drawn by this network passes

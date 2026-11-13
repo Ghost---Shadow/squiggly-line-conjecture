@@ -1,8 +1,10 @@
 # Weight decay, early stopping and spare parameters are one thing
 
+**Proofs:** [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean), [`WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/WeightDecay.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -55,7 +57,7 @@ little explicit regularisation.
 ## Early stopping is weight decay
 
 Now use no penalty and stop after `t` steps. The share of the error left along
-the direction is `(1 − ηλ)^t` (**proved** earlier: `SpectralBias.lean`). It is
+the direction is `(1 − ηλ)^t` (**proved** earlier: [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean)). It is
 caught between two numbers:
 
 ```

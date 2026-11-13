@@ -1,5 +1,7 @@
 # The wind tunnel, in plain words
 
+**Proofs:** [`Marginal.lean`](../../lean/SquigglyLine/Theorem/Marginal.lean), [`Verdict.lean`](../../lean/SquigglyLine/Theorem/Verdict.lean), [`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean), [`ExchangeRate.lean`](../../lean/SquigglyLine/Networks/ExchangeRate.lean), [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean), [`NarrowChain.lean`](../../lean/SquigglyLine/Networks/NarrowChain.lean), [`Polarizer.lean`](../../lean/SquigglyLine/Networks/Polarizer.lean).
+
 Notes from 11 Nov 2026. This is the picture behind the ReLU part of the
 conjecture, written down before any of it was proved.
 
@@ -34,9 +36,9 @@ how good that approximation is, and they behave differently:
 | Travel | the current weights | the nearest weights that fit | the exchange rate |
 
 The original conjecture was about the second distance at a random start. It is
-false there (**proved**: `Marginal.lean`, `Verdict.lean`). It is true for the
-third (**proved** for models linear in their parameters: `LinearModel.lean`,
-`ExchangeRate.lean`; **checked** by `scripts/fourier_params.py`).
+false there (**proved**: [`Marginal.lean`](../../lean/SquigglyLine/Theorem/Marginal.lean), [`Verdict.lean`](../../lean/SquigglyLine/Theorem/Verdict.lean)). It is true for the
+third (**proved** for models linear in their parameters: [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean),
+[`ExchangeRate.lean`](../../lean/SquigglyLine/Networks/ExchangeRate.lean); **checked** by `scripts/fourier_params.py`).
 
 What the data fixes is where each bird takes off and where it must land. The
 route through the hidden layers is not fixed: many routes land every bird
@@ -63,7 +65,7 @@ pieces, like pixels. Each neuron is one fold.
 - `L` layers of `n` neurons, one input: each layer folds what the earlier ones
   made, so the counts multiply. The maximum is about `n^L`.
 
-The doubling is **proved** for two neurons per layer (`Depth.lean`): `L` such
+The doubling is **proved** for two neurons per layer ([`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean)): `L` such
 layers draw a curve that alternates 0, 1, 0, 1 on `2^L + 1` evenly spaced
 inputs, so it turns `2^L − 1` times. The general `n^L` bound is **recalled**.
 
@@ -86,7 +88,7 @@ relu(w1 · relu(w2 · relu(w3 · relu(w4·x + b4) + b3) + b2) + b1)
 
 Every layer here is a monotone function of its input, and a chain of monotone
 functions is monotone. So this network, at any depth, never turns: its output
-only rises with `x`, or only falls (**proved**: `NarrowChain.lean`). Without
+only rises with `x`, or only falls (**proved**: [`NarrowChain.lean`](../../lean/SquigglyLine/Networks/NarrowChain.lean)). Without
 biases it is a single line through the origin, or dead.
 
 ## ReLU is a polarizer with a wide opening
@@ -104,7 +106,7 @@ The weights decide how the wedge sits relative to the flock, just as one
 chooses the angle of a polarizer.
 
 All three cases are **proved** for a bird on the edge of the wedge
-(`Polarizer.lean`), along with the fact that ReLU sends each point to the
+([`Polarizer.lean`](../../lean/SquigglyLine/Networks/Polarizer.lean)), along with the fact that ReLU sends each point to the
 nearest point of the wedge.
 
 ## The three-polarizer effect

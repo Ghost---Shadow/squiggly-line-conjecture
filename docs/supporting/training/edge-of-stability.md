@@ -1,8 +1,10 @@
 # The edge of stability
 
+**Proofs:** [`EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -22,7 +24,7 @@ exact, and it comes from the same line of algebra as spectral bias.
 Follow a direction of the labels of strength `λ`. The strength is the
 sharpness of the loss in that direction. Each step multiplies the error along
 it by `1 − ηλ`, where `η` is the step size (**proved** earlier:
-`inner_residual_gradientStep` in `SpectralBias.lean`). So the size of the
+`inner_residual_gradientStep` in [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean)). So the size of the
 error is multiplied by `|1 − ηλ|` each step
 (**proved**: `abs_inner_residual_iterate_gradientStep`).
 

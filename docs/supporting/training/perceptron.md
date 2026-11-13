@@ -1,8 +1,10 @@
 # The perceptron, XOR and no free lunch: nearness to a boundary
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`Perceptron.lean`](../../../lean/SquigglyLine/Supporting/Training/Perceptron.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/Perceptron.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/Perceptron.lean`](../../../lean/SquigglyLine/Supporting/Training/Perceptron.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -65,7 +67,7 @@ squiggly line.
   `docs/networks/kernel-trick.md`.
 - **A fold.** Fold the plane along the line `x = y`, which is what `|x − y|`
   does. After the fold a flat boundary works (**proved**:
-  `separatesXor_fold`). This is one ReLU layer, as in `Depth.lean`.
+  `separatesXor_fold`). This is one ReLU layer, as in [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean).
 
 ## Can XOR be done with no hidden layer by changing the encoding?
 
@@ -100,7 +102,7 @@ is flat in some lift, and choosing the lift is where the work is.
 One more thing seen in such experiments: the training loss ends small and not
 zero. That is not rounding error. Against a sure label, no finite scores
 bring cross-entropy to zero (**proved**: `crossEntropy_single_pos` in
-`CrossEntropy.lean`). The loss only stops falling when training stops.
+[`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean)). The loss only stops falling when training stops.
 
 ## No free lunch: squiggle helps only if labels vary gently
 
@@ -125,7 +127,7 @@ content (`docs/supporting/new-inputs/`).
 
 - **A perceptron with a moving lift.** The bound is for fixed features.
 - **Margins for boundaries that are not flat.** For a score of slope `K` the
-  matching statement is `le_mul_dist_of_flip` in `NetworkSlope.lean`.
+  matching statement is `le_mul_dist_of_flip` in [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean).
 - **How large the margin of real data is** after a network's lift. **open**
 - **A bound on test error from the margin.** Known (**recalled**: Vapnik),
   not formalised.

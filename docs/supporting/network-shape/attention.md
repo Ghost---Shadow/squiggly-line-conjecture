@@ -1,8 +1,10 @@
 # Attention: a weighted average, and one step of training
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/Attention.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/Attention.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -13,7 +15,7 @@ each query.
 - **Score.** Give every token a score against the query.
 - **Share.** Turn the scores into shares with a softmax. The shares are
   positive and add up to one (**proved**: `softmax_pos`, `sum_softmax` in
-  `CrossEntropy.lean`).
+  [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean)).
 - **Average.** Return the tokens' values, averaged with those shares.
 
 Two things can be said about this with the tools already here. Attention on
@@ -30,7 +32,7 @@ Three consequences.
 
 - **Merged stays merged.** If every token carries the same value, every query
   gets that value back, whatever the scores (**proved**: `attend_const`).
-  This is the rule of `MarkovChains.lean` again.
+  This is the rule of [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean) again.
 - **At the start it is the plain average.** With equal scores every token
   gets the same share (**proved**: `softmax_const`, `attend_of_const_score`).
   A fresh head with scores near zero is close to this.
@@ -78,8 +80,8 @@ examples most like the query. Statisticians call that kernel smoothing
 The theorem says a line gets near the data by being steep. An average is
 never steeper than what it averages, so attention cannot supply the slope.
 In a transformer the squiggle has to come from the other parts: the
-feed-forward layers, which are the ReLU folds of `Depth.lean`, and the skip
-connections, which keep the tokens apart (`SkipAndNorm.lean`).
+feed-forward layers, which are the ReLU folds of [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), and the skip
+connections, which keep the tokens apart ([`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean)).
 
 The second half ties depth to travel. If each layer is one step of training
 on the prompt, then the number of layers is the number of steps, and how well

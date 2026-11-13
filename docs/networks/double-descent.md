@@ -1,5 +1,7 @@
 # Double descent, as the travel peak
 
+**Proofs:** [`DoubleDescent.lean`](../../lean/SquigglyLine/Networks/DoubleDescent.lean), [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean).
+
 Notes from 11 Nov 2026. The original idea claimed that the squiggly line picture
 ties in with double descent, and derived nothing. This note is what can
 actually be said. Each statement is marked **proved** (in `lean/`),

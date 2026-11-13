@@ -1,8 +1,10 @@
 # Vanishing and exploding signals
 
+**Proofs:** [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -63,7 +65,7 @@ and cause the opposite.
 
 A plate followed by an amplifier, which is a normalisation, gives light of
 length exactly one at every depth (**proved** earlier:
-`throughNormedPlates_eq` in `SkipAndNorm.lean`).
+`throughNormedPlates_eq` in [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean)).
 
 That gives the full picture of why the usual recipe has both parts.
 

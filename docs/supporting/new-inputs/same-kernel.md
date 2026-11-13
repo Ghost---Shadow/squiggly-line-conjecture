@@ -1,8 +1,10 @@
 # Same kernel, same predictions
 
+**Proofs:** [`Kernel.lean`](../../../lean/SquigglyLine/Networks/Kernel.lean), [`SameKernel.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -43,14 +45,14 @@ Then:
 
 - **Same errors, every step.** Gradient descent takes both through the same
   training errors (**proved** earlier: `residual_iterate_gradientStep_eq` in
-  `Kernel.lean`).
+  [`Kernel.lean`](../../../lean/SquigglyLine/Networks/Kernel.lean)).
 - **Same answer at the test point, every step.** Their predictions at the test
   point are equal after any number of steps
   (**proved**: `prediction_iterate_gradientStep_eq`).
 - **Same answer in the end.** The fit that training heads for gives the same
   prediction in both models (**proved**: `prediction_kernelFit_eq`).
 - **Same distance to go.** Their nearest fits are equally far away (**proved**
-  earlier: `travel_eq_of_kernel_eq` in `Kernel.lean`).
+  earlier: `travel_eq_of_kernel_eq` in [`Kernel.lean`](../../../lean/SquigglyLine/Networks/Kernel.lean)).
 
 The reason is one line. A gradient step changes the answer at a test point by
 the step size times the test row matched against the current errors

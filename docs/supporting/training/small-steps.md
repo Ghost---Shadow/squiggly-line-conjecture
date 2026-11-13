@@ -1,8 +1,10 @@
 # Many small steps
 
+**Proofs:** [`ThreePolarizers.lean`](../../../lean/SquigglyLine/Networks/ThreePolarizers.lean), [`SmallSteps.lean`](../../../lean/SquigglyLine/Supporting/Training/SmallSteps.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/SmallSteps.lean`), **recalled**, **argued**, or **open**.
+[`lean/SquigglyLine/Supporting/Training/SmallSteps.lean`](../../../lean/SquigglyLine/Supporting/Training/SmallSteps.lean)), **recalled**, **argued**, or **open**.
 
 ## The idea
 

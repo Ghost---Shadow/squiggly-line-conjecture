@@ -1,8 +1,10 @@
 # Signed distance functions
 
+**Proofs:** [`Coverage.lean`](../../../lean/SquigglyLine/Theorem/Coverage.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean` unless another file is
+[`lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean) unless another file is
 named), **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -68,7 +70,7 @@ Dividing by a bound on the slope is the usual fix in sphere tracing
   squigglier line has a field that is small in more of space. That is the
   theorem.
 - **The tube is a level set.** The tube of radius `r` round the line, used in
-  `Coverage.lean`, is the region where the field is below `r` (**proved**:
+  [`Coverage.lean`](../../../lean/SquigglyLine/Theorem/Coverage.lean), is the region where the field is below `r` (**proved**:
   `distanceField_lt_iff_mem_thickening`).
 - **Why a field can be easier to learn than a height.** Training learns
   gentle functions first (`docs/supporting/training/spectral-bias.md`). The

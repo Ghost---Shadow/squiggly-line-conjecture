@@ -1,7 +1,9 @@
 # Three polarizers, and the photon's squiggly line
 
+**Proofs:** [`Polarizer.lean`](../../lean/SquigglyLine/Networks/Polarizer.lean), [`ThreePolarizers.lean`](../../lean/SquigglyLine/Networks/ThreePolarizers.lean).
+
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/SquigglyLine/Networks/ThreePolarizers.lean`),
+done. Each statement is marked **proved** (in [`lean/SquigglyLine/Networks/ThreePolarizers.lean`](../../lean/SquigglyLine/Networks/ThreePolarizers.lean)),
 **checked** (by a calculation here), or **recalled** (textbook physics, not
 derived here).
 
@@ -131,7 +133,7 @@ the quantum Zeno effect. (**recalled**)
 | one 90° turn blocks | one turn past 90° blocks |
 | many small turns pass | many small turns pass |
 
-The ReLU side of this table is **proved** in `Polarizer.lean`.
+The ReLU side of this table is **proved** in [`Polarizer.lean`](../../lean/SquigglyLine/Networks/Polarizer.lean).
 
 One difference decides everything. A polarizer casts the shadow on a line, and
 that is a linear operation. A whole stack of polarizers is one linear

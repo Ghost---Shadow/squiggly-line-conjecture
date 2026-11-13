@@ -1,5 +1,7 @@
 # Resolution of the Squiggly Line Conjecture
 
+**Proofs:** [`SquigglyLineTheorem.lean`](../lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) for sines, [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean) for any function, and the rest of [`lean/SquigglyLine/Theorem/`](../lean/SquigglyLine/Theorem).
+
 **Status: settled. The geometry is true, the parameter claim is false for width, and the learning claim is false.**
 
 *Revised 11 Nov 2026.* The first status line read "the conjecture is true, and
@@ -274,10 +276,22 @@ start. G is true. P is false for width and weak for depth. L is false.
   from above by the oscillation scale `ρ` of the function and from below by
   the slope. A shrinking `ρ` is sufficient for the conjecture and a growing
   slope is necessary. For random networks, how `ρ` depends on size is open.
-- **Formalisation.** `lean/` states the conjecture and the learning claim and
-  proves the sandwich, the tube identity, the marginal lemma, the covering
-  bound, the two-sided bound for sines, and that the learning claim fails for
-  random-phase sines. Not formalised: the constant 0.2974, the `V/(4l)` bound,
+- **Formalisation.** [`lean/`](../lean) states the conjecture and the
+  learning claim
+  ([`Conjecture.lean`](../lean/SquigglyLine/Theorem/Conjecture.lean)) and
+  proves the sandwich
+  ([`Sandwich.lean`](../lean/SquigglyLine/Theorem/Sandwich.lean)), the tube
+  identity ([`Coverage.lean`](../lean/SquigglyLine/Theorem/Coverage.lean)),
+  the marginal lemma
+  ([`Marginal.lean`](../lean/SquigglyLine/Theorem/Marginal.lean)), the
+  covering bound
+  ([`Oscillation.lean`](../lean/SquigglyLine/Theorem/Oscillation.lean)), the
+  two-sided bound for sines
+  ([`SineCloser.lean`](../lean/SquigglyLine/Theorem/SineCloser.lean)), and
+  that the learning claim fails for random-phase sines
+  ([`Verdict.lean`](../lean/SquigglyLine/Theorem/Verdict.lean)). The four
+  claims are one statement in
+  [`SquigglyLineTheorem.lean`](../lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean). Not formalised: the constant 0.2974, the `V/(4l)` bound,
   and anything about network width.
 
 ---

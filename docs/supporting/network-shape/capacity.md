@@ -1,8 +1,10 @@
 # Storage capacity: what a network can memorise
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`Capacity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -45,7 +47,7 @@ it is made of.
 For a ReLU network with one hidden layer there is a third count. Labels that
 alternate along a line, low, high, low, high, need a unit for every
 up-and-down (**proved** earlier: `card_ge_of_zigzag` in
-`DepthSeparation.lean`). So `m` units can follow at most about `m` turns.
+[`DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean)). So `m` units can follow at most about `m` turns.
 
 ## Depth buys pattern, not storage
 

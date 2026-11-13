@@ -1,8 +1,10 @@
 # Cross-entropy: classification in the same picture
 
+**Proofs:** [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/CrossEntropy.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -100,7 +102,7 @@ minus label.
 ## What is not shown
 
 - **Speed.** Under squared error each direction of the kernel shrinks at its
-  own fixed rate (`SpectralBias.lean`, `EdgeOfStability.lean`). Under
+  own fixed rate ([`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean), [`EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean)). Under
   cross-entropy the error is not a linear function of the outputs, so those
   rates change as training goes. **open** here.
 - **Where the weights go.** On separable data the direction of the weights

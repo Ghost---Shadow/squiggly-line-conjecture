@@ -1,5 +1,7 @@
 # Open problems
 
+**Proofs:** [`Coverage.lean`](../lean/SquigglyLine/Theorem/Coverage.lean), [`Oscillation.lean`](../lean/SquigglyLine/Theorem/Oscillation.lean), [`ExchangeRate.lean`](../lean/SquigglyLine/Networks/ExchangeRate.lean), [`Kernel.lean`](../lean/SquigglyLine/Networks/Kernel.lean), [`LinearModel.lean`](../lean/SquigglyLine/Networks/LinearModel.lean), [`Polarizer.lean`](../lean/SquigglyLine/Networks/Polarizer.lean), [`DepthSeparation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean), [`ModeConnectivity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`CrossEntropy.lean`](../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`LeastAction.lean`](../lean/SquigglyLine/Supporting/Training/LeastAction.lean).
+
 What this repository does not settle, stated so that someone else can pick
 one up. Written 11 Nov 2026.
 
@@ -20,7 +22,7 @@ notes under `docs/`, grouped the same way.
 ## The network case
 
 1. **Oscillation scale of a random ReLU network.** (**open**)
-   `Oscillation.lean` shows that a function which reaches every label within
+   [`Oscillation.lean`](../lean/SquigglyLine/Theorem/Oscillation.lean) shows that a function which reaches every label within
    distance `ρ` of every input is within `ρ` of the data. For a random ReLU
    network, how does the smallest such `ρ` depend on width, depth and the
    scale of the weights? The conjecture for networks reduces to this.
@@ -36,7 +38,7 @@ notes under `docs/`, grouped the same way.
    small widths. How large is the effect?
 
 4. **When is a trained network a linear model?** (**known, not formalised**)
-   `Kernel.lean` proves `error ← error − η·K·error` for models linear in their
+   [`Kernel.lean`](../lean/SquigglyLine/Networks/Kernel.lean) proves `error ← error − η·K·error` for models linear in their
    weights. For a full network `K` moves during training. The lazy-training
    literature bounds how much, for wide networks. None of it is formalised
    here.
@@ -49,7 +51,7 @@ notes under `docs/`, grouped the same way.
    If the truth crosses a band of height `2ε` more times than the network has
    straight pieces, the network misses it by more than `ε` somewhere. For a
    network with one hidden layer this is now `card_ge_of_zigzag` and
-   `depth_separation` in `DepthSeparation.lean`: a unit per up-and-down, so
+   `depth_separation` in [`DepthSeparation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean): a unit per up-and-down, so
    fewer than `2^L` units cannot stay within one half of `L + 1` tent layers.
    See `docs/supporting/network-shape/depth-separation.md`. For deeper networks it needs the bound on
    pieces in the next item.
@@ -69,7 +71,7 @@ notes under `docs/`, grouped the same way.
 8. **Random Fourier features are nearly orthogonal.** (**measured**)
    For `n` scattered points and `m` terms with `m` much larger than `n`, the
    kernel is close to `(m + 1)` times the identity. A concentration bound
-   would turn `ExchangeRate.lean` into a statement about the experiment, and
+   would turn [`ExchangeRate.lean`](../lean/SquigglyLine/Networks/ExchangeRate.lean) into a statement about the experiment, and
    give the `1/√parameters` rate for travel.
 
 9. **The blow-up at the threshold.** (**measured**)
@@ -98,7 +100,7 @@ change of link or loss. Added 12 Nov 2026.
 
 25. **A budget of movement under any convex loss.** (**proved** for
     cross-entropy with two classes, 12 Nov 2026: `le_totalLogLoss_sub_along`
-    and `totalLogLoss_along_le_max` in `CrossEntropy.lean`; other losses
+    and `totalLogLoss_along_le_max` in [`CrossEntropy.lean`](../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean); other losses
     **known, not formalised**)
     `exists_within_budget` says a move of `ε` toward a fit at distance `d`
     removes exactly `ε / d` of the error. For any loss that is convex in the
@@ -108,7 +110,7 @@ change of link or loss. Added 12 Nov 2026.
 
 26. **Gradient descent reaches the nearest fit, under any link.**
     (**proved**, 12 Nov 2026: `iterate_errorStep_is_nearest` in
-    `CrossEntropy.lean`)
+    [`CrossEntropy.lean`](../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean))
     `gradientDescent_fit_is_nearest` is proved for squared error. Under any
     link each step is still a weighted sum of the feature vectors, which is
     all the proof uses.
@@ -132,7 +134,7 @@ change of link or loss. Added 12 Nov 2026.
 12. **The length bound.** (**known, not formalised**)
     A curve of length `l` inside a region of area `V` has mean distance at
     least about `V / (4·l)` to a random point. It follows from the tube
-    identity in `Coverage.lean` and a bound on the area of a tube.
+    identity in [`Coverage.lean`](../lean/SquigglyLine/Theorem/Coverage.lean) and a bound on the area of a tube.
 
 13. **The constant for sines.** (**measured**)
     For a sine spanning the box, distance times frequency tends to
@@ -149,7 +151,7 @@ change of link or loss. Added 12 Nov 2026.
 
 15. **Malus's law for ReLU at any angle and in any dimension.** (**open** as a
     statement; the planar case is easy)
-    `Polarizer.lean` handles a bird on the edge of the positive quadrant in
+    [`Polarizer.lean`](../lean/SquigglyLine/Networks/Polarizer.lean) handles a bird on the edge of the positive quadrant in
     the plane. Give the length a rotate-then-ReLU layer keeps for a bird
     anywhere, in `d` dimensions.
 
@@ -194,7 +196,7 @@ change of link or loss. Added 12 Nov 2026.
     Rescaling one example after each plate is an amplifier: the light arrives
     at full strength after any turn short of a right angle, and a blocked
     beam stays blocked (`renorm_plate`, `throughNormedPlates_eq`,
-    `renorm_plate_of_crossed` in `SkipAndNorm.lean`; see `docs/supporting/network-shape/skip-and-norm.md`).
+    `renorm_plate_of_crossed` in [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean); see `docs/supporting/network-shape/skip-and-norm.md`).
     That is closest to layer normalisation. What follows is the earlier note,
     which is about the batch.
     A first reading: gain control. Batch norm rescales and recentres the flock
@@ -209,7 +211,7 @@ change of link or loss. Added 12 Nov 2026.
     plates, 12 Nov 2026; for ReLU layers still **open**)
     A plate with a bypass never dims the light, does nothing when crossed, and
     turns the light only part of the way (`norm_le_norm_skipPlate`,
-    `skipPlate_of_crossed`, `inner_skipPlate` in `SkipAndNorm.lean`; see
+    `skipPlate_of_crossed`, `inner_skipPlate` in [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean); see
     `docs/supporting/network-shape/skip-and-norm.md`). What follows is the earlier note.
     A first reading: a bypass. Split the beam, send one part through the plate
     and one part around it, and add them. The result keeps the part the plate

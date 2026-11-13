@@ -1,8 +1,10 @@
 # Neural collapse: why the classes end up on a simplex
 
+**Proofs:** [`Bottleneck.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean), [`NeuralCollapse.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -25,7 +27,7 @@ This is the counting result from `information-bottleneck.md`. A layer of a
 network that gets every label right has at least one place for each label. If
 it has squeezed down to exactly that many, then two inputs share a place
 exactly when they share a label (**proved** earlier: `merged_iff_label_eq` in
-`Bottleneck.lean`). That is the first point above, in counting form.
+[`Bottleneck.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean)). That is the first point above, in counting form.
 
 ## Part two: the simplex is as far apart as points can get
 

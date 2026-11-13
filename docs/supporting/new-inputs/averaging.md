@@ -1,8 +1,10 @@
 # Averages: ensembles, weight averaging and the ideal denoiser
 
+**Proofs:** [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/Averaging.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NewInputs/Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -51,7 +53,7 @@ members are on average (**proved**: `sq_liftedModel_soup_sub_le`).
 
 For a real network they are not the same. With just two weights multiplied,
 the midpoint between a fit and its mirror image outputs zero
-(`twoLayer_midpoint_mirror` in `ModeConnectivity.lean`). Weight averaging
+(`twoLayer_midpoint_mirror` in [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean)). Weight averaging
 works for networks only when the copies are close enough for the network to
 behave like a linear model between them, which is the case when they share a
 starting point (**argued**; **recalled**: Neyshabur et al. 2020).
@@ -99,5 +101,5 @@ it draws in its place is the open question (`docs/wishlist.md`).
 - **Weight averaging for networks.** Only the linear case is proved.
 - **Ensembles under other losses.** The split is for squared error. For
   cross-entropy the ensemble is still no worse than the average member, by
-  convexity (`convexOn_logLoss` in `CrossEntropy.lean`), but that is not
+  convexity (`convexOn_logLoss` in [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean)), but that is not
   written out.

@@ -1,8 +1,10 @@
 # Skip connections and normalisation, as polarizers
 
+**Proofs:** [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean`), **recalled**, or **open**.
+[`lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean)), **recalled**, or **open**.
 
 ## The question
 

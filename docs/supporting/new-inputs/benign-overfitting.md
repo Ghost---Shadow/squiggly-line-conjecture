@@ -1,8 +1,10 @@
 # Benign overfitting: fitting the noise without paying for it
 
+**Proofs:** [`BenignOverfitting.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean), [`Pruning.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Pruning.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -50,7 +52,7 @@ the noise direction, so it pays a fortune to fit it.
 
 Now give the model a pile of extra features that have nothing to do with the
 task. Suppose they are spread evenly, with strength `c'` in every direction.
-Strengths add (**proved** earlier: `kernel_eigen_add` in `Pruning.lean`), so
+Strengths add (**proved** earlier: `kernel_eigen_add` in [`Pruning.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Pruning.lean)), so
 every direction gains `c'`. The two terms become
 
 ```

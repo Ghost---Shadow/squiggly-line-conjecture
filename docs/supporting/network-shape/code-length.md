@@ -1,8 +1,10 @@
 # Compression: folds, code length and travel
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`CodeLength.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea

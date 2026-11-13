@@ -1,7 +1,9 @@
 # A chain of Markov chains
 
+**Proofs:** [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean), [`MarkovChains.lean`](../../lean/SquigglyLine/Networks/MarkovChains.lean).
+
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
-done. Each statement is marked **proved** (in `lean/SquigglyLine/Networks/MarkovChains.lean` unless
+done. Each statement is marked **proved** (in [`lean/SquigglyLine/Networks/MarkovChains.lean`](../../lean/SquigglyLine/Networks/MarkovChains.lean) unless
 another file is named) or **recalled** (not derived here).
 
 ## What a Markov chain is

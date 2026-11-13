@@ -1,8 +1,10 @@
 # A gain per step: He initialisation and the Bellman update
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`Gain.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Gain.lean), [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/Gain.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/Gain.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -29,9 +31,9 @@ layer to layer. That is the rule known as He initialisation (**recalled**:
 He et al. 2015; Glorot and Bengio 2010 for the version without the fold).
 
 In the terms of this repository: a fold is how depth makes squiggle
-(`Depth.lean`), and every fold costs half the signal. He initialisation is
+([`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean)), and every fold costs half the signal. He initialisation is
 the weight scale at which a network can stack folds without the signal dying
-or blowing up. It is the middle case of `VanishingGradients.lean`.
+or blowing up. It is the middle case of [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
 
 ## The Bellman update: a gain below one on purpose
 
@@ -47,7 +49,7 @@ by at most `γ` times what they did, measured by their largest disagreement
 
 So every starting guess is pulled to the same answer. Here a gain below one
 is the point. The update forgets where it started, at the rate that
-`VanishingGradients.lean` gives for a signal dying out.
+[`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) gives for a signal dying out.
 
 The slope is in the space of value tables, not in the input. The link to the
 squiggly line is the same rule read on a different map: a product of slopes

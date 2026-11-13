@@ -1,8 +1,10 @@
 # Rules for the step: Adam, clipping, low-rank training and rounding
 
+**Proofs:** [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean), [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`StepRules.lean`](../../../lean/SquigglyLine/Supporting/Training/StepRules.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/StepRules.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/StepRules.lean`](../../../lean/SquigglyLine/Supporting/Training/StepRules.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -59,7 +61,7 @@ has (**recalled**: Li et al. 2018).
 Confining the weights to a subspace never shortens the trip. If a fit exists
 inside the subspace, it is at least as far from the start as the nearest fit
 of the full model (**proved**: `travel_le_travel_comp`). This is
-`travel_coprod_le` in `LinearModel.lean` read the other way: adding
+`travel_coprod_le` in [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean) read the other way: adding
 directions never lengthens the trip, and removing them never shortens it.
 
 So low-rank training trades travel for parameters. It works well when the
@@ -94,4 +96,4 @@ its data by being steep. (**argued**)
   the full model's nearest fit.
 - **Rounding a deep network.** The bound is for a model linear in its
   weights. Through several layers the error is multiplied by the slope of
-  the layers after it (**argued** from `NetworkSlope.lean`).
+  the layers after it (**argued** from [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean)).

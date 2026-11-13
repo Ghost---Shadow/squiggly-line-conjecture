@@ -1,8 +1,10 @@
 # The trained path as a path of least action
 
+**Proofs:** [`DoubleDescent.lean`](../../../lean/SquigglyLine/Networks/DoubleDescent.lean), [`LeastAction.lean`](../../../lean/SquigglyLine/Supporting/Training/LeastAction.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/LeastAction.lean`), **recalled**, or **open**.
+[`lean/SquigglyLine/Supporting/Training/LeastAction.lean`](../../../lean/SquigglyLine/Supporting/Training/LeastAction.lean)), **recalled**, or **open**.
 
 ## The idea
 

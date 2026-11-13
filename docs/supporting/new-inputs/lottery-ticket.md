@@ -1,8 +1,10 @@
 # Lottery tickets: what pruning costs
 
+**Proofs:** [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean), [`Pruning.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Pruning.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/Pruning.lean` unless another file is named), **recalled**,
+[`lean/SquigglyLine/Supporting/NewInputs/Pruning.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Pruning.lean) unless another file is named), **recalled**,
 or **open**.
 
 ## The idea
@@ -46,7 +48,7 @@ travel of pruned model × √c  =  travel of whole model × √(c + c')
 (**proved**: `travel_mul_sqrt_pruned`.) So pruning to a tenth of the strength
 puts the fit `√10` times farther. This is the exchange rate read backwards.
 The general statement, that adding parameters never moves the fit away, was
-**proved** earlier (`travel_coprod_le` in `LinearModel.lean`).
+**proved** earlier (`travel_coprod_le` in [`LinearModel.lean`](../../../lean/SquigglyLine/Networks/LinearModel.lean)).
 
 ## When a ticket wins
 

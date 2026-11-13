@@ -1,8 +1,10 @@
 # Squiggly below, flat above: the kernel trick
 
+**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean), [`Lift.lean`](../../lean/SquigglyLine/Networks/Lift.lean), [`Capacity.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`CrossEntropy.lean`](../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`LeastAction.lean`](../../lean/SquigglyLine/Supporting/Training/LeastAction.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Networks/Lift.lean` unless another file is named),
+[`lean/SquigglyLine/Networks/Lift.lean`](../../lean/SquigglyLine/Networks/Lift.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The question
@@ -65,8 +67,8 @@ first. Training is the second, and it is what travel measures.
 ## The kernel trick
 
 Training moves the weights only along the lifted data points
-(`exists_iterate_gradientStep` in `LeastAction.lean`, and
-`exists_iterate_errorStep` in `CrossEntropy.lean` for any loss). Weights of
+(`exists_iterate_gradientStep` in [`LeastAction.lean`](../../lean/SquigglyLine/Supporting/Training/LeastAction.lean), and
+`exists_iterate_errorStep` in [`CrossEntropy.lean`](../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) for any loss). Weights of
 that kind predict at a new input by
 
 ```
@@ -92,7 +94,7 @@ feature (**proved**: `exists_lift_eq`). So "it is flat upstairs" says nothing
 unless the lift is fixed before the labels are seen.
 
 With a fixed lift into `m` dimensions, the model can match arbitrary labels
-on at most `m` points (`exists_unfittable` in `Capacity.lean`). That is the
+on at most `m` points (`exists_unfittable` in [`Capacity.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean)). That is the
 real content: a fixed lift buys a fixed amount of squiggle.
 
 ## What this says about networks
@@ -113,7 +115,7 @@ linear layer).
 
 - **A lift that moves.** See above.
 - **The converse for kernels.** Recalled, not proved.
-- **The sine wave picture** is now in `FourierLift.lean`; see
+- **The sine wave picture** is now in [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean); see
   `docs/networks/fourier-lift.md`.
 - **How much stretch a given lift has.** For the Fourier lift of one
   frequency `w` it is at most `w` (`lipschitzWith_fourierLift`). Other lifts

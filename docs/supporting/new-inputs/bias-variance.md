@@ -1,8 +1,10 @@
 # Bias and variance, and what the dial is
 
+**Proofs:** [`BenignOverfitting.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean), [`BiasVariance.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean) unless another file is named),
 **recalled**, **argued**, or **open**.
 
 ## The idea

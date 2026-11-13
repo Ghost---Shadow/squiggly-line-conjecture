@@ -1,8 +1,10 @@
 # Depth separation: what a wide, shallow network cannot do cheaply
 
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -10,7 +12,7 @@ done. Each statement is marked **proved** (in
 The wind tunnel notes say depth multiplies the turns: each layer folds
 everything the earlier layers made. A stack of `L` tent layers, two neurons
 each, draws a zigzag that goes up and down `2^(L−1)` times
-(**proved** earlier: `iterate_tent_dyadic` in `Depth.lean`).
+(**proved** earlier: `iterate_tent_dyadic` in [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean)).
 
 Could a network with one hidden layer do the same with about as many neurons?
 No. This is a known result (**recalled**: Telgarsky 2016, "Benefits of depth

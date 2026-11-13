@@ -1,8 +1,10 @@
 # Catastrophic forgetting: what a new task costs an old one
 
+**Proofs:** [`Forgetting.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean), [`LeastAction.lean`](../../../lean/SquigglyLine/Supporting/Training/LeastAction.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -54,7 +56,7 @@ distance times the size of the old task's features
 
 Gradient descent moves the weights as little as any method could: if it
 arrives at a fit of the new task, that fit is the nearest one (**proved**
-earlier: `gradientDescent_fit_is_nearest` in `LeastAction.lean`). Together:
+earlier: `gradientDescent_fit_is_nearest` in [`LeastAction.lean`](../../../lean/SquigglyLine/Supporting/Training/LeastAction.lean)). Together:
 
 > The amount forgotten is at most the size of the old task's features times
 > the distance from the start to the nearest fit of the new task.

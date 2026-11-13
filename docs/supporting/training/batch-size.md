@@ -1,8 +1,10 @@
 # Batch size and learning rate
 
+**Proofs:** [`BatchSize.lean`](../../../lean/SquigglyLine/Supporting/Training/BatchSize.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/BatchSize.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/BatchSize.lean`](../../../lean/SquigglyLine/Supporting/Training/BatchSize.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea

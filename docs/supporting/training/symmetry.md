@@ -1,8 +1,10 @@
 # Symmetries: changes to the weights that leave the line alone
 
+**Proofs:** [`Symmetry.lean`](../../../lean/SquigglyLine/Supporting/Training/Symmetry.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/Symmetry.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/Symmetry.lean`](../../../lean/SquigglyLine/Supporting/Training/Symmetry.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea

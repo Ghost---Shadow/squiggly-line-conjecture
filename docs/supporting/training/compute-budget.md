@@ -1,8 +1,10 @@
 # Chinchilla: how to split a compute budget
 
+**Proofs:** [`CodeLength.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean), [`ComputeBudget.lean`](../../../lean/SquigglyLine/Supporting/Training/ComputeBudget.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/Training/ComputeBudget.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/Training/ComputeBudget.lean`](../../../lean/SquigglyLine/Supporting/Training/ComputeBudget.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -31,7 +33,7 @@ measurements and are not derived.
 ## The floor
 
 The floor is the entropy of the data. No model's average log-loss can be
-below it (**proved** earlier: `gibbs` in `CodeLength.lean`).
+below it (**proved** earlier: `gibbs` in [`CodeLength.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean)).
 
 ## The rule
 

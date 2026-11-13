@@ -1,5 +1,7 @@
 # The bridge between the Fourier model and the ReLU wind tunnel
 
+**Proofs:** [`Bridge.lean`](../../lean/SquigglyLine/Networks/Bridge.lean), [`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean), [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean), [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean).
+
 Notes from 11 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in `lean/`), **checked** (by a
 calculation here), or **recalled** (from the literature).
@@ -18,7 +20,7 @@ differ, and it is the one that matters for training.
 
 ## Bridge 1: a fold is a frequency doubling
 
-Take the two-neuron layer `APPLY_TENT` from `Depth.lean`. It folds the interval
+Take the two-neuron layer `APPLY_TENT` from [`Depth.lean`](../../lean/SquigglyLine/Networks/Depth.lean). It folds the interval
 `[0, 1]` in half. Now look at its output through one fixed lens, the function
 `sin²(π/2 · y)`. Then
 
@@ -32,7 +34,7 @@ The layer has doubled the angle inside the sine. Stack `L` layers:
 sin²(π/2 · tent^L(x)) = sin²(2^(L−1) · π · x)
 ```
 
-(**proved**: `sin_sq_iterate_tent` in `Bridge.lean`; also **checked** to machine
+(**proved**: `sin_sq_iterate_tent` in [`Bridge.lean`](../../lean/SquigglyLine/Networks/Bridge.lean); also **checked** to machine
 precision for `L` up to 10.)
 
 The right side is a single Fourier term: `sin²(a) = (1 − cos(2a)) / 2`, so it
@@ -74,14 +76,14 @@ layer computes: hinges, or folded shapes.
 Everything proved for the Fourier model used only this skeleton. So it holds
 for the ReLU model too, word for word: the loss curve along the straight path,
 "loss gap equals distance times steepness", and "more parameters never move
-the fit away" (**proved**: `LinearModel.lean`).
+the fit away" (**proved**: [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean)).
 
 More is true. Write `A` for the map from weights to outputs on the data. The
 kernel is `K = A·Aᵀ`: it records how alike the features make two data points
 look. Then:
 
 - A gradient step changes the error by `error ← error − η · K · error`. The
-  weights do not appear (**proved**: `residual_gradientStep` in `Kernel.lean`).
+  weights do not appear (**proved**: `residual_gradientStep` in [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean)).
 - The travel to the nearest fit is `√(errorᵀ · K⁻¹ · error)`. The weights do
   not appear (**proved**: `travel_eq_norm_of_kernelInverse`).
 

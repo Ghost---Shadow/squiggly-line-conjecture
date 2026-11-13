@@ -1,8 +1,10 @@
 # How steep a network can be, and what that slope costs
 
+**Proofs:** [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean), [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean` unless another file is
+[`lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) unless another file is
 named), **argued**, **recalled**, or **open**.
 
 ## The idea
@@ -45,7 +47,7 @@ of what comes back is bounded by the same product as the signal going forward
 
 So slope and gradient share one fate. A product well below one is a flat
 network and a vanishing gradient. A product well above one is a squiggly
-network and an exploding gradient (`VanishingGradients.lean`).
+network and an exploding gradient ([`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean)).
 
 ## Adversarial examples
 
@@ -88,7 +90,7 @@ critic can report is at most the total distance between the pairs
 So a slope-one critic measures how far the made samples are from the real
 ones. It cannot say "infinitely wrong" about a sample that is nearly right.
 The distance field of the real data is such a critic
-(`lipschitzWith_distanceField` in `SignedDistance.lean`).
+(`lipschitzWith_distanceField` in [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean)).
 
 ## What is not shown
 

@@ -1,8 +1,10 @@
 # The Fourier lift: Fourier features, position signals and convolution
 
+**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Networks/FourierLift.lean` unless another file is named),
+[`lean/SquigglyLine/Networks/FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean) unless another file is named),
 **argued**, **recalled**, or **open**.
 
 ## The idea

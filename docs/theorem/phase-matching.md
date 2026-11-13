@@ -1,5 +1,7 @@
 # Training can use the nearness, once the phase matches
 
+**Proofs:** [`Oscillation.lean`](../../lean/SquigglyLine/Theorem/Oscillation.lean), [`SineCloser.lean`](../../lean/SquigglyLine/Theorem/SineCloser.lean).
+
 Notes from 11 Nov 2026. This corrects a slogan used earlier in this project:
 "a squigglier curve is closer to the data, in a direction training cannot
 use". That was too strong. Each statement below is marked **proved** (in

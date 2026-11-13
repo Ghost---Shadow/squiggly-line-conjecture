@@ -1,8 +1,10 @@
 # The information bottleneck, by counting
 
+**Proofs:** [`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean), [`Bottleneck.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean).
+
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
-`lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean` unless another file is named),
+[`lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean) unless another file is named),
 **recalled**, or **open**.
 
 ## The idea
@@ -22,7 +24,7 @@ it fits the flock of birds exactly.
 Send a finite flock of inputs through the layers. After each layer, count how
 many different places the flock occupies. Two birds at the same place can
 never be told apart again (**proved** earlier: `merged_stays_merged` in
-`MarkovChains.lean`). The count is the plainest measure of how much the layer
+[`MarkovChains.lean`](../../../lean/SquigglyLine/Networks/MarkovChains.lean)). The count is the plainest measure of how much the layer
 still knows about which input it was given.
 
 Three facts pin the count down.

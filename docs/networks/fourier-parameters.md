@@ -1,5 +1,7 @@
 # What adding parameters changes, in plain words
 
+**Proofs:** [`Marginal.lean`](../../lean/SquigglyLine/Theorem/Marginal.lean), [`ExchangeRate.lean`](../../lean/SquigglyLine/Networks/ExchangeRate.lean), [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean).
+
 Notes from 11 Nov 2026. This is the Fourier-series version of the conjecture:
 the one family here where the number of parameters is the only dial.
 
@@ -61,7 +63,7 @@ The results below divide by which part they use.
 - **No link and squared error.** "The error left is `1 − t` times the
   starting error", the gradient-descent step, and everything proved about its
   speed and stability use both.
-- **Neither.** That the initial loss does not move (`Marginal.lean`) holds for
+- **Neither.** That the initial loss does not move ([`Marginal.lean`](../../lean/SquigglyLine/Theorem/Marginal.lean)) holds for
   any model and any loss of this kind.
 
 ## Four things to measure
@@ -91,7 +93,7 @@ The results below divide by which part they use.
 - **The initial loss does not move.** It is about 2/3 at every size. The
   differences are sampling noise. This has to be so: the loss depends only on
   how the output is distributed at each single input, and the scaling keeps
-  that the same (**proved**: `Marginal.lean`).
+  that the same (**proved**: [`Marginal.lean`](../../lean/SquigglyLine/Theorem/Marginal.lean)).
 - **The nearest-point distance falls**, roughly like one over the parameter
   count. Random series with more terms are steeper, and steep curves pass
   close to everything.
@@ -120,7 +122,7 @@ Chizat and Bach 2019). It is not a new result.
 Slide the parameters in a straight line from the random start to the nearest
 fit. At fraction `t` of the way, the error left is `1 − t` times the starting
 error. This is the same at every model size (**proved**:
-`residual_along` in `LinearModel.lean`).
+`residual_along` in [`LinearModel.lean`](../../lean/SquigglyLine/Networks/LinearModel.lean)).
 
 So every model walks the same loss curve. What differs is how long the walk
 is. Loss gap equals distance times steepness: a model whose fit is at distance
@@ -144,7 +146,7 @@ then
 travel = (size of the error) / √c
 ```
 
-exactly (**proved**: `TightFeatures.travel_eq` in `ExchangeRate.lean`).
+exactly (**proved**: `TightFeatures.travel_eq` in [`ExchangeRate.lean`](../../lean/SquigglyLine/Networks/ExchangeRate.lean)).
 
 With as many orthonormal features as data points, `c = 1`. Then parameter
 space is data space and travel equals the error (**proved**:
