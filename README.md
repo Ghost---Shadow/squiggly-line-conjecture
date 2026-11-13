@@ -705,12 +705,6 @@ Experiments that are specified and not yet run are in
 [`handoff.md`](handoff.md).
 
 ## Wishlist and open problems
-| Graph networks blur their nodes with depth (Kipf and Welling 2017; Li et al. 2018) | A message-passing layer is an average over neighbours, so the spread of the nodes shrinks at a geometric rate. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean), when every weight has a floor |
-| The diffusion noising schedule (Ho et al. 2020) | Each noising step blends the signal with fresh noise so the total variance stays fixed while the signal's share shrinks geometrically. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |
-| The actor-critic baseline (Sutton and Barto 1998) | Subtracting a baseline from the reward leaves the average push unchanged. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |
-| Data augmentation and invariance | Averaging a model over a set of moves that keep distances gives a model that ignores those moves and is no steeper. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |
-| Classifier-free guidance (Ho and Salimans 2022) | Guidance is the one step of a diffusion sampler that is not an average: its weights are `1 + w` and `−w`. It moves `1 + w` times as far as the plain step, and can leave the region the examples span. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |
-| Squared error fits the mean, absolute error the median | The loss chooses which average the line goes through. | [`Averaging.lean`](lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) for the mean, [`OnAverage.lean`](lean/SquigglyLine/Supporting/NewInputs/OnAverage.lean) for the median |
 
 The aim is to say all of deep learning in the terms of the squiggly line
 (slope, nearness, travel, the kernel and the lift, folds, and averages) with
