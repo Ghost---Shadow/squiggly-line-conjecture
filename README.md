@@ -399,6 +399,21 @@ theorem depends only on Lean's three standard axioms. The files are in one
 folder for each group below, and the notes in [`docs/`](docs) are grouped the
 same way.
 
+The Lean code is written to be read: readable, pythonic and "enterprise
+grade". In practice that means:
+
+- every file opens with a summary in plain words that lists its theorems;
+- names say what a thing is (`travel`, `residual`, `nearestDist`,
+  `perceptron_mistake_bound`), and every main theorem has a one-line
+  statement in plain words above it;
+- a definition is written once and reused, so later files build on earlier
+  ones and repeat nothing;
+- proofs are short, and each named step says what it establishes;
+- every push is built from scratch by CI, which fails on any `sorry`.
+
+You should be able to open a file and follow what is claimed without knowing
+Lean.
+
 **The theorem.** Proofs in
 [`lean/SquigglyLine/Theorem/`](lean/SquigglyLine/Theorem), notes in
 [`docs/theorem/`](docs/theorem).
