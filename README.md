@@ -396,7 +396,7 @@ is the known lazy-training picture, not a new result.
 
 **The exchange rate.** When the features are orthogonal on the data side with
 squared length `c`, the travel is exactly `‖residual‖ / √c`
-(`ExchangeRate.lean`). For the Fourier model `c` is about the number of
+([`ExchangeRate.lean`](lean/SquigglyLine/Networks/ExchangeRate.lean)). For the Fourier model `c` is about the number of
 parameters, which predicts 0.45, 0.32 and 0.22 for 129, 257 and 513
 parameters, against 0.48, 0.34 and 0.23 measured. Loss and distance are one
 quantity at an exchange rate that grows like the root of the parameter count.
@@ -417,7 +417,7 @@ noisy points and score it on fresh ones
 The test error and the travel peak at the same place: where the model has just
 enough parameters to fit. Along a direction of the labels where the model has
 strength `λ`, no fit exists if `λ = 0`, and the travel is exactly the size of
-that part divided by `√λ` if `λ > 0` (`DoubleDescent.lean`). Unable to fit the
+that part divided by `√λ` if `λ > 0` ([`DoubleDescent.lean`](lean/SquigglyLine/Networks/DoubleDescent.lean)). Unable to fit the
 noise is safe, barely able is the worst case, and easily able is safe again.
 That the test error peaks there is measured, not proved. More in
 [`docs/networks/fourier-parameters.md`](docs/networks/fourier-parameters.md) and
@@ -662,6 +662,7 @@ them proves the phenomenon for real networks.
 | The GAN game | At one input the critic's loss is a cross-entropy whose label is the share of real data there. Where real and made data overlap, the best critic predicts that share; where they do not, no score is best and the critic is asked to be steeper forever. For the payoff `x * y`, each simultaneous step multiplies the squared distance from the resting point by `1 + η²`. | [note](docs/supporting/training/gan-game.md) | [`GanGame`](lean/SquigglyLine/Supporting/Training/GanGame.lean) |
 | AdamW | Weight decay put inside Adam's rescaling moves every weight by the same amount `η`, whatever the strength of the decay, and making the loss larger makes the decay weaker. Applied outside the rescaling it shrinks every weight by `1 − η μ` a step, as plain weight decay does. | [note](docs/supporting/training/step-rules.md) | [`AdamW`](lean/SquigglyLine/Supporting/Training/AdamW.lean) |
 | RMSNorm and pre-norm | Dividing by the root mean square forgets the scale, so a loss read through it is scale invariant and its gradient is at right angles to the weights. A pre-norm branch adds the same whatever the size of the stream; a post-norm block always outputs root mean square one. | [note](docs/supporting/training/symmetry.md) | [`RmsNorm`](lean/SquigglyLine/Supporting/NetworkShape/RmsNorm.lean) |
+| Residual layers and the LSTM cell | Input plus a branch of slope `K` has slope between `1 − K` and `1 + K`. With `K < 1` it merges no two inputs and, with one input, never turns. `L` layers with branches of slope `c / L` have total slope at most `e^c`. The memory cell of an LSTM has the forget gate as its slope per step, and exactly one with the gate open. | [note](docs/supporting/network-shape/skip-and-norm.md) | [`Residual`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean) |
 | Attention loses rank with depth | With scores at most `B` in size, every token gets a share of at least `exp(−2B) / n`, so one layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)` and `L` layers by that to the power `L`. | [note](docs/supporting/network-shape/attention.md) | [`AttentionRate`](lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
 | Kolmogorov–Arnold networks | A node that adds one learnable curve per input is within `2 × total slope / n` of a ReLU layer with `n` pieces per edge. | [note](docs/supporting/network-shape/universal-approximation.md) | [`KolmogorovArnold`](lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean) |
 
@@ -766,14 +767,129 @@ The full list, with a status for each, is in
 Experiments that are specified and not yet run are in
 [`handoff.md`](handoff.md).
 
+## Proved, paper by paper
+
+Well-known papers and ideas, each said in the terms of the squiggly line,
+with the file that proves it. Every statement is for a simplified model,
+most often a fixed kernel. They are grouped by which of six things they
+connect through: slope, nearness, travel, the kernel and the lift, folds,
+and averages. What is not proved yet is in
+[`docs/wishlist.md`](docs/wishlist.md). The papers and years are recalled
+from memory and have not been checked.
+
+### Slope
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| Robustness against accuracy (Tsipras et al. 2019) | `vertical / √(1 + K²) ≤ nearest ≤ vertical`: a line can be near the data only by being steep. | [`Sandwich.lean`](lean/SquigglyLine/Theorem/Sandwich.lean) |
+| Slope of a network (Szegedy et al. 2014; Bartlett et al. 2017; Miyato et al. 2018) | A network is no steeper than the product of the slopes of its layers. So its nearness to the data has to be paid for in that product. | [`NetworkSlope.lean`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
+| Backpropagation (Rumelhart, Hinton and Williams 1986) | The gradient comes back through the same layers in reverse, so it is bounded by the same product. | [`NetworkSlope.lean`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`VanishingGradients.lean`](lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) |
+| Vanishing gradients and the LSTM (Hochreiter and Schmidhuber 1997) | A slope below one per layer dies out with depth, above one blows up. | [`VanishingGradients.lean`](lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) |
+| Adversarial examples (Szegedy et al. 2014; Goodfellow et al. 2015) | To flip a classifier of slope `K` you must move the input at least `score / K`. For a linear model, nudging every input by `ε` moves the score by `ε` times the sum of the sizes of the weights. | [`NetworkSlope.lean`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
+| Dimpled manifold (Shamir et al. 2021) | Gentle along the data, steep straight off it. | [`Dimple.lean`](lean/SquigglyLine/Supporting/NewInputs/Dimple.lean) |
+| Generative adversarial networks, the original game (Goodfellow et al. 2014) | The critic's loss at an input is a cross-entropy whose label is the real share there. Where real and made data overlap the best critic is finite. Where they do not, no score is best, so the critic is asked to be steeper forever. Simultaneous steps of the two players spiral away from the resting point. | one input at a time, and for the payoff `x * y`: [`GanGame.lean`](lean/SquigglyLine/Supporting/Training/GanGame.lean) |
+| Wasserstein GAN (Arjovsky et al. 2017) | The critic is held to slope one. The gap it reports between two points is then at most their distance, and a distance field is such a critic. | [`NetworkSlope.lean`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
+| Temperature and calibration (Guo et al. 2017; Holtzman et al. 2020) | Dividing the scores by a temperature divides their slope and never changes their order. | [`NetworkSlope.lean`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
+| Softmax and cross-entropy | For a yes-or-no label no finite score is best, so the loss keeps asking for a steeper line. | [`CrossEntropy.lean`](lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) |
+| Label smoothing (Szegedy et al. 2016) | With a soft label the best score is finite, so the slope can stop growing. | [`CrossEntropy.lean`](lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) |
+| Reinforcement learning (Bellman 1957; Mnih et al. 2015) | One sweep of value updates is a map of slope `γ < 1`, so repeated sweeps pull every guess to one answer. | [`Gain.lean`](lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) |
+| Signed distance networks (Park et al. 2019) | The distance field of any line has slope at most one. | [`SignedDistance.lean`](lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean) |
+| Residual networks keep points apart (He et al. 2016) | Input plus a branch of slope `K < 1` keeps any two points at least `1 − K` of their distance apart. A skip cannot merge what a fold would. | [`Residual.lean`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean) |
+| Residual networks and turns (He et al. 2016) | With one input, input plus a branch of slope below one is always rising. So a residual layer adds a turn only where its branch is steeper than one. Squiggle has to be bought in the branch. | [`Residual.lean`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean) |
+| Residual networks at depth (He et al. 2016) | `L` layers with branches of slope `c / L` have total slope at most `e^c`, however deep. A plain stack of slope `K` has `K^L`. | [`Residual.lean`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean) |
+| LSTM and GRU gates (Hochreiter and Schmidhuber 1997; Cho et al. 2014) | Along the memory cell the slope per step is the forget gate, which is at most one. With the gate open it is exactly one: a skip through time. | [`Residual.lean`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean), for the memory cell |
+
+### Nearness
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| The original conjecture | A squigglier line is nearer to the data. | for sines and for any squeezed function: [`SquigglyLineTheorem.lean`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean), [`Compression.lean`](lean/SquigglyLine/Theorem/Compression.lean) |
+| No free lunch (Wolpert 1996) | Averaged over every labelling of the unseen inputs, no line is nearer than any other. Squiggle helps only when labels vary gently. | [`Perceptron.lean`](lean/SquigglyLine/Supporting/Training/Perceptron.lean) |
+| Perceptron (Rosenblatt 1958; Novikoff 1962) | If the data is at least `γ` from a flat boundary and inside radius `R`, the perceptron makes at most `(R / γ)²` mistakes. Nearness of the data to the boundary sets the number of steps. | [`Perceptron.lean`](lean/SquigglyLine/Supporting/Training/Perceptron.lean) |
+| XOR (Minsky and Papert 1969) | The smallest data that no flat boundary fits. One lift, or one fold, fixes it. | [`Perceptron.lean`](lean/SquigglyLine/Supporting/Training/Perceptron.lean) |
+| XOR by changing the encoding (one input per corner, or one class per corner) | A table lookup is a lift that fits anything. A flat layer with one score per class names the nearest anchor point; it does not compute XOR of it. Two classes with a softmax are still flat. | [`Perceptron.lean`](lean/SquigglyLine/Supporting/Training/Perceptron.lean) |
+| Sphere tracing (Hart 1996) | A step shorter than the distance field cannot reach the line. | [`SignedDistance.lean`](lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean) |
+| The eikonal equation (classical) | Walking straight to the nearest point of the line, the distance falls by exactly what is walked. So "slope at most one" cannot be improved, for a squiggly line or a flat one. | along that path: [`Eikonal.lean`](lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean) |
+
+### Travel
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| Lazy training (Chizat and Bach 2019) | A bigger model starts no nearer in loss and much nearer in travel. | [`LinearModel.lean`](lean/SquigglyLine/Networks/LinearModel.lean), [`ExchangeRate.lean`](lean/SquigglyLine/Networks/ExchangeRate.lean) |
+| Double descent (Belkin et al. 2019; Nakkiran et al. 2020) | Travel peaks where the model can just fit. | for travel: [`DoubleDescent.lean`](lean/SquigglyLine/Networks/DoubleDescent.lean) |
+| Implicit bias (Gunasekar et al. 2017; Soudry et al. 2018) | Gradient descent takes the least travel. | [`LeastAction.lean`](lean/SquigglyLine/Supporting/Training/LeastAction.lean), [`CrossEntropy.lean`](lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) |
+| Gradient descent happens in a tiny subspace (Gur-Ari et al. 2018) | Training travels only along the features of the data. | [`LeastAction.lean`](lean/SquigglyLine/Supporting/Training/LeastAction.lean) |
+| Weight decay, early stopping (Krogh and Hertz 1992) | A floor on travel: directions weaker than the floor are not learned. | [`WeightDecay.lean`](lean/SquigglyLine/Supporting/Training/WeightDecay.lean) |
+| Dropout (Srivastava et al. 2014) | The same floor, set by the dropout rate. | [`Dropout.lean`](lean/SquigglyLine/Supporting/Training/Dropout.lean) |
+| Loss along a line (Goodfellow et al. 2015) | From the start to the fit in a straight line, the loss only falls. | for linear models: [`LinearModel.lean`](lean/SquigglyLine/Networks/LinearModel.lean), [`CrossEntropy.lean`](lean/SquigglyLine/Supporting/Training/CrossEntropy.lean) |
+| Mode connectivity (Garipov et al. 2018; Draxler et al. 2018) | No hill on the straight path between two fits. | for linear models: [`ModeConnectivity.lean`](lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean) |
+| Flat minima (Keskar et al. 2017; Dinh et al. 2017) | Rescaling changes flatness and travel and leaves the line alone. | [`Reparam.lean`](lean/SquigglyLine/Supporting/Training/Reparam.lean) |
+| Normalisation (Ioffe and Szegedy 2015; Ba et al. 2016) | Weights that feed a normalisation can be rescaled freely, so the gradient is at right angles to them and each step makes them longer. Their size stops setting the slope. | [`Symmetry.lean`](lean/SquigglyLine/Supporting/Training/Symmetry.lean), [`SkipAndNorm.lean`](lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean) |
+| RMSNorm and pre-norm (Zhang and Sennrich 2019; Xiong et al. 2020) | Dividing by the root mean square alone already makes the weights before it free to rescale, so the gradient is at right angles to them. Normalising inside the branch leaves the skip path untouched. | [`RmsNorm.lean`](lean/SquigglyLine/Supporting/NetworkShape/RmsNorm.lean) |
+| Adam (Kingma and Ba 2015) | Adam travels the same distance per step along a strong direction and a weak one. It removes the "strong first" clock of spectral bias, so squiggles are fitted sooner. | with no memory: [`StepRules.lean`](lean/SquigglyLine/Supporting/Training/StepRules.lean) |
+| AdamW (Loshchilov and Hutter 2019) | Weight decay applied outside Adam's rescaling shrinks every weight at the same rate. Applied inside it, the shrink is rescaled away with the gradient. So only the outside form is a floor on travel. | with no memory: [`AdamW.lean`](lean/SquigglyLine/Supporting/Training/AdamW.lean) |
+| Gradient clipping (Pascanu et al. 2013) | A cap on travel per step. | [`StepRules.lean`](lean/SquigglyLine/Supporting/Training/StepRules.lean) |
+| Low-rank adaptation, intrinsic dimension (Li et al. 2018; Hu et al. 2021) | Training only some directions never shortens the travel. | [`StepRules.lean`](lean/SquigglyLine/Supporting/Training/StepRules.lean) |
+| Quantisation (Courbariaux et al. 2015 and after) | Moving the weights by a rounding error moves each output by at most that error times the stretch of the lift. | [`StepRules.lean`](lean/SquigglyLine/Supporting/Training/StepRules.lean) |
+| Relabelling neurons (Entezari et al. 2022) | Shuffling the hidden units gives the same line at a different place in weight space. Travel is to the nearest copy. | [`Symmetry.lean`](lean/SquigglyLine/Supporting/Training/Symmetry.lean). No hill after shuffling: **out of reach** |
+| Deep linear networks (Saxe et al. 2014; Arora et al. 2018) | For two weights multiplied, training keeps `a² − b²` almost fixed, so the slope is shared between the layers. | [`Symmetry.lean`](lean/SquigglyLine/Supporting/Training/Symmetry.lean) |
+| Linear scaling rule (Goyal et al. 2017) | Two small steps are one big step, up to a term through the kernel. | [`BatchSize.lean`](lean/SquigglyLine/Supporting/Training/BatchSize.lean) |
+| Scaling laws (Kaplan et al. 2020; Hoffmann et al. 2022) | The best split of a budget balances the two terms of the loss. | [`ComputeBudget.lean`](lean/SquigglyLine/Supporting/Training/ComputeBudget.lean) |
+| Lottery ticket (Frankle and Carbin 2019) | Pruning subtracts a kernel: slower and farther. | for a fixed kernel: [`Pruning.lean`](lean/SquigglyLine/Supporting/NewInputs/Pruning.lean) |
+| Fine-tuning and transfer | Gradient descent from pretrained weights reaches the fit nearest to them. | [`LeastAction.lean`](lean/SquigglyLine/Supporting/Training/LeastAction.lean) |
+
+### The kernel and the lift
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| Kernel trick, support vector machines (Boser, Guyon and Vapnik 1992) | Squiggly below is flat above. | [`Lift.lean`](lean/SquigglyLine/Networks/Lift.lean) |
+| Radial basis functions (Broomhead and Lowe 1988) | A kernel that depends only on the distance between two inputs. A bump of width `σ` is the unit bump squeezed by `1 / σ`, so it has slope at most `1 / σ`: the width is the frequency of the theorem. Narrow bumps fit any labels. | [`RadialBasis.lean`](lean/SquigglyLine/Networks/RadialBasis.lean) |
+| Neural tangent kernel (Jacot et al. 2018) | For training, a model is its kernel. | for a fixed kernel: [`Kernel.lean`](lean/SquigglyLine/Networks/Kernel.lean) |
+| Spectral bias (Rahaman et al. 2019) | Gentle directions of the kernel are learned first. | [`SpectralBias.lean`](lean/SquigglyLine/Supporting/Training/SpectralBias.lean) |
+| Edge of stability (Cohen et al. 2021) | A direction is stable up to strength `2 / η`. | [`EdgeOfStability.lean`](lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean) |
+| Fourier features and NeRF (Tancik et al. 2020; Mildenhall et al. 2020) | A Fourier lift of frequency `w` stretches distances by exactly up to `w`. That stretch is where the fine detail comes from. | [`FourierLift.lean`](lean/SquigglyLine/Networks/FourierLift.lean) |
+| Position signals (Vaswani et al. 2017; Su et al. 2021) | The same lift applied to position. Moving along the sequence is a fixed turn, so the kernel of two positions depends only on how far apart they are. | [`FourierLift.lean`](lean/SquigglyLine/Networks/FourierLift.lean) |
+| Convolution (LeCun et al. 1989) | A kernel that depends only on how far apart two inputs are gives the same line when the data is shifted. | [`FourierLift.lean`](lean/SquigglyLine/Networks/FourierLift.lean) |
+| Platonic representations (Huh et al. 2024) | Same kernel, same learner. | [`SameKernel.lean`](lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean) |
+| Catastrophic forgetting (Kirkpatrick et al. 2017) | A new task moves an old one through the kernel between them. | [`Forgetting.lean`](lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) |
+| Benign overfitting (Bartlett et al. 2020) | Junk directions of the kernel swallow the noise. | for one junk direction: [`BenignOverfitting.lean`](lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean) |
+| Rethinking generalisation (Zhang et al. 2017) | A lift into `m` dimensions fits any labels on `m` points. | [`Capacity.lean`](lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean) |
+| In-context learning (von Oswald et al. 2023) | One attention head scoring by the kernel is one step of travel on the prompt. | [`Attention.lean`](lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
+
+### Folds
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| ReLU and depth (Nair and Hinton 2010; Telgarsky 2016) | `L` folds make `2^L` pieces and pass within `1 / 2^L` of every point. | [`Depth.lean`](lean/SquigglyLine/Networks/Depth.lean), [`TentCloser.lean`](lean/SquigglyLine/Networks/TentCloser.lean), [`DepthSeparation.lean`](lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean) |
+| Recurrent networks (Elman 1990) | A recurrent network run for `T` steps is `T` layers with the same weights. The tent layer repeated `T` times already turns `2^T − 1` times, so time buys squiggle exactly as depth does. | [`Depth.lean`](lean/SquigglyLine/Networks/Depth.lean) uses one layer repeated |
+| Universal approximation (Cybenko 1989) | Units needed go as slope over error. | in one dimension: [`UniversalApproximation.lean`](lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean) |
+| Initialisation (Glorot and Bengio 2010; He et al. 2015) | A fold keeps half the squared size of a signal that is as often negative as positive. That is the factor two in He initialisation. | [`Gain.lean`](lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) |
+| Residual networks (He et al. 2016) | A skip is a bypass: nothing is fully blocked. | for plates: [`SkipAndNorm.lean`](lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean) |
+| Dying ReLU | Dead stays dead. | [`MarkovChains.lean`](lean/SquigglyLine/Networks/MarkovChains.lean) |
+| Information bottleneck (Shwartz-Ziv and Tishby 2017) | A fold merges inputs and merged stays merged. | [`Bottleneck.lean`](lean/SquigglyLine/Supporting/NetworkShape/Bottleneck.lean), [`CodeLength.lean`](lean/SquigglyLine/Supporting/NetworkShape/CodeLength.lean) |
+| Neural ODEs (Chen et al. 2018) | Many small turns lose almost nothing. | [`SmallSteps.lean`](lean/SquigglyLine/Supporting/Training/SmallSteps.lean) |
+| Kolmogorov–Arnold networks (Liu et al. 2024) | A learnable curve on an edge is a few folds: a node is within `2 × total slope / n` of a ReLU layer with `n` pieces per edge. | [`KolmogorovArnold.lean`](lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean) |
+
+### Averages
+
+| Paper or idea | In squiggly terms | Proof |
+|---|---|---|
+| Attention (Vaswani et al. 2017) | A weighted average. It cannot spread the tokens, so it cannot add squiggle. | [`Attention.lean`](lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
+| Memory networks and neural Turing machines (Graves et al. 2014; Weston et al. 2015) | Reading memory by content is an attention head over the memory slots, so what is read is an average of what is stored. | [`Attention.lean`](lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
+| Attention loses rank with depth (Dong et al. 2021) | With scores at most `B` in size, each layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)`. | for number-valued tokens: [`AttentionRate.lean`](lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
+| Ensembles (Krogh and Vedelsby 1995; Lakshminarayanan et al. 2017) | The average of several lines is no steeper than the steepest, and its squared error is the average error minus the spread of the lines. | [`Averaging.lean`](lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
+| Model soups and weight averaging (Izmailov et al. 2018; Wortsman et al. 2022) | For a model linear in its weights, averaging weights is averaging lines. | [`Averaging.lean`](lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
+| Diffusion models (Ho et al. 2020; Song et al. 2021) | The best denoiser is an attention head over the training set: a weighted average of the clean examples. So it never leaves the region the examples span. | [`Averaging.lean`](lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
+| Bias and variance (Geman et al. 1992) | The noise an average removes is the variance. | [`BiasVariance.lean`](lean/SquigglyLine/Supporting/NewInputs/BiasVariance.lean) |
+| Neural collapse (Papyan et al. 2020) | Class averages can be no farther apart than a simplex. | [`NeuralCollapse.lean`](lean/SquigglyLine/Supporting/NetworkShape/NeuralCollapse.lean) |
 ## Wishlist
 
 The aim is to say all of deep learning in the terms of the squiggly line
 (slope, nearness, travel, the kernel and the lift, folds, and averages) with
 every step machine-checked. [`docs/wishlist.md`](docs/wishlist.md) lists
-well-known papers under whichever of those they connect through, says each
-in those terms, and marks it proved, next, or out of reach. It also lists the
-proofs I want and cannot get yet, with what is in the way.
+the well-known papers that are not proved yet under whichever of those they
+connect through, says each in those terms, and marks it next or out of
+reach, with what is in the way. What is proved is in the section above.
 
 ## Citing
 

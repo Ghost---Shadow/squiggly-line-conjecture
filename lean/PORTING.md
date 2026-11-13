@@ -105,3 +105,4 @@ comment. Remove a file from this list when it is ported.
 
 - `SquigglyLine/Supporting/Training/AdamW.lean`
 - `SquigglyLine/Supporting/NetworkShape/RmsNorm.lean`
+- `SquigglyLine/Supporting/NetworkShape/Residual.lean`

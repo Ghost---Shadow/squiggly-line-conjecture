@@ -1,6 +1,6 @@
 # Skip connections and normalisation, as polarizers
 
-**Proofs:** [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean).
+**Proofs:** [`Residual.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Residual.lean), [`SkipAndNorm.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -71,6 +71,41 @@ So the two tricks fix different things. A bypass makes sure no plate can kill
 the light. An amplifier makes sure light that survives does not fade. A
 bypass alone lets the light grow without limit, and an amplifier alone is
 helpless after a crossed plate. That may be why networks use both.
+
+## What a skip does to squiggle
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/Residual.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Residual.lean).
+
+A residual layer is `input + branch(input)`. Say the branch has slope at
+most `K`.
+
+- **The layer's slope is between `1 - K` and `1 + K`.** It is no steeper
+  than `1 + K` (**proved**: `lipschitzWith_addSkip`), and two outputs are at
+  least `1 - K` of the distance between their inputs (**proved**:
+  `le_dist_addSkip`).
+- **With `K < 1` nothing is merged.** No two inputs give the same output
+  (**proved**: `addSkip_injective`). A fold merges inputs; a skip with a
+  gentle branch cannot.
+- **A turn has to be bought in the branch.** With one input and `K < 1` the
+  layer is always rising, so it never turns (**proved**:
+  `strictMono_addSkip`, `neverTurns_addSkip`). A residual layer adds a turn
+  only where its branch is steeper than one.
+- **Depth does not blow up the slope.** `L` layers with branches of slope
+  `c / L` have total slope at most `e^c`, whatever `L` is (**proved**:
+  `dist_runResidualLayers_le_exp`). A plain stack of slope `K` has `K^L`.
+
+So a residual network keeps the signal by default and makes squiggle only
+through steep branches.
+
+The memory cell of an LSTM is the same thing through time. One step keeps a
+share `forget` of the cell and adds something new. The slope of the cell per
+step is that share (**proved**: `abs_updateCell_sub`). It is never above
+one (**proved**: `abs_updateCell_sub_le`), and with the gate fully open it
+is exactly one: the difference between two memories is carried forward
+unchanged (**proved**: `updateCell_sub_of_open_gate`). Over `n` steps the
+slopes multiply (**proved**: `runCell_sub`). An open gate is a skip through
+time, which is how an LSTM avoids the fading of `vanishing-gradients.md`.
 
 ## What is not shown
 
