@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 7 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 4 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,7 +38,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | **next** |
 
 ## Nearness
 
@@ -49,14 +48,12 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Variational autoencoders (Kingma and Welling 2014) | The penalty on the code is half its squared travel from the origin plus a term in its width. It is zero only for a code that ignores the input. | **next** |
 | Random features are nearly at right angles, on average | Two random directions in `d` dimensions have expected squared overlap `1 / d`. This is the on-average form of the fact that makes travel fall with size. | **next** |
 
 ## The kernel and the lift
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Softmax bottleneck (Yang et al. 2018) | With `d` hidden numbers the table of scores over contexts and words has rank at most `d`. A lift that small cannot give every next-word distribution. | **next** |
 | Random Fourier features (Rahimi and Recht 2007) | Average the Fourier-lift kernel over frequencies drawn from a bell curve and the result is the Gaussian bump. The Fourier lift and the radial basis kernel are one thing. | **next** |
 | Policy gradient (Williams 1992) | The push on the scores is the action taken minus the prediction, times the reward. That is the cross-entropy push, so the same kernel carries it. | **next** |
 

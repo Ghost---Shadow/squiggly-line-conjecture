@@ -113,3 +113,4 @@ comment. Remove a file from this list when it is ported.
 - `SquigglyLine/Supporting/NewInputs/Neighbours.lean`
 - `SquigglyLine/Supporting/NewInputs/Mixing.lean`
 - `SquigglyLine/Supporting/NetworkShape/Convolution.lean`
+- `SquigglyLine/Supporting/NetworkShape/Mixtures.lean`

@@ -670,6 +670,7 @@ them proves the phenomenon for real networks.
 | Residual layers and the LSTM cell | Input plus a branch of slope `K` has slope between `1 − K` and `1 + K`. With `K < 1` it merges no two inputs and, with one input, never turns. `L` layers with branches of slope `c / L` have total slope at most `e^c`. The memory cell of an LSTM has the forget gate as its slope per step, and exactly one with the gate open. | [note](docs/supporting/network-shape/skip-and-norm.md) | [`Residual`](lean/SquigglyLine/Supporting/NetworkShape/Residual.lean) |
 | Activations and caps on slope | A sigmoid's slope is never above one quarter, so `L` sigmoid layers have slope at most `(1/4)^L`. A leaky ReLU keeps a slope of at least its leak. The higher of two lines is no steeper than the steeper one. A layer divided by its own size has slope at most one. | [note](docs/supporting/network-shape/vanishing-gradients.md) | [`Activations`](lean/SquigglyLine/Supporting/NetworkShape/Activations.lean) |
 | Convolution, stride, upsampling | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the length of the signal. After `L` layers of kernel width `n` an output depends only on the inputs within `L n` of it. Reading every second position is squeezing by two, so it doubles the slope; upsampling by two undoes it. | [note](docs/networks/fourier-lift.md) | [`Convolution`](lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean) |
+| Mixture of experts, the VAE penalty, the softmax bottleneck | A gate that blends experts changes the output by at most what the experts change, plus their spread times the change in the gates. The penalty on a VAE code is at least half the squared distance of its centre from the origin, and zero only for the code that ignores its input. A table of scores made from `d` hidden numbers has rank at most `d`. | [note](docs/supporting/network-shape/capacity.md) | [`Mixtures`](lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean) |
 | Attention loses rank with depth | With scores at most `B` in size, every token gets a share of at least `exp(−2B) / n`, so one layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)` and `L` layers by that to the power `L`. | [note](docs/supporting/network-shape/attention.md) | [`AttentionRate`](lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
 | Kolmogorov–Arnold networks | A node that adds one learnable curve per input is within `2 × total slope / n` of a ReLU layer with `n` pieces per edge. | [note](docs/supporting/network-shape/universal-approximation.md) | [`KolmogorovArnold`](lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean) |
 
@@ -817,6 +818,7 @@ from memory and have not been checked.
 | Convolution, locality (LeCun et al. 1989) | After `L` layers of kernel radius `r`, an output depends only on inputs within `L × r` of it. Squiggles are made locally and shared across positions. | [`Convolution.lean`](lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean) |
 | Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | [`Convolution.lean`](lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean) |
 | Upsampling (Ronneberger et al. 2015) | The mirror of stride: stretching by two halves the frequency. | [`Convolution.lean`](lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean) |
+| Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | [`Mixtures.lean`](lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean) |
 
 ### Nearness
 
@@ -865,6 +867,7 @@ from memory and have not been checked.
 | Federated averaging (McMahan et al. 2017) | Averaging the weights after one local step each is one step on all the data. | [`Optimisers.lean`](lean/SquigglyLine/Supporting/Training/Optimisers.lean), for one local step |
 | Lasso, the penalty on summed sizes (Tibshirani 1996) | Weight decay shrinks a weak direction. This penalty sets it to exactly zero: a direction weaker than the penalty is not travelled at all. | [`Regularisers.lean`](lean/SquigglyLine/Supporting/Training/Regularisers.lean), for one weight |
 | Stochastic depth (Huang et al. 2016) | Dropping a branch at random is, on average, the branch at part strength. The same floor as dropout, on whole layers. | [`Regularisers.lean`](lean/SquigglyLine/Supporting/Training/Regularisers.lean) |
+| Variational autoencoders (Kingma and Welling 2014) | The penalty on the code is half its squared travel from the origin plus a term in its width. It is zero only for a code that ignores the input. | [`Mixtures.lean`](lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean), from the closed form of the penalty |
 
 ### The kernel and the lift
 
@@ -888,6 +891,7 @@ from memory and have not been checked.
 | Rotary positions (Su et al. 2021) | Turn the query and the key by angles set by their positions. The score then depends on the two positions only through the gap, and no vector changes length. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean), for one pair of coordinates |
 | Relative position bias (Shaw et al. 2018; Raffel et al. 2020) | Add to each score a number that depends only on the gap. Shifting the whole sequence then changes no attention weight. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean) |
 | Learned position table (Devlin et al. 2019; Radford et al. 2019) | One free vector per position is a lookup: a lift that can give any position anything. It ties no two positions together and says nothing about a position it has not seen. | [`Positions.lean`](lean/SquigglyLine/Networks/Positions.lean) |
+| Softmax bottleneck (Yang et al. 2018) | With `d` hidden numbers the table of scores over contexts and words has rank at most `d`. A lift that small cannot give every next-word distribution. | [`Mixtures.lean`](lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean), for the table of scores |
 
 ### Folds
 

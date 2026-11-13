@@ -1,6 +1,6 @@
 # Storage capacity: what a network can memorise
 
-**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`Capacity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean).
+**Proofs:** [`Depth.lean`](../../../lean/SquigglyLine/Networks/Depth.lean), [`Capacity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`DepthSeparation.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean), [`Mixtures.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -66,6 +66,44 @@ So the two things a network does are separate:
 
 A network generalises when its data has the second kind of regularity and it
 is forced to use it. It memorises when it has the room and nothing stops it.
+
+## Gates, codes and a narrow last layer
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean).
+
+- **Mixture of experts.** A gate gives each expert a share, and the output
+  is the experts blended with those shares. Between two inputs the output
+  changes by at most the most any expert changes, plus the spread of the
+  experts times the total change in the shares (**proved**:
+  `abs_mixture_sub_le`). So a gate adds slope only through how far apart
+  the experts are. Where they agree the gate adds none, however fast it
+  switches. Attention with scores that depend on the input is a gate of
+  this kind.
+- **The penalty of a variational autoencoder.** The encoder gives each
+  input a code drawn from a bell curve with a centre and a width. The
+  penalty on that code has the closed form
+  `(centre² + width² - 1 - log(width²)) / 2` (**recalled**: Kingma and
+  Welling 2014; the closed form is taken as the definition here). It is at
+  least half the squared distance of the centre from the origin
+  (**proved**: `half_sq_le_codePenalty`), so it is never negative
+  (**proved**: `codePenalty_nonneg`). It is zero only when the centre is
+  zero and the width is one (**proved**: `codePenalty_eq_zero_iff`): the
+  code that is the same for every input. In the terms of
+  `code-length.md`, the penalty charges the code for its travel from the
+  origin, and a code that travels nowhere says nothing.
+- **The softmax bottleneck.** The last layer of a language model scores
+  each word by the overlap of the context's `d` hidden numbers with the
+  word's `d` numbers. The table of scores, one row per context and one
+  column per word, has rank at most `d` (**proved**:
+  `rank_scoreTable_le`). With more contexts than `d` it cannot be every
+  table; for one, it cannot score each context's own word one and every
+  other word zero (**proved**: `scoreTable_ne_one`). A lift into `d`
+  dimensions fits any labels on `d` points and no more.
+
+Not shown: that the penalty is the coding distance between two bell curves,
+and the bottleneck for the log of the probabilities, where the rank can be
+one higher.
 
 ## How this meets the squiggly line
 

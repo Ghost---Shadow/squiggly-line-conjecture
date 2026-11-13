@@ -129,6 +129,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `Residual`               | a skip keeps points apart; turns are bought in the branch; LSTM cell |
 | `Activations`            | sigmoid slope ≤ 1/4; leaky ReLU; max pooling; spectral normalisation |
 | `Convolution`            | conv slope ≤ summed kernel; local window `L n`; stride is squeezing  |
+| `Mixtures`               | gates add slope via expert spread; VAE penalty; softmax bottleneck   |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -185,6 +186,7 @@ import SquigglyLine.Supporting.NetworkShape.RmsNorm
 import SquigglyLine.Supporting.NetworkShape.Residual
 import SquigglyLine.Supporting.NetworkShape.Activations
 import SquigglyLine.Supporting.NetworkShape.Convolution
+import SquigglyLine.Supporting.NetworkShape.Mixtures
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
