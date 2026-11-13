@@ -78,7 +78,8 @@ Known pitfalls:
 - A last line that starts with `-1` right after a `let` parses as a
   subtraction. Name the `-1` with a `let`.
 - Naming part of an expression with its own `let` can make Lean fill in a
-  hidden argument differently. If a statement mixes `∘L`, `adjoint` or
+  hidden argument differently. This happened with `‖NORMALIZE_SPECTRALLY W‖`:
+  naming the layer first, then taking its size, gave a different statement. If a statement mixes `∘L`, `adjoint` or
   coercions, keep the expression whole.
 
 ## To keep this cheap
@@ -100,21 +101,5 @@ its log has anything the author must look at.
 
 ## Waiting to be ported
 
-These files are in typical Mathlib style. Each says so in its opening
-comment. Remove a file from this list when it is ported.
-
-- `SquigglyLine/Supporting/Training/AdamW.lean`
-- `SquigglyLine/Supporting/NetworkShape/RmsNorm.lean`
-- `SquigglyLine/Supporting/NetworkShape/Residual.lean`
-- `SquigglyLine/Supporting/NetworkShape/Activations.lean`
-- `SquigglyLine/Supporting/Training/Optimisers.lean`
-- `SquigglyLine/Supporting/Training/Regularisers.lean`
-- `SquigglyLine/Networks/Positions.lean`
-- `SquigglyLine/Supporting/NewInputs/Neighbours.lean`
-- `SquigglyLine/Supporting/NewInputs/Mixing.lean`
-- `SquigglyLine/Supporting/NetworkShape/Convolution.lean`
-- `SquigglyLine/Supporting/NetworkShape/Mixtures.lean`
-- `SquigglyLine/Supporting/Training/PolicyGradient.lean`
-- `SquigglyLine/Supporting/NewInputs/OnAverage.lean`
-- `SquigglyLine/Supporting/NetworkShape/HardChoices.lean`
-- `SquigglyLine/Networks/RandomFourier.lean`
+Nothing, as of 14 Nov 2026. A file in typical Mathlib style says so in its
+opening comment and is listed here until it is ported.

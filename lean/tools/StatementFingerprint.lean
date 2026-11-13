@@ -6,7 +6,7 @@ prints one line per declaration with a hash of its statement, computed after
 removing everything a restyle is allowed to change:
 
 * `let`s are substituted in, and the result is beta- and eta-reduced;
-* binder names and binder kinds are ignored;
+* binder names, binder kinds and the names of universe levels are ignored;
 * the project's own abbreviations are unfolded;
 * a renamed definition is mapped back to its old name (`RENAMES.txt`).
 
@@ -105,12 +105,15 @@ run_cmd do
   for (n, info) in env.constants.toList do
     if !isOurs env n || skipName n then continue
     let name := mapBack back n
+    -- Universe levels are named after the type variables, so give them fixed names.
+    let canon := (List.range info.levelParams.length).map fun i => Level.param (Name.mkNum `u i)
+    let fixLevels := fun (e : Expr) => e.instantiateLevelParams info.levelParams canon
     match info with
     | .thmInfo t =>
-      lines := lines.push s!"theorem {name} {(norm env back t.type).hash}"
+      lines := lines.push s!"theorem {name} {(norm env back (fixLevels t.type)).hash}"
     | .defnInfo d =>
       lines := lines.push
-        s!"def {name} {(norm env back d.type).hash} {(norm env back d.value).hash}"
+        s!"def {name} {(norm env back (fixLevels d.type)).hash} {(norm env back (fixLevels d.value)).hash}"
     | _ => pure ()
   IO.FS.writeFile "FINGERPRINT.txt" ("\n".intercalate (lines.qsort (· < ·)).toList ++ "\n")
   logInfo m!"{lines.size} declarations fingerprinted"
