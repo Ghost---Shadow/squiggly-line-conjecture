@@ -6,6 +6,12 @@ theorem. The second carries it to networks and to parameter space. The third
 is supporting material: the same tools pointed at known puzzles, none of it
 needed for the theorem. The README lists the files in the same groups.
 
+## 0. Style
+
+`SquigglyLine/Style.lean` holds the proof step `unfold_named_pieces` and
+the names `RealFunction` and `PI`. `STYLE.md` sets out how every statement
+is written.
+
 ## 1. The theorem
 
 In `SquigglyLine/Theorem/`.
@@ -109,6 +115,8 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `NetworkSlope`           | slope ≤ product of layers; flipping costs score / slope; temperature |
 | `Gain`                   | a fold keeps half (He initialisation); a Bellman sweep has slope `γ` |
 -/
+-- 0. How statements are written
+import SquigglyLine.Style
 -- 1. The theorem
 import SquigglyLine.Theorem.Defs
 import SquigglyLine.Theorem.RandomFunction

@@ -1,14 +1,29 @@
 /-
 The conjecture, settled for sines.
 
-A sine of frequency `w` takes every value of its band within `π / w` of every
-input. So its nearest-point distance to in-band data is at most `π / w`, for
-every phase, and tends to zero as the frequency grows. That is the geometric
-half of the conjecture, as a theorem.
+A sine of frequency `frequency` takes every value of its band within
+`PI / frequency` of every input. So its nearest-point distance to in-band
+data is at most `PI / frequency`, for every phase, and goes to zero as the
+frequency grows. That is the geometric half of the conjecture, as a theorem.
 
 `closer_but_no_better` puts it next to `Verdict.lean`: along the same family
 the nearest-point distance goes to zero while every regression loss stays
 exactly where it was.
+
+Theorems:
+
+* `sin_coversWithin`               a sine reaches every height within half a
+                                   wave;
+* `sin_exists_phaseShift`          or after a phase shift of half a turn;
+* `sineWave_eval_coe`              the random-phase sine is the usual sine;
+* `sineWave_coversWithin`          so every draw covers its band;
+* `lipschitzWith_sine`             a sine's slope is at most
+                                   `|amplitude| * |frequency|`;
+* `sineWave_nearestDist_bounds`    the distance, pinned from both sides;
+* `sineWave_exists_warp`           a small warp fits any in-band target;
+* `expected_nearestDist_sineWave_le`, `tendsto_expected_nearestDist_sineWave`
+                                   the same on average, and in the limit;
+* `closer_but_no_better`           closer, at no change in loss.
 -/
 import Mathlib.Algebra.Order.Round
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
@@ -20,134 +35,283 @@ namespace SquigglyLine
 
 open MeasureTheory Filter Topology Real
 
-/-- A real sine of frequency `w` takes every value in `[-|A|, |A|]` within `π / w` of
-every input. -/
-theorem sin_coversWithin (A φ : ℝ) {w : ℝ} (hw : 0 < w) :
-    COVERS_WITHIN (fun x : ℝ => A * sin (w * x + φ)) (π / w) (Set.Icc (-|A|) |A|) := by
-  intro x y hy
-  rcases eq_or_ne A 0 with rfl | hA
-  · have hy0 : y = 0 := by
-      have := hy.1; have := hy.2; simp at *; linarith
-    exact ⟨x, by simpa using (div_pos pi_pos hw).le, by simp [hy0]⟩
-  have hratio : |y / A| ≤ 1 := by
-    rw [abs_div, div_le_one (abs_pos.mpr hA)]
-    exact abs_le.mpr hy
-  obtain ⟨hlo, hhi⟩ := abs_le.mp hratio
-  set t := arcsin (y / A) with ht
-  set θ₀ := w * x + φ with hθ₀
-  set k : ℤ := round ((θ₀ - t) / (2 * π)) with hk
-  set θ := t + k * (2 * π) with hθ
-  have hπ : (0 : ℝ) < 2 * π := by positivity
-  have hclose : |θ₀ - θ| ≤ π := by
-    have hround := abs_sub_round ((θ₀ - t) / (2 * π))
-    have hsplit : θ₀ - θ = (2 * π) * ((θ₀ - t) / (2 * π) - k) := by
-      rw [hθ]; field_simp; ring
-    rw [hsplit, abs_mul, abs_of_pos hπ]
-    nlinarith [abs_nonneg ((θ₀ - t) / (2 * π) - k)]
-  refine ⟨(θ - φ) / w, ?_, ?_⟩
-  · have hdist : x - (θ - φ) / w = (θ₀ - θ) / w := by
-      rw [hθ₀]; field_simp; ring
-    rw [Real.dist_eq, hdist, abs_div, abs_of_pos hw]
-    exact div_le_div_of_nonneg_right hclose hw.le
-  · have harg : w * ((θ - φ) / w) + φ = t + k * (2 * π) := by
-      rw [hθ]; field_simp; ring
-    show A * sin (w * ((θ - φ) / w) + φ) = y
-    rw [harg, sin_add_int_mul_two_pi, ht, sin_arcsin hlo hhi]
+/-- A real sine of frequency `frequency` takes every value in
+`[-|amplitude|, |amplitude|]` within `PI / frequency` of every input. -/
+theorem sin_coversWithin
+    (amplitude phase : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency) :
+    let sine : RealFunction := fun input =>
+      amplitude * sin (frequency * input + phase)
+    let half_wave := PI / frequency  -- a full wave is 2 * PI / frequency wide
+    COVERS_WITHIN sine half_wave (GET_SINE_BAND amplitude) := by
+  unfold_named_pieces
+  intro input label label_in_band
+  -- A flat line (amplitude zero) only ever takes the value zero.
+  rcases eq_or_ne amplitude 0 with rfl | amplitude_ne_zero
+  · have label_is_zero : label = 0 := by
+      have := label_in_band.1; have := label_in_band.2; simp at *; linarith
+    exact ⟨input, by simpa using (div_pos pi_pos frequency_pos).le,
+      by simp [label_is_zero]⟩
+  have ratio_is_a_sine_value : |label / amplitude| ≤ 1 := by
+    rw [abs_div, div_le_one (abs_pos.mpr amplitude_ne_zero)]
+    exact abs_le.mpr label_in_band
+  obtain ⟨ratio_ge_neg_one, ratio_le_one⟩ := abs_le.mp ratio_is_a_sine_value
+  -- One angle at which the sine has the right height.
+  set base_angle := arcsin (label / amplitude) with base_angle_def
+  -- The angle the sine is at now.
+  set current_angle := frequency * input + phase with current_angle_def
+  -- Every full turn gives the same height. Take the copy of `base_angle`
+  -- nearest to the current angle.
+  set turns : ℤ := round ((current_angle - base_angle) / (2 * π))
+    with turns_def
+  set target_angle := base_angle + turns * (2 * π) with target_angle_def
+  have two_pi_pos : (0 : ℝ) < 2 * π := by positivity
+  -- Rounding is off by at most a half, so the nearest copy is at most half
+  -- a turn away.
+  have angles_are_close : |current_angle - target_angle| ≤ π := by
+    have rounding_error :=
+      abs_sub_round ((current_angle - base_angle) / (2 * π))
+    have gap_in_turns : current_angle - target_angle
+        = (2 * π) * ((current_angle - base_angle) / (2 * π) - turns) := by
+      rw [target_angle_def]; field_simp; ring
+    rw [gap_in_turns, abs_mul, abs_of_pos two_pi_pos]
+    nlinarith [abs_nonneg ((current_angle - base_angle) / (2 * π) - turns)]
+  -- The input at which the sine is at `target_angle`.
+  refine ⟨(target_angle - phase) / frequency, ?_, ?_⟩
+  · -- Half a turn of angle is `PI / frequency` of input.
+    have gap_in_input : input - (target_angle - phase) / frequency
+        = (current_angle - target_angle) / frequency := by
+      rw [current_angle_def]; field_simp; ring
+    rw [Real.dist_eq, gap_in_input, abs_div, abs_of_pos frequency_pos]
+    exact div_le_div_of_nonneg_right angles_are_close frequency_pos.le
+  · have angle_there :
+        frequency * ((target_angle - phase) / frequency) + phase
+          = base_angle + turns * (2 * π) := by
+      rw [target_angle_def]; field_simp; ring
+    show amplitude
+        * sin (frequency * ((target_angle - phase) / frequency) + phase)
+      = label
+    rw [angle_there, sin_add_int_mul_two_pi, base_angle_def,
+      sin_arcsin ratio_ge_neg_one ratio_le_one]
     field_simp
 
-/-- **Once the phase matches.** For any data point with its label in the band, a change of
-phase of at most half a turn makes the sine pass through it. The change needed does not
-shrink with the frequency: a squigglier sine is closer in the input and exactly as far in
-the phase. -/
-theorem sin_exists_phaseShift (A φ : ℝ) {w : ℝ} (hw : 0 < w) (x : ℝ) {y : ℝ}
-    (hy : y ∈ Set.Icc (-|A|) |A|) : ∃ δ : ℝ, |δ| ≤ π ∧ A * sin (w * x + (φ + δ)) = y := by
-  obtain ⟨x', hx', hfit⟩ := sin_coversWithin A φ hw x y hy
-  refine ⟨w * (x' - x), ?_, ?_⟩
-  · rw [abs_mul, abs_of_pos hw, abs_sub_comm, ← Real.dist_eq]
-    calc w * dist x x' ≤ w * (π / w) := mul_le_mul_of_nonneg_left hx' hw.le
+/-- **Once the phase matches.** For any data point with its label in the
+band, a change of phase of at most half a turn makes the sine pass through
+it. The change needed does not shrink with the frequency: a squigglier sine
+is closer in the input and exactly as far in the phase. -/
+theorem sin_exists_phaseShift
+    (amplitude phase : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency)
+    (input : ℝ)
+    {label : ℝ}
+    (label_in_band : IS_IN_SINE_BAND amplitude label) :
+    ∃ phase_shift : ℝ,
+      let shift_is_small := |phase_shift| ≤ PI  -- half a turn, whatever the frequency
+      let shifted_sine_hits_the_label :=
+        amplitude * sin (frequency * input + (phase + phase_shift)) = label
+      shift_is_small ∧ shifted_sine_hits_the_label := by
+  unfold_named_pieces
+  -- Moving the input by `gap` is the same as moving the phase by
+  -- `frequency * gap`.
+  obtain ⟨other_input, other_is_near, other_hits_label⟩ :=
+    sin_coversWithin amplitude phase frequency_pos input label label_in_band
+  refine ⟨frequency * (other_input - input), ?_, ?_⟩
+  · rw [abs_mul, abs_of_pos frequency_pos, abs_sub_comm, ← Real.dist_eq]
+    calc frequency * dist input other_input
+        ≤ frequency * (π / frequency) :=
+          mul_le_mul_of_nonneg_left other_is_near frequency_pos.le
       _ = π := by field_simp
-  · rw [← hfit]
+  · rw [← other_hits_label]
     congr 2
     ring
 
-/-- With the phase written as a real number, the random-phase sine is the usual sine. -/
-theorem sineWave_eval_coe (A w φ : ℝ) :
-    (MAKE_RANDOM_PHASE_SINE A w).eval (φ : AddCircle (2 * π)) = fun x => A * sin (w * x + φ) := by
-  funext x
-  show A * Angle.sin ((↑(w * x) : Angle) + (↑φ : Angle)) = _
+/-- With the phase written as a real number, the random-phase sine is the
+usual sine. -/
+theorem sineWave_eval_coe
+    (amplitude frequency phase : ℝ) :
+    let random_phase_sine :=
+      (MAKE_RANDOM_PHASE_SINE amplitude frequency).eval
+        (phase : AddCircle (2 * PI))
+    let usual_sine : RealFunction := fun input =>
+      amplitude * sin (frequency * input + phase)
+    random_phase_sine = usual_sine := by
+  unfold_named_pieces
+  funext input
+  show amplitude * Angle.sin ((↑(frequency * input) : Angle) + (↑phase : Angle))
+    = _
   rw [← Angle.coe_add, Angle.sin_coe]
 
-/-- Every draw of the random-phase sine covers its band within `π / w`. -/
-theorem sineWave_coversWithin (A : ℝ) {w : ℝ} (hw : 0 < w) (φ : (MAKE_RANDOM_PHASE_SINE A w).Param) :
-    COVERS_WITHIN ((MAKE_RANDOM_PHASE_SINE A w).eval φ) (π / w) (Set.Icc (-|A|) |A|) := by
-  obtain ⟨φ', rfl⟩ : ∃ φ' : ℝ, (φ' : AddCircle (2 * π)) = φ := QuotientAddGroup.mk_surjective φ
+/-- Every draw of the random-phase sine covers its band within
+`PI / frequency`. -/
+theorem sineWave_coversWithin
+    (amplitude : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency)
+    (phase : SinePhase amplitude frequency) :
+    let sine      := (MAKE_RANDOM_PHASE_SINE amplitude frequency).eval phase
+    let half_wave := PI / frequency  -- a full wave is 2 * PI / frequency wide
+    COVERS_WITHIN sine half_wave (GET_SINE_BAND amplitude) := by
+  unfold_named_pieces
+  -- A point of the circle is some real angle, wrapped round.
+  obtain ⟨real_phase, rfl⟩ :
+      ∃ real_phase : ℝ, (real_phase : AddCircle (2 * π)) = phase :=
+    QuotientAddGroup.mk_surjective phase
   rw [sineWave_eval_coe]
-  exact sin_coversWithin A φ' hw
+  exact sin_coversWithin amplitude real_phase frequency_pos
 
-/-- A sine of amplitude `A` and frequency `w` has slope at most `|A| * |w|`. -/
-theorem lipschitzWith_sine (A w φ : ℝ) :
-    LipschitzWith (‖A‖₊ * ‖w‖₊) (fun x : ℝ => A * sin (w * x + φ)) := by
-  refine LipschitzWith.of_dist_le_mul fun x y => ?_
-  have h := abs_sin_sub_sin_le (w * x + φ) (w * y + φ)
-  have hw : w * x + φ - (w * y + φ) = w * (x - y) := by ring
-  rw [hw, abs_mul] at h
+/-- A sine of amplitude `amplitude` and frequency `frequency` has slope at
+most `|amplitude| * |frequency|`. -/
+theorem lipschitzWith_sine
+    (amplitude frequency phase : ℝ) :
+    let sine : RealFunction := fun input =>
+      amplitude * sin (frequency * input + phase)
+    let slope_limit := ‖amplitude‖₊ * ‖frequency‖₊  -- the derivative is amplitude * frequency * cos(...), and |cos| ≤ 1
+    LipschitzWith slope_limit sine := by
+  unfold_named_pieces
+  refine LipschitzWith.of_dist_le_mul fun input other_input => ?_
+  -- `sin` itself never changes faster than its angle.
+  have sin_gap_le_angle_gap :=
+    abs_sin_sub_sin_le (frequency * input + phase)
+      (frequency * other_input + phase)
+  have angle_gap : frequency * input + phase - (frequency * other_input + phase)
+      = frequency * (input - other_input) := by ring
+  rw [angle_gap, abs_mul] at sin_gap_le_angle_gap
   simp only [Real.dist_eq, NNReal.coe_mul, coe_nnnorm, Real.norm_eq_abs]
   rw [← mul_sub, abs_mul]
-  calc |A| * |sin (w * x + φ) - sin (w * y + φ)|
-      ≤ |A| * (|w| * |x - y|) := mul_le_mul_of_nonneg_left h (abs_nonneg A)
-    _ = |A| * |w| * |x - y| := by ring
+  calc |amplitude| * |sin (frequency * input + phase)
+          - sin (frequency * other_input + phase)|
+      ≤ |amplitude| * (|frequency| * |input - other_input|) :=
+        mul_le_mul_of_nonneg_left sin_gap_le_angle_gap (abs_nonneg amplitude)
+    _ = |amplitude| * |frequency| * |input - other_input| := by ring
 
-/-- **Claim G for sines, pinned from both sides, at every data point and every phase.**
-For a label in the band, the nearest-point distance lies between the vertical error divided
-by `√(1 + (A w)²)` and `π / w`. Both ends fall like `1 / w`. -/
-theorem sineWave_nearestDist_bounds (A : ℝ) {w : ℝ} (hw : 0 < w) (φ : (MAKE_RANDOM_PHASE_SINE A w).Param)
-    (p : DataPoint ℝ) (hp : p.2 ∈ Set.Icc (-|A|) |A|) :
-    GET_VERTICAL_ERROR ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p / √(1 + (A * w) ^ 2)
-        ≤ GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ∧
-      GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ≤ π / w := by
-  refine ⟨?_, nearestDist_le_of_coversWithin (sineWave_coversWithin A hw φ) p hp⟩
-  obtain ⟨φ', rfl⟩ : ∃ φ' : ℝ, (φ' : AddCircle (2 * π)) = φ := QuotientAddGroup.mk_surjective φ
+/-- **The distance for sines, pinned from both sides, at every data point
+and every phase.** For a label in the band, the nearest-point distance lies
+between the vertical error divided by `√(1 + (amplitude * frequency)²)` and
+`PI / frequency`. Both ends fall like `1 / frequency`. -/
+theorem sineWave_nearestDist_bounds
+    (amplitude : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency)
+    (phase : SinePhase amplitude frequency)
+    (data_point : DataPoint ℝ)
+    (label_in_band : IS_IN_SINE_BAND amplitude (GET_LABEL data_point)) :
+    let sine := (MAKE_RANDOM_PHASE_SINE amplitude frequency).eval phase
+    let vertical_error   := GET_VERTICAL_ERROR sine data_point
+    let nearest_distance := GET_NEAREST_DISTANCE sine data_point
+    let slope_bound      := √(1 + (amplitude * frequency) ^ 2)  -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
+    let lower_bound      := vertical_error / slope_bound         -- a curve no steeper than that cannot pass any closer
+    let upper_bound      := PI / frequency                       -- half a wave: within it the sine passes every height
+    let is_above_lower_bound := lower_bound ≤ nearest_distance
+    let is_below_upper_bound := nearest_distance ≤ upper_bound
+    is_above_lower_bound ∧ is_below_upper_bound := by
+  unfold_named_pieces
+  -- The upper bound is the covering bound.
+  refine ⟨?_, nearestDist_le_of_coversWithin
+    (sineWave_coversWithin amplitude frequency_pos phase)
+    data_point label_in_band⟩
+  -- The lower bound is the slope sandwich, with the slope of a sine.
+  obtain ⟨real_phase, rfl⟩ :
+      ∃ real_phase : ℝ, (real_phase : AddCircle (2 * π)) = phase :=
+    QuotientAddGroup.mk_surjective phase
   rw [sineWave_eval_coe, div_le_iff₀' (by positivity)]
-  have h := verticalDist_le_of_lipschitz (lipschitzWith_sine A w φ') p
-  have hK : ((‖A‖₊ * ‖w‖₊ : NNReal) : ℝ) ^ 2 = (A * w) ^ 2 := by simp [mul_pow]
-  rwa [hK] at h
+  have sandwich :=
+    verticalDist_le_of_lipschitz
+      (lipschitzWith_sine amplitude frequency real_phase) data_point
+  have slope_limit_squared :
+      ((‖amplitude‖₊ * ‖frequency‖₊ : NNReal) : ℝ) ^ 2
+        = (amplitude * frequency) ^ 2 := by
+    simp [mul_pow]
+  rwa [slope_limit_squared] at sandwich
 
-/-- **A sine fits anything in its band, after a small warp.** Any target with values in the
-band is matched exactly by the sine of frequency `w` after moving each input by at most
-`π / w`. For a single data point this is a shift of the phase. -/
-theorem sineWave_exists_warp (A : ℝ) {w : ℝ} (hw : 0 < w) (φ : (MAKE_RANDOM_PHASE_SINE A w).Param)
-    (target : ℝ → ℝ) (ht : ∀ x, target x ∈ Set.Icc (-|A|) |A|) :
-    ∃ warp : ℝ → ℝ, (∀ x, dist x (warp x) ≤ π / w) ∧
-      ∀ x, (MAKE_RANDOM_PHASE_SINE A w).eval φ (warp x) = target x :=
-  exists_warp_of_coversWithin (sineWave_coversWithin A hw φ) target ht
+/-- **A sine fits anything in its band, after a small warp.** Any target
+with values in the band is matched exactly by the sine of frequency
+`frequency` after moving each input by at most `PI / frequency`. For a
+single data point this is a shift of the phase. -/
+theorem sineWave_exists_warp
+    (amplitude : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency)
+    (phase : SinePhase amplitude frequency)
+    (target : RealFunction)
+    (target_stays_in_band : ∀ input, IS_IN_SINE_BAND amplitude (target input)) :
+    let sine      := (MAKE_RANDOM_PHASE_SINE amplitude frequency).eval phase
+    let max_shift := PI / frequency  -- half a wave
+    ∃ warp : Warp,
+      let moves_each_input_a_little :=
+        ∀ input, dist input (warp input) ≤ max_shift
+      let hits_the_target :=
+        ∀ input, sine (warp input) = target input
+      moves_each_input_a_little ∧ hits_the_target :=
+  exists_warp_of_coversWithin
+    (sineWave_coversWithin amplitude frequency_pos phase)
+    target target_stays_in_band
 
-variable {μ : Measure (DataPoint ℝ)} [IsProbabilityMeasure μ]
+variable {data_distribution : DataDistribution}
+  [IsProbabilityMeasure data_distribution]
 
-/-- **Claim G for sines, with a rate.** On data whose labels lie in the band, the expected
-nearest-point distance of a random-phase sine of frequency `w` is at most `π / w`. -/
-theorem expected_nearestDist_sineWave_le (A : ℝ) {w : ℝ} (hw : 0 < w)
-    (hμ : ∀ᵐ p ∂μ, p.2 ∈ Set.Icc (-|A|) |A|) :
-    (MAKE_RANDOM_PHASE_SINE A w).expected GET_NEAREST_DISTANCE μ ≤ π / w :=
-  expected_nearestDist_le _ (sineWave_coversWithin A hw) μ hμ
+/-- **The average distance for sines, with a rate.** On data whose labels
+lie in the band, the expected nearest-point distance of a random-phase sine
+of frequency `frequency` is at most `PI / frequency`. -/
+theorem expected_nearestDist_sineWave_le
+    (amplitude : ℝ)
+    {frequency : ℝ}
+    (frequency_pos : 0 < frequency)
+    (labels_in_band :
+      ARE_LABELS_ALMOST_SURELY_IN_BAND amplitude data_distribution) :
+    let expected_distance :=
+      (MAKE_RANDOM_PHASE_SINE amplitude frequency).expected
+        GET_NEAREST_DISTANCE data_distribution
+    let half_wave := PI / frequency
+    expected_distance ≤ half_wave :=
+  expected_nearestDist_le _
+    (sineWave_coversWithin amplitude frequency_pos)
+    data_distribution labels_in_band
 
-/-- **Claim G for sines, in the limit.** The expected nearest-point distance tends to zero as
-the frequency grows. -/
-theorem tendsto_expected_nearestDist_sineWave (A : ℝ)
-    (hμ : ∀ᵐ p ∂μ, p.2 ∈ Set.Icc (-|A|) |A|) :
-    Tendsto (fun w : ℝ => (MAKE_RANDOM_PHASE_SINE A w).expected GET_NEAREST_DISTANCE μ) atTop (𝓝 0) :=
-  squeeze_zero' (Eventually.of_forall fun _ => expected_nearestDist_nonneg _ μ)
-    ((eventually_gt_atTop 0).mono fun _ hw => expected_nearestDist_sineWave_le A hw hμ)
+/-- **The average distance for sines, in the limit.** The expected
+nearest-point distance goes to zero as the frequency grows. -/
+theorem tendsto_expected_nearestDist_sineWave
+    (amplitude : ℝ)
+    (labels_in_band :
+      ARE_LABELS_ALMOST_SURELY_IN_BAND amplitude data_distribution) :
+    let expected_distance_at : RealFunction := fun frequency =>
+      (MAKE_RANDOM_PHASE_SINE amplitude frequency).expected
+        GET_NEAREST_DISTANCE data_distribution
+    GOES_TO_ZERO_AS_INPUT_GROWS expected_distance_at :=
+  -- Squeezed between zero and `PI / frequency`, which goes to zero.
+  squeeze_zero'
+    (Eventually.of_forall fun _ =>
+      expected_nearestDist_nonneg _ data_distribution)
+    ((eventually_gt_atTop 0).mono fun _ frequency_pos =>
+      expected_nearestDist_sineWave_le amplitude frequency_pos labels_in_band)
     (tendsto_const_nhds.div_atTop tendsto_id)
 
-/-- **Closer, but no better.** As the frequency of a random-phase sine grows, its expected
-distance to the nearest point of the data tends to zero, and its expected loss, for every
-regression loss, does not change at all. -/
-theorem closer_but_no_better (A : ℝ) {ℓ : ℝ → ℝ} (hℓ : Measurable ℓ)
-    (hμ : ∀ᵐ p ∂μ, p.2 ∈ Set.Icc (-|A|) |A|) :
-    Tendsto (fun w : ℝ => (MAKE_RANDOM_PHASE_SINE A w).expected GET_NEAREST_DISTANCE μ) atTop (𝓝 0) ∧
-      ∀ w w' : ℝ, (MAKE_RANDOM_PHASE_SINE A w).expected (GET_RESIDUAL_LOSS ℓ) μ
-        = (MAKE_RANDOM_PHASE_SINE A w').expected (GET_RESIDUAL_LOSS ℓ) μ :=
-  ⟨tendsto_expected_nearestDist_sineWave A hμ,
-    fun w w' => expected_residualLoss_congr hℓ (marginal_sineWave_eq A w w') μ⟩
+/-- **Closer, but no better.** As the frequency of a random-phase sine
+grows, its expected distance to the nearest point of the data goes to zero,
+and its expected loss, for every regression loss, does not change at all. -/
+theorem closer_but_no_better
+    (amplitude : ℝ)
+    {loss_fn : RealFunction}
+    (loss_is_measurable : Measurable loss_fn)
+    (labels_in_band :
+      ARE_LABELS_ALMOST_SURELY_IN_BAND amplitude data_distribution) :
+    let expected_distance_at : RealFunction := fun frequency =>
+      (MAKE_RANDOM_PHASE_SINE amplitude frequency).expected
+        GET_NEAREST_DISTANCE data_distribution
+    let expected_loss_at : RealFunction := fun frequency =>
+      (MAKE_RANDOM_PHASE_SINE amplitude frequency).expected
+        (GET_RESIDUAL_LOSS loss_fn) data_distribution
+    let distance_vanishes :=
+      GOES_TO_ZERO_AS_INPUT_GROWS expected_distance_at
+    let loss_is_flat :=
+      ∀ frequency other_frequency : ℝ,
+        expected_loss_at frequency = expected_loss_at other_frequency
+    distance_vanishes ∧ loss_is_flat :=
+  ⟨tendsto_expected_nearestDist_sineWave amplitude labels_in_band,
+    fun frequency other_frequency =>
+      expected_residualLoss_congr loss_is_measurable
+        (marginal_sineWave_eq amplitude frequency other_frequency)
+        data_distribution⟩
 
 end SquigglyLine

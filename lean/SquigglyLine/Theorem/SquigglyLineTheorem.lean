@@ -32,7 +32,8 @@ The file is written as a short script. Read it top to bottom:
 * each `claim_N_...` is one of the four claims above;
 * the last line says that all four claims hold.
 
-The names are explained in `Vocabulary.lean`. The proof at the bottom is four
+The names are explained where they are defined: `Defs.lean`,
+`Vocabulary.lean` and the end of `RandomPhase.lean`. The proof at the bottom is four
 calls, one per claim, to lemmas proved in `SineCloser.lean`.
 
 ## The same statement in Python

@@ -61,7 +61,7 @@ theorem flatModel_blend (v w : Θ) (t : ℝ) :
 downstairs exactly when its lift is on the plane upstairs. -/
 theorem embed_mem_curve_liftedModel_iff (p : DataPoint X) :
     EMBED_DATA_POINT p ∈ GET_GRAPH (EVALUATE_LIFTED_MODEL φ θ) ↔ EMBED_DATA_POINT (φ p.1, p.2) ∈ GET_GRAPH (EVALUATE_FLAT_MODEL θ) := by
-  rw [embed_mem_curve_iff, embed_mem_curve_iff]
+  rw [propext (embed_mem_curve_iff _ _), propext (embed_mem_curve_iff _ _)]
   rfl
 
 /-- **A squiggly boundary is a flat one upstairs.** The inputs a classifier scores zero are
