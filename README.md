@@ -6,7 +6,7 @@ nearness buys is a short distance to move, not a head start.
 
 ![The same 16 points beside a smooth curve and a squiggly curve. The lines to the nearest point of the curve get much shorter on the squiggly curve. The vertical lines do not.](graphs/readme_two_distances.png)
 
-This repository holds an idea from 2022 about why large neural networks learn
+This repository holds an idea about why large neural networks learn
 fast, the experiments that tested it, and a machine-checked proof of what
 turned out to be true.
 
@@ -184,7 +184,7 @@ staying away from the peak, one from above and one from below.
 
 **What is settled**
 
-- Why the 2022 picture looks right and tests wrong: the geometry holds, and
+- Why the original picture looks right and tests wrong: the geometry holds, and
   the loss cannot see it.
 - Why double descent peaks at the interpolation threshold, for a model linear
   in its weights: that is where the nearest fit is farthest away, exactly
@@ -208,7 +208,7 @@ points: one smooth, one squiggly. The squiggly one passes closer to the points
 on average, because it visits more of the plane.
 
 A network computes a function, and the graph of that function is such a curve.
-The 2022 conjecture said:
+The original conjecture said:
 
 > A network with more parameters draws a squigglier curve before training. So
 > it starts closer to its data. So it learns faster.
@@ -420,7 +420,7 @@ Lean.
 
 | File | What it proves |
 |---|---|
-| [`Defs`](lean/SquigglyLine/Theorem/Defs.lean), [`RandomFunction`](lean/SquigglyLine/Theorem/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Theorem/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the 2022 conjecture as a statement |
+| [`Defs`](lean/SquigglyLine/Theorem/Defs.lean), [`RandomFunction`](lean/SquigglyLine/Theorem/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Theorem/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the original conjecture as a statement |
 | [`Sandwich`](lean/SquigglyLine/Theorem/Sandwich.lean) | `vertical / √(1 + K²) ≤ nearest ≤ vertical` |
 | [`Marginal`](lean/SquigglyLine/Theorem/Marginal.lean) | a regression loss sees only one-point marginals |
 | [`Coverage`](lean/SquigglyLine/Theorem/Coverage.lean) | the mean distance to a set is its uncovered mass, integrated over the radius |
@@ -632,7 +632,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 
 ## What went wrong the first time
 
-The first scripts (August 2025) appeared to support the idea. Three of their
+The first scripts appeared to support the idea. Three of their
 measurements were not what they claimed to be.
 [`scripts/audit_legacy_metrics.py`](scripts/audit_legacy_metrics.py) reproduces
 each one.

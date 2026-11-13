@@ -30,8 +30,6 @@ This work is outside the repository, except for one script.
 
 **The session found this repository late.** The first version of the blog post was written from the owner's early notes only. After the owner approved it, the results of `RESOLUTION.md` were added (the blog section "What my experiments found"). The blog post is live at https://ad-absurdum.me/blog/squiggly-line-conjecture.
 
-The idea is from 2022. The first scripts are from August 2025.
-
 ## 3. New findings from the session
 
 ### 3.1 Sign error in the original derivation

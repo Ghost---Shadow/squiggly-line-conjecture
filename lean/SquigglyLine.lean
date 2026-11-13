@@ -14,7 +14,7 @@ In `SquigglyLine/Theorem/`.
 |-----------------------|----------------------------------------------------------------|
 | `Defs`                | the curve, the data, the two costs                             |
 | `RandomFunction`      | a randomly initialised model, its marginals, its expected cost |
-| `Conjecture`          | the 2022 conjecture and the learning claim, as statements      |
+| `Conjecture`          | the original conjecture and the learning claim, as statements  |
 | `Sandwich`            | `vertical / √(1 + K²) ≤ nearest ≤ vertical`                    |
 | `Coverage`            | mean distance = uncovered mass integrated over tube radii      |
 | `Marginal`            | a regression loss sees only one-point marginals                |

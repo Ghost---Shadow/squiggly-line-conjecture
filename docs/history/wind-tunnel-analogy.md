@@ -4,8 +4,6 @@
 > here are superseded by [`docs/RESOLUTION.md`](../RESOLUTION.md). Kept as a record of
 > how the idea developed.
 
-*Session Date: September 1, 2025*
-
 ## 🧠 Major Conceptual Breakthroughs
 
 ### 1. **ReLU Networks as Piecewise Polynomials**

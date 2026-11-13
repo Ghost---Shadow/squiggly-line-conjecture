@@ -1,7 +1,7 @@
 /-
 The conjecture, as statements.
 
-The 2022 idea is two claims of the same shape: "a bigger model starts closer
+The original idea is two claims of the same shape: "a bigger model starts closer
 to the data". They differ only in the cost that defines "closer", so both are
 instances of `StartsCloser`.
 
