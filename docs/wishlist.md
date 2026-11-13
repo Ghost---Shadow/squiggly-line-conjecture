@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 38 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 34 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,10 +38,8 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Sigmoid and tanh saturate (Glorot and Bengio 2010; Nair and Hinton 2010) | A sigmoid's slope is never above one quarter. `L` sigmoid layers shrink the gradient by `4^L` unless the weights make up for it. A fold's slope is one where it is open. | **next** |
 | Adversarial training (Madry et al. 2018) | For a linear model, training against the worst nudge of size `ε` is training with a penalty of `ε` times the summed sizes of the weights. The defence is a charge on slope. | **next** |
 | Training with noise on the input (Bishop 1995) | For a linear model, noise of variance `σ²` on the input adds `σ²` times the squared slope to the expected loss. Noise is a charge on slope. | **next** |
-| Spectral normalisation (Miyato et al. 2018) | A layer divided by its own size has slope at most one, so a stack of them does too. The cap on slope is put in by hand. | **next** |
 | Mixup (Zhang et al. 2018) | A model that fits every blend of two examples is straight between them. Its slope there is the gap in labels over the distance, the least any line through both can have. | **next** |
 | Knowledge distillation (Hinton et al. 2015) | A teacher's soft label gives the student a finite best score, the teacher's own. A hard label gives none. So a student is never asked for more slope than its teacher has. | **next** |
 | Convolution, slope (LeCun et al. 1989) | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the size of the image. | **next** |
@@ -49,8 +47,6 @@ The papers and years are recalled from memory and have not been checked.
 | Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | **next** |
 | Upsampling (Ronneberger et al. 2015) | The mirror of stride: stretching by two halves the frequency. | **next** |
 | Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | **next** |
-| Max pooling | The highest of several lines is no steeper than the steepest of them. | **next** |
-| Leaky ReLU (Maas et al. 2013) | A leaky fold keeps a slope of at least the leak, so it never merges two inputs and never dies. | **next** |
 
 ## Nearness
 

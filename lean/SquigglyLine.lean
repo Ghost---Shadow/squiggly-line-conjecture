@@ -122,6 +122,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `KolmogorovArnold`       | a node of edge curves is within `2 × slope / n` of a ReLU layer     |
 | `RmsNorm`                | RMSNorm forgets the scale; pre-norm leaves the skip path alone     |
 | `Residual`               | a skip keeps points apart; turns are bought in the branch; LSTM cell |
+| `Activations`            | sigmoid slope ≤ 1/4; leaky ReLU; max pooling; spectral normalisation |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -173,6 +174,7 @@ import SquigglyLine.Supporting.Training.StepRules
 import SquigglyLine.Supporting.Training.AdamW
 import SquigglyLine.Supporting.NetworkShape.RmsNorm
 import SquigglyLine.Supporting.NetworkShape.Residual
+import SquigglyLine.Supporting.NetworkShape.Activations
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting
