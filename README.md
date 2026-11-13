@@ -35,6 +35,7 @@ machine-checked statements about well-known puzzles of deep learning:
 [compression and code length](docs/supporting/network-shape/code-length.md),
 [the Chinchilla scaling rule](docs/supporting/training/compute-budget.md),
 [softmax and cross-entropy](docs/supporting/training/cross-entropy.md),
+[the GAN game](docs/supporting/training/gan-game.md),
 [dropout](docs/supporting/training/dropout.md),
 [attention and in-context learning](docs/supporting/network-shape/attention.md),
 [signed distance functions](docs/supporting/network-shape/signed-distance.md),
@@ -658,6 +659,7 @@ them proves the phenomenon for real networks.
 | Slope of a network, adversarial examples, temperature | A network is no steeper than the product of its layers, and the gradient comes back through the same product. Flipping a classifier of slope `K` takes a move of at least `score / K`. Temperature changes the slope of the scores and never their order. A critic of slope one reports at most the distance. | [note](docs/supporting/network-shape/network-slope.md) | [`NetworkSlope`](lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
 | He initialisation, the Bellman update | A fold keeps exactly half the mean squared size of a signal that is as often negative as positive, which is the factor two in He initialisation. One sweep of value updates has slope at most the discount `γ`, so `n` sweeps bring any two guesses within `γ^n`. | [note](docs/supporting/network-shape/gain.md) | [`Gain`](lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) |
 | The eikonal equation | Walking straight to a nearest point of the line, the distance field falls by exactly the distance walked. So the slope limit of one cannot be improved, whatever the line. | [note](docs/supporting/network-shape/signed-distance.md) | [`Eikonal`](lean/SquigglyLine/Supporting/NetworkShape/Eikonal.lean) |
+| The GAN game | At one input the critic's loss is a cross-entropy whose label is the share of real data there. Where real and made data overlap, the best critic predicts that share; where they do not, no score is best and the critic is asked to be steeper forever. For the payoff `x * y`, each simultaneous step multiplies the squared distance from the resting point by `1 + η²`. | [note](docs/supporting/training/gan-game.md) | [`GanGame`](lean/SquigglyLine/Supporting/Training/GanGame.lean) |
 | Attention loses rank with depth | With scores at most `B` in size, every token gets a share of at least `exp(−2B) / n`, so one layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)` and `L` layers by that to the power `L`. | [note](docs/supporting/network-shape/attention.md) | [`AttentionRate`](lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
 | Kolmogorov–Arnold networks | A node that adds one learnable curve per input is within `2 × total slope / n` of a ReLU layer with `n` pieces per edge. | [note](docs/supporting/network-shape/universal-approximation.md) | [`KolmogorovArnold`](lean/SquigglyLine/Supporting/NetworkShape/KolmogorovArnold.lean) |
 

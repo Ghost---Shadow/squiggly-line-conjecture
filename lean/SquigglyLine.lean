@@ -77,6 +77,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `BatchSize`       | two small steps = one big step minus an `η²` cross-kernel term   |
 | `ComputeBudget`   | `A / N + B / D` with `N D` fixed is least when the terms balance |
 | `CrossEntropy`    | softmax loss pushes by prediction minus label; same kernel       |
+| `GanGame`         | the best critic predicts the real share; the players spiral      |
 | `Dropout`         | expected dropout loss = loss + `v` × squared shares: weight decay |
 | `Perceptron`      | margin is nearness; at most `(R / γ)²` mistakes; XOR; no free lunch |
 | `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
@@ -161,6 +162,7 @@ import SquigglyLine.Supporting.Training.WeightDecay
 import SquigglyLine.Supporting.Training.BatchSize
 import SquigglyLine.Supporting.Training.ComputeBudget
 import SquigglyLine.Supporting.Training.CrossEntropy
+import SquigglyLine.Supporting.Training.GanGame
 import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry
