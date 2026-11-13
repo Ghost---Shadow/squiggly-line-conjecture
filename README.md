@@ -45,6 +45,7 @@ machine-checked statements about well-known puzzles of deep learning:
 [convolution](docs/supporting/network-shape/convolution.md),
 [nearest neighbours, k-means and contrastive learning](docs/supporting/new-inputs/neighbours.md),
 [graph networks, diffusion schedules and guidance](docs/supporting/new-inputs/mixing.md),
+[why image models miscount](docs/supporting/new-inputs/counting.md),
 [radial basis functions](docs/networks/radial-basis.md),
 [the perceptron, XOR and no free lunch](docs/supporting/training/perceptron.md),
 [adversarial examples and temperature](docs/supporting/network-shape/network-slope.md),

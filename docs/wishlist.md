@@ -19,16 +19,6 @@ unless it connects to the squiggly line.
 
 The papers and years are recalled from memory and have not been checked.
 
-## Next
-
-These look within reach of the tools already here. None is proved yet.
-
-| Paper or idea | In squiggly terms | Connects through |
-|---|---|---|
-| Codebook autoencoders, VQ-VAE (van den Oord et al. 2017) | Snapping a code to its nearest codebook entry moves it by at most the distance to that entry, so the decoder's output moves by at most its slope times that distance. The codebook update is a k-means step, and the gradient passes the snap by the straight-through trick. | Nearness, slope |
-| Why image models miscount (fingers, legs, "three cats") | A count is a step. Any smooth read-out that says 2 on one image and 3 on another says 2.5 somewhere between. The ideal denoiser blends a five-finger hand with a six-finger one. Telling `k` from `k + 1` on nearby images costs slope, and a local layer cannot see the whole image. This would show the difficulty, not that it is the cause of real errors. | Slope, averages |
-| Temperature trades quality for diversity (Ackley et al. 1985; Holtzman et al. 2020) | As the temperature falls, the average score of a sample rises and the samples concentrate on the top score. Temperature is the slope of the scores. | Slope |
-
 ## Averages
 
 | Paper or idea | In squiggly terms | Status |

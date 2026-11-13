@@ -105,6 +105,7 @@ In `SquigglyLine/Supporting/NewInputs/`.
 | `Neighbours`        | nearest-neighbour error ≤ slope × distance; k-means; contrastive   |
 | `Mixing`            | graph nets blur; noising schedule; augmentation; baseline; guidance |
 | `OnAverage`         | absolute error is least at a median; random directions overlap 1/d |
+| `Counting`          | between two counts is a half; denoisers blend; counting costs slope |
 
 ### The shape of a network
 
@@ -134,6 +135,7 @@ In `SquigglyLine/Supporting/NetworkShape/`.
 | `Convolution`            | conv slope ≤ summed kernel; local window `L n`; stride is squeezing  |
 | `Mixtures`               | gates add slope via expert spread; VAE penalty; softmax bottleneck   |
 | `HardChoices`            | straight-through trick; a cold softmax picks; Hopfield recall       |
+| `Temperature`            | colder samples score higher on average; a codebook snaps to nearest |
 -/
 -- 0. How statements are written
 import SquigglyLine.Style
@@ -182,6 +184,7 @@ import SquigglyLine.Supporting.Training.CrossEntropy
 import SquigglyLine.Supporting.Training.GanGame
 import SquigglyLine.Supporting.Training.PolicyGradient
 import SquigglyLine.Supporting.NewInputs.OnAverage
+import SquigglyLine.Supporting.NewInputs.Counting
 import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry
@@ -195,6 +198,7 @@ import SquigglyLine.Supporting.NetworkShape.Activations
 import SquigglyLine.Supporting.NetworkShape.Convolution
 import SquigglyLine.Supporting.NetworkShape.Mixtures
 import SquigglyLine.Supporting.NetworkShape.HardChoices
+import SquigglyLine.Supporting.NetworkShape.Temperature
 -- 3. Supporting material: what a fit does to new inputs
 import SquigglyLine.Supporting.NewInputs.SameKernel
 import SquigglyLine.Supporting.NewInputs.BenignOverfitting

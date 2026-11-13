@@ -1,6 +1,6 @@
 # How steep a network can be, and what that slope costs
 
-**Proofs:** [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean), [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
+**Proofs:** [`HardChoices.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/HardChoices.lean), [`NetworkSlope.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean), [`Temperature.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Temperature.lean), [`VanishingGradients.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -91,6 +91,48 @@ So a slope-one critic measures how far the made samples are from the real
 ones. It cannot say "infinitely wrong" about a sample that is nearly right.
 The distance field of the real data is such a critic
 (`lipschitzWith_distanceField` in [`SignedDistance.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/SignedDistance.lean)).
+
+## Temperature trades quality for diversity
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/Temperature.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/Temperature.lean).
+
+Sampling at a temperature means taking the softmax of the scores divided by
+the temperature. Write `β` for one over the temperature, so a cold sampler
+has a large `β`.
+
+- **Quality.** The average score of a sample never falls as `β` rises
+  (**proved**: `expectedScore_softmax_mono`). The proof pairs every two
+  answers: the better of the two gains more share from a larger `β`
+  (**proved**: `sum_mul_exp_mul_sum_exp_le`).
+- **Diversity.** A cold softmax puts nearly all its share on the top score
+  (**proved**: `one_sub_softmax_div_le` in [`HardChoices.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/HardChoices.lean)), so its
+  samples are nearly all the same.
+
+So one dial moves both, in opposite directions. The dial is the slope of the
+scores: dividing by the temperature multiplies their slope by `β`. A steep
+sampler is sharp and repeats itself; a gentle one is varied and worse on
+average.
+
+Not shown: a measure of diversity that falls at every step as `β` rises,
+such as the entropy. Only the two ends are proved.
+
+## A codebook snaps to the nearest code
+
+Proofs in the same file.
+
+A codebook autoencoder (VQ-VAE) replaces the encoder's output by the nearest
+entry of a learned codebook. The decoder's output moves by at most its slope
+times the distance to the entry (**proved**: `dist_decode_snap_le`), and the
+nearest entry is the one that keeps that bound smallest (**proved**:
+`dist_snap_le_of_nearest`). So what the snap costs is nearness times slope,
+the product this project is about.
+
+The other two parts are proved elsewhere. Moving a code to the mean of the
+points snapped to it is the second half of a k-means step
+(`docs/supporting/new-inputs/neighbours.md`). The snap has slope zero, and
+the gradient is passed across it by the straight-through trick
+(`attention.md`).
 
 ## What is not shown
 
