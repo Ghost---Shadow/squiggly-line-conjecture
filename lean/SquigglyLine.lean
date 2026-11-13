@@ -26,14 +26,12 @@ In `SquigglyLine/Theorem/`.
 | `Compression`         | any function squeezed by `w`: closer, steeper, no better       |
 | `Vocabulary`          | readable second names for the above; proves nothing            |
 
-`SquigglyLine/HighSchool/` holds reduced versions that can be followed with
-high-school mathematics. `SquigglyLine/Tests/` checks that each restyled
-statement says what its original said.
+`SquigglyLine/Tests/` checks that each restyled statement says what its
+original said.
 
-| File                             | Contents                                            |
-|----------------------------------|-----------------------------------------------------|
-| `HighSchool/SquigglyLineTheorem` | the theorem for sines on a list of `n` data points  |
-| `Tests/StatementsUnchanged`      | restyled statements against their original text     |
+| File                        | Contents                                         |
+|-----------------------------|--------------------------------------------------|
+| `Tests/StatementsUnchanged` | restyled statements against their original text  |
 
 ## 2. Networks and parameter space
 
@@ -125,7 +123,6 @@ import SquigglyLine.Theorem.Verdict
 import SquigglyLine.Theorem.SquigglyLineTheorem
 import SquigglyLine.Theorem.Compression
 import SquigglyLine.Theorem.Vocabulary
-import SquigglyLine.HighSchool.SquigglyLineTheorem
 import SquigglyLine.Tests.StatementsUnchanged
 -- 2. Networks and parameter space
 import SquigglyLine.Networks.NarrowChain
