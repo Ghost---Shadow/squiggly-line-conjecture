@@ -21,7 +21,7 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order. None are left as of 12 Nov 2026.
+  order. One is left as of 13 Nov 2026: radial basis functions.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
 
@@ -84,6 +84,7 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Kernel trick, support vector machines (Boser, Guyon and Vapnik 1992) | Squiggly below is flat above. | **proved**: `Lift.lean` |
+| Radial basis functions (Broomhead and Lowe 1988) | A kernel that depends only on the distance between two inputs. A narrow bump is a steep one, so the width of the bump sets how squiggly the line can be. | **next** |
 | Neural tangent kernel (Jacot et al. 2018) | For training, a model is its kernel. | **proved** for a fixed kernel: `Kernel.lean` |
 | Spectral bias (Rahaman et al. 2019) | Gentle directions of the kernel are learned first. | **proved**: `SpectralBias.lean` |
 | Edge of stability (Cohen et al. 2021) | A direction is stable up to strength `2 / η`. | **proved**: `EdgeOfStability.lean` |
