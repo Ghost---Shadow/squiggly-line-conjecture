@@ -76,6 +76,76 @@ in order: [the idea](#1-the-idea), [the theorem](#2-the-theorem),
 [a network made of polarizers](#a-network-made-of-polarizers) and the
 [supporting material](#8-supporting-material).
 
+## The style: readable, pythonic, "enterprise_grade"
+
+A proof is code. It is read far more often than it is written, it gets
+changed, and other proofs come to depend on it. So this project writes its
+theorems the way a careful engineer writes software, and not in the
+traditional notation of mathematics.
+
+Traditional notation was made for a blackboard: single letters, Greek, and
+as much as possible on one line. That is quick to write and slow to read,
+because the reader has to carry what `A`, `w`, `φ`, `ℓ` and `μ` stand for.
+It is also hard to maintain, because nobody can safely change a line they
+cannot read. The position taken here is that named, chunked statements beat
+it: they are easier to check, easier to change and open to far more readers.
+
+Here is one claim of the theorem, in traditional notation and in this
+style. Lean checks that the two say the same thing.
+
+```lean
+-- Traditional
+verticalDist ((sineWave A w).eval φ) p / √(1 + (A * w) ^ 2)
+    ≤ nearestDist ((sineWave A w).eval φ) p ∧
+  nearestDist ((sineWave A w).eval φ) p ≤ π / w
+```
+
+```lean
+-- Here
+let curve            := sine_curve frequency phase
+let vertical_error   := VERTICAL_DIST curve data_point
+let nearest_distance := NEAREST_DIST curve data_point
+let slope_bound      := √(1 + (amplitude * frequency) ^ 2)
+let lower_bound      := vertical_error / slope_bound
+let upper_bound      := PI / frequency
+let is_above_lower_bound := lower_bound ≤ nearest_distance
+let is_below_upper_bound := nearest_distance ≤ upper_bound
+is_above_lower_bound ∧ is_below_upper_bound
+```
+
+The rules:
+
+- **Names, not letters.** No single letters and no Greek. Local names are
+  `snake_case`, global values and functions are `SCREAMING_SNAKE_CASE`, and
+  types are `PascalCase`, as in Python.
+- **No type inside a type.** `Fin n → DataPoint ℝ` is written `Dataset n`.
+  The names are listed in
+  [`Vocabulary.lean`](lean/SquigglyLine/Theorem/Vocabulary.lean).
+- **One idea per line.** Each quantity gets a `let` with a comment above it.
+  Each claim gets a name. Both sides of every "and" get a name, and the last
+  line only combines names.
+- **Python beside the Lean.** Each statement comes with the same thing
+  written as plain Python.
+- **Tested.** Each restyled statement is checked against its original text
+  in [`Tests/`](lean/SquigglyLine/Tests), so a restyle cannot change the
+  mathematics without failing the build. A misspelt name is a build error.
+
+**High-school versions.** A proof that only specialists can read is checked
+by the machine and by almost nobody else. Most people who build and train
+networks last studied formal mathematics at school, and they are the people
+this theorem is for. So a main theorem also gets a high-school version: a
+reduced version of the theorem and its proof that can be followed with
+high-school mathematics. It makes the same claims with fewer prerequisites
+(a list of data points in place of a probability distribution, for
+example), it is proved in named steps, and it is checked by Lean like
+everything else. It is weaker than the full theorem, and it says where.
+
+So far the headline theorem is written this way:
+[the full statement](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) and
+[its high-school version](lean/SquigglyLine/HighSchool/SquigglyLineTheorem.lean).
+The other files are being moved over one at a time, and until then they use
+Mathlib's short names.
+
 ## How does this help me?
 
 ### If you are curious about AI
@@ -400,7 +470,8 @@ folder for each group below, and the notes in [`docs/`](docs) are grouped the
 same way.
 
 The Lean code is written to be read: readable, pythonic and "enterprise
-grade". In practice that means:
+grade". [The style](#the-style-readable-pythonic-enterprise_grade) is set
+out near the top. In every file it means:
 
 - every file opens with a summary in plain words that lists its theorems;
 - names say what a thing is (`travel`, `residual`, `nearestDist`,
@@ -418,15 +489,24 @@ Lean.
 [`lean/SquigglyLine/Theorem/`](lean/SquigglyLine/Theorem), notes in
 [`docs/theorem/`](docs/theorem).
 
-| File | What it proves |
-|---|---|
-| [`Defs`](lean/SquigglyLine/Theorem/Defs.lean), [`RandomFunction`](lean/SquigglyLine/Theorem/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Theorem/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the original conjecture as a statement |
-| [`Sandwich`](lean/SquigglyLine/Theorem/Sandwich.lean) | `vertical / √(1 + K²) ≤ nearest ≤ vertical` |
-| [`Marginal`](lean/SquigglyLine/Theorem/Marginal.lean) | a regression loss sees only one-point marginals |
-| [`Coverage`](lean/SquigglyLine/Theorem/Coverage.lean) | the mean distance to a set is its uncovered mass, integrated over the radius |
-| [`Oscillation`](lean/SquigglyLine/Theorem/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`; any target in range is fitted after moving each input by at most `ρ` |
-| [`RandomPhase`](lean/SquigglyLine/Theorem/RandomPhase.lean), [`SineCloser`](lean/SquigglyLine/Theorem/SineCloser.lean), [`Verdict`](lean/SquigglyLine/Theorem/Verdict.lean), [`SquigglyLineTheorem`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) | the sine case: `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`, the loss does not depend on the frequency, and so the learning claim fails |
-| [`Compression`](lean/SquigglyLine/Theorem/Compression.lean) | **the theorem for any function**: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the expected loss unchanged |
+The last column links the high-school version of a file: a reduced version
+of the proof that can be followed with high-school mathematics. "Not yet"
+means it has not been written.
+
+| File | What it proves | High-school version |
+|---|---|---|
+| [`SquigglyLineTheorem`](lean/SquigglyLine/Theorem/SquigglyLineTheorem.lean) | **the theorem for sines**, as one statement of four claims: the distance is squeezed between `vertical / √(1 + (A·w)²)` and `π / w`, it goes to zero, the loss does not depend on the frequency, and a small shift of the input fits any target in the band | [`HighSchool/SquigglyLineTheorem`](lean/SquigglyLine/HighSchool/SquigglyLineTheorem.lean): a list of `n` data points and a continuous loss |
+| [`Vocabulary`](lean/SquigglyLine/Theorem/Vocabulary.lean) | nothing: the readable names used in restyled statements, each a second name for something defined elsewhere | not needed |
+| [`Defs`](lean/SquigglyLine/Theorem/Defs.lean), [`RandomFunction`](lean/SquigglyLine/Theorem/RandomFunction.lean), [`Conjecture`](lean/SquigglyLine/Theorem/Conjecture.lean) | definitions: the curve, the data, the two costs, a randomly initialised model, and the original conjecture as a statement | not yet |
+| [`Sandwich`](lean/SquigglyLine/Theorem/Sandwich.lean) | `vertical / √(1 + K²) ≤ nearest ≤ vertical` | not yet |
+| [`Marginal`](lean/SquigglyLine/Theorem/Marginal.lean) | a regression loss sees only one-point marginals | not yet |
+| [`Coverage`](lean/SquigglyLine/Theorem/Coverage.lean) | the mean distance to a set is its uncovered mass, integrated over the radius | not yet |
+| [`Oscillation`](lean/SquigglyLine/Theorem/Oscillation.lean) | `nearest ≤ ρ` when `f` covers the labels within `ρ`; any target in range is fitted after moving each input by at most `ρ` | not yet |
+| [`RandomPhase`](lean/SquigglyLine/Theorem/RandomPhase.lean), [`SineCloser`](lean/SquigglyLine/Theorem/SineCloser.lean), [`Verdict`](lean/SquigglyLine/Theorem/Verdict.lean) | the sine case, lemma by lemma: `vertical / √(1 + (A·w)²) ≤ nearest ≤ π / w`, the loss does not depend on the frequency, and so the learning claim fails | not yet |
+| [`Compression`](lean/SquigglyLine/Theorem/Compression.lean) | **the theorem for any function**: squeezing by `w` divides the oscillation scale by `w`, multiplies the slope by `w`, and leaves the expected loss unchanged | not yet |
+
+[`Tests/StatementsUnchanged`](lean/SquigglyLine/Tests/StatementsUnchanged.lean)
+checks that each restyled statement says what its original said.
 
 **Networks and parameter space.** Proofs in
 [`lean/SquigglyLine/Networks/`](lean/SquigglyLine/Networks), notes in
@@ -614,6 +694,8 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | Path | Contents |
 |---|---|
 | `lean/SquigglyLine/Theorem/` | the proof of the theorem |
+| `lean/SquigglyLine/HighSchool/` | reduced versions of the proofs, for a reader with high-school mathematics |
+| `lean/SquigglyLine/Tests/` | checks that each restyled statement says what its original said |
 | `lean/SquigglyLine/Networks/` | the proofs for networks and parameter space |
 | `lean/SquigglyLine/Supporting/` | the proofs of the supporting material, in `Training/`, `NewInputs/` and `NetworkShape/` |
 | `paper/` | a NeurIPS-format draft of the paper |
