@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 29 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 23 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,10 +38,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Adversarial training (Madry et al. 2018) | For a linear model, training against the worst nudge of size `ε` is training with a penalty of `ε` times the summed sizes of the weights. The defence is a charge on slope. | **next** |
-| Training with noise on the input (Bishop 1995) | For a linear model, noise of variance `σ²` on the input adds `σ²` times the squared slope to the expected loss. Noise is a charge on slope. | **next** |
-| Mixup (Zhang et al. 2018) | A model that fits every blend of two examples is straight between them. Its slope there is the gap in labels over the distance, the least any line through both can have. | **next** |
-| Knowledge distillation (Hinton et al. 2015) | A teacher's soft label gives the student a finite best score, the teacher's own. A hard label gives none. So a student is never asked for more slope than its teacher has. | **next** |
 | Convolution, slope (LeCun et al. 1989) | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the size of the image. | **next** |
 | Convolution, locality (LeCun et al. 1989) | After `L` layers of kernel radius `r`, an output depends only on inputs within `L × r` of it. Squiggles are made locally and shared across positions. | **next** |
 | Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | **next** |
@@ -60,8 +56,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Lasso, the penalty on summed sizes (Tibshirani 1996) | Weight decay shrinks a weak direction. This penalty sets it to exactly zero: a direction weaker than the penalty is not travelled at all. | **next** |
-| Stochastic depth (Huang et al. 2016) | Dropping a branch at random is, on average, the branch at part strength. The same floor as dropout, on whole layers. | **next** |
 | Variational autoencoders (Kingma and Welling 2014) | The penalty on the code is half its squared travel from the origin plus a term in its width. It is zero only for a code that ignores the input. | **next** |
 | Random features are nearly at right angles, on average | Two random directions in `d` dimensions have expected squared overlap `1 / d`. This is the on-average form of the fact that makes travel fall with size. | **next** |
 

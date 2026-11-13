@@ -1,6 +1,6 @@
 # Weight decay, early stopping and spare parameters are one thing
 
-**Proofs:** [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean), [`WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean).
+**Proofs:** [`Regularisers.lean`](../../../lean/SquigglyLine/Supporting/Training/Regularisers.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean), [`WeightDecay.lean`](../../../lean/SquigglyLine/Supporting/Training/WeightDecay.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -84,6 +84,51 @@ All three add a floor to the strength of every direction:
 
 A direction weaker than the floor is not learned and does little harm. A
 direction stronger than the floor is learned almost as before.
+
+## Other regularisers, in the same terms
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/Training/Regularisers.lean`](../../../lean/SquigglyLine/Supporting/Training/Regularisers.lean).
+
+Weight decay is a floor on travel. The other common regularisers are either
+the same floor in another shape or a direct charge on slope.
+
+- **Lasso.** Charge `μ` times the size of a weight, not its square. For one
+  weight with target `a`: if `a` is no larger than `μ` the best weight is
+  exactly zero (**proved**: `lassoCost_zero_le`), and if it is larger the
+  best weight is `a - μ` (**proved**: `lassoCost_sub_le`). Weight decay's
+  best weight is `a / (1 + μ)`, which is zero only when `a` is (**proved**:
+  `ridgeCost_div_le`). So weight decay shrinks a weak direction and lasso
+  does not travel along it at all.
+- **Noise on the input.** For the line `w * x`, average the squared error
+  over input noise of mean zero and variance `σ²`. The result is the plain
+  squared error plus `σ² * w²` (**proved**: `sum_mul_sq_sub_noisy_eq`). The
+  weight of a line is its slope, so noise on the input is a charge on slope.
+- **Adversarial training.** For a linear model, no nudge of size at most `ε`
+  on each input lowers the score by more than `ε` times the summed sizes of
+  the weights (**proved**: `sub_le_score_add`), and one nudge lowers it by
+  exactly that (**proved**: `score_add_worst_nudge`). Training against the
+  worst nudge is training with that penalty. The summed sizes of the
+  weights are the slope of the model when distance is measured by the
+  largest change in any one input.
+- **Stochastic depth.** Keep a residual branch with chance `p` and drop it
+  otherwise. On average the layer is the input plus `p` times the branch
+  (**proved**: `mean_stochasticDepth`).
+- **Mixup.** Train on blends of two examples, with the labels blended the
+  same way. A model that fits every blend is straight between the two: the
+  gap in its output between two blends is the gap in labels times the share
+  of the way between them (**proved**: `mixup_fit_gap`). Any line through
+  both examples has at least that slope (**proved**:
+  `abs_sub_le_of_lipschitz_fit`). So mixup asks for the least slope a fit
+  can have between examples.
+- **Distillation.** Train a student on a teacher's soft label. Against that
+  label the teacher's own score is a best score (**proved**:
+  `logLoss_teacher_le`). A hard label has no best score
+  (`cross-entropy.md`). So a student is never asked for more slope than its
+  teacher has.
+
+Not shown: lasso for many weights at once, any of these for a deep
+network, and the noise or adversarial penalty under cross-entropy.
 
 ## How this meets the squiggly line
 

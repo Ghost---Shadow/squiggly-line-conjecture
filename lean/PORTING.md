@@ -108,3 +108,4 @@ comment. Remove a file from this list when it is ported.
 - `SquigglyLine/Supporting/NetworkShape/Residual.lean`
 - `SquigglyLine/Supporting/NetworkShape/Activations.lean`
 - `SquigglyLine/Supporting/Training/Optimisers.lean`
+- `SquigglyLine/Supporting/Training/Regularisers.lean`

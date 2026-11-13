@@ -84,6 +84,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `StepRules`       | Adam's step is a sign; clipping caps travel; subspaces; rounding    |
 | `AdamW`           | decay inside Adam is rescaled away; outside it shrinks by `1 − η μ` |
 | `Optimisers`      | schedules multiply; condition number; momentum's edge; SGD on average |
+| `Regularisers`    | lasso zeroes; input noise and adversarial training charge slope; mixup |
 
 ### What a fit does to new inputs
 
@@ -174,6 +175,7 @@ import SquigglyLine.Supporting.Training.Symmetry
 import SquigglyLine.Supporting.Training.StepRules
 import SquigglyLine.Supporting.Training.AdamW
 import SquigglyLine.Supporting.Training.Optimisers
+import SquigglyLine.Supporting.Training.Regularisers
 import SquigglyLine.Supporting.NetworkShape.RmsNorm
 import SquigglyLine.Supporting.NetworkShape.Residual
 import SquigglyLine.Supporting.NetworkShape.Activations
