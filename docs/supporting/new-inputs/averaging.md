@@ -1,6 +1,6 @@
 # Averages: ensembles, weight averaging and the ideal denoiser
 
-**Proofs:** [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Neighbours.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Neighbours.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+**Proofs:** [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Mixing.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Mixing.lean), [`Neighbours.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Neighbours.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -112,6 +112,49 @@ Three common methods use nothing but the distance between points.
 
 Not shown: what the contrastive loss does to the lift as it trains, and
 that k-means stops.
+
+## More averages, and one thing that is not
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NewInputs/Mixing.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Mixing.lean).
+
+- **Graph networks.** A message-passing layer replaces each node by a
+  weighted sum of the nodes. If each node's weights add to one and every
+  weight is at least `m`, two nodes end no further apart than `1 - n m`
+  times the range of the values, for `n` nodes (**proved**:
+  `abs_messagePassing_sub_le`). After `L` layers the factor is
+  `(1 - n m)^L` (**proved**: `abs_iterate_messagePassing_sub_le`). This is
+  the blurring of deep graph networks, and it is the same statement as the
+  merging of tokens under attention. On a real graph a node gives weight
+  only to its neighbours, so the floor holds only after enough layers for
+  every node to reach every other; that step is not shown.
+- **The diffusion noising schedule.** Follow the share of the variance that
+  is signal and the share that is noise. A step keeps `1 - β` of each and
+  adds `β` of fresh noise. The two shares still add to one (**proved**:
+  `noisingStep_sum`), and after `n` steps the signal's share is
+  `(1 - β)^n` of what it was (**proved**: `iterate_noisingStep_signal`).
+  The forward process is an average of the data with noise, with the
+  weight on the data shrinking geometrically.
+- **Data augmentation.** Average a model over a group of moves of the
+  input, such as shifts or flips. The averaged model gives the same answer
+  before and after any of the moves (**proved**: `averageOverMoves_smul`).
+  If the moves keep distances it is no steeper than the model it was made
+  from (**proved**: `lipschitzWith_averageOverMoves`). Training on
+  augmented data pushes toward this average (**argued**).
+- **The baseline.** In policy gradient the push on the score of an action
+  is "action taken minus prediction", times the reward. Averaged over the
+  action taken, "action taken minus prediction" is zero (**proved**:
+  `sum_mul_baseline_eq_zero`). So subtracting the same baseline from every
+  reward leaves the average push as it was (**proved**:
+  `sum_mul_sub_baseline`). That it lowers the noise is not shown.
+- **Classifier-free guidance.** The guided prediction is `1 + w` of the
+  prediction with the prompt minus `w` of the prediction without. It moves
+  from the plain prediction toward the prompt, `1 + w` times as far as the
+  prompt alone does (**proved**: `guidance_sub`, `norm_guidance_sub`). For
+  `w > 0` it is not on the stretch between the two predictions
+  (**proved**: `guidance_notMem_segment`). One weight is negative, so this
+  is not an average. It is the one step of a diffusion sampler that can
+  leave the region the examples span.
 
 ## How this meets the squiggly line
 

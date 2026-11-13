@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 16 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 11 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -73,13 +73,8 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Graph networks blur their nodes with depth (Kipf and Welling 2017; Li et al. 2018) | A message-passing layer is an average over neighbours, so the spread of the nodes shrinks at a geometric rate. | **next** |
-| The diffusion noising schedule (Ho et al. 2020) | Each noising step blends the signal with fresh noise so the total variance stays fixed while the signal's share shrinks geometrically. | **next** |
 | Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
 | Squared error fits the mean, absolute error the median | The loss chooses which average the line goes through. | Mean **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). Median **next** |
-| The actor-critic baseline (Sutton and Barto 1998) | Subtracting a baseline from the reward leaves the average push unchanged. | **next** |
-| Data augmentation and invariance | Averaging a model over a set of moves that keep distances gives a model that ignores those moves and is no steeper. | **next** |
-| Classifier-free guidance (Ho and Salimans 2022) | Guidance is the one step of a diffusion sampler that is not an average: its weights are `1 + w` and `−w`. It moves `1 + w` times as far as the plain step, and can leave the region the examples span. | **next** |
 | Averaging the weights over time (Polyak and Juditsky 1992) | A running average of the weights is an average of lines, for a model linear in its weights. | Argued from [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 
 ## No link to the squiggly line yet

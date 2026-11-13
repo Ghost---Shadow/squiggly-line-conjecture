@@ -101,6 +101,7 @@ In `SquigglyLine/Supporting/NewInputs/`.
 | `Dimple`            | gentle on the data manifold, steep off it: loss blind, fragile   |
 | `Averaging`         | ensemble error = mean error − spread; the ideal denoiser averages |
 | `Neighbours`        | nearest-neighbour error ≤ slope × distance; k-means; contrastive   |
+| `Mixing`            | graph nets blur; noising schedule; augmentation; baseline; guidance |
 
 ### The shape of a network
 
@@ -191,6 +192,7 @@ import SquigglyLine.Supporting.NewInputs.Pruning
 import SquigglyLine.Supporting.NewInputs.Dimple
 import SquigglyLine.Supporting.NewInputs.Averaging
 import SquigglyLine.Supporting.NewInputs.Neighbours
+import SquigglyLine.Supporting.NewInputs.Mixing
 -- 3. Supporting material: the shape of a network
 import SquigglyLine.Supporting.NetworkShape.DepthSeparation
 import SquigglyLine.Supporting.NetworkShape.UniversalApproximation
