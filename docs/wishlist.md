@@ -22,11 +22,11 @@ optimisers are left to others.
 - **Averages.** An average is never squigglier than what it averages.
 
 What is proved is not listed here. It is in the
-[README](../README.md#proved-paper-by-paper), paper by paper. Each row here
+[`supporting-proofs.md`](supporting-proofs.md#paper-by-paper), paper by paper. Each row here
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 2 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 4 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -68,6 +68,7 @@ The papers and years are recalled from memory and have not been checked.
 |---|---|---|
 | Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
 | Averaging the weights over time (Polyak and Juditsky 1992) | A running average of the weights is an average of lines, for a model linear in its weights. | Argued from [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
+| Hopfield networks (Hopfield 1982; Ramsauer et al. 2021) | A stored pattern is a resting point: each update lowers an energy, so the state settles and cannot wander. In the modern form the update is an attention head over the stored patterns, so it is the ideal denoiser of [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). | **next** |
 
 ## No link to the squiggly line yet
 
