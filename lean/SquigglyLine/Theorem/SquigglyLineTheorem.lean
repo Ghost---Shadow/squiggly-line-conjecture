@@ -18,7 +18,7 @@ phase, and data whose labels lie in the band the sine sweeps.
 So the nearness is real and usable, but it is not a lower loss at the start:
 it is a short distance to move. The statement is about sines. For neural
 networks the corresponding claim is still a conjecture: see
-`docs/open-problems.md`.
+`docs/wishlist.md`.
 
 ## How to read this file
 

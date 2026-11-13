@@ -1,4 +1,4 @@
-> **Historical record, as of 10 November 2026.** This file is out of date. The current state of the project is in [`README.md`](README.md). Since this was written, the geometric claim has been proved for sines, with a named theorem in `lean/` (`squiggly_line_theorem`); the original idea turned out to be true in parameter space; and the straight-line test and the reading of Hanin, Jeong and Rolnick were corrected. Open work is now listed in [`docs/open-problems.md`](docs/open-problems.md).
+> **Historical record, as of 10 November 2026.** This file is out of date. The current state of the project is in [`README.md`](README.md). Since this was written, the geometric claim has been proved for sines, with a named theorem in `lean/` (`squiggly_line_theorem`); the original idea turned out to be true in parameter space; and the straight-line test and the reading of Hanin, Jeong and Rolnick were corrected. Open work is now listed in [`docs/wishlist.md`](docs/wishlist.md#open-problems).
 
 # Handoff: 10 November 2026
 
@@ -80,7 +80,7 @@ Each one states a prediction and a stop rule before any run. This is the standar
 
 ### E1. Reachability (the open thread of `RESOLUTION.md` section 6)
 
-> Note (11 Nov 2026): addressed for models linear in their parameters, by `scripts/fourier_params.py` and the parameter-space proofs (`LinearModel.lean`, `ExchangeRate.lean`, `Kernel.lean`). Not addressed for ReLU networks; see `docs/open-problems.md` item 4.
+> Note (11 Nov 2026): addressed for models linear in their parameters, by `scripts/fourier_params.py` and the parameter-space proofs (`LinearModel.lean`, `ExchangeRate.lean`, `Kernel.lean`). Not addressed for ReLU networks; see `docs/wishlist.md` item 4.
 
 - **Question:** does a larger network travel a shorter distance in weight space from initialisation to a fit?
 - **Setup:** one fixed regression task (for example 200 points, 10 inputs, as in the README table). ReLU networks, widths 16 to 4096, He initialisation, one optimiser and one learning-rate rule fixed in advance. Train to a fixed MSE threshold.

@@ -174,4 +174,4 @@ parameters and the measurement is 16.
   network is only approximately so, and only when it is very wide.
 - Everything proved about training is for squared error with no link. What
   carries over to other links, such as the logistic one, is listed in
-  `docs/open-problems.md`, items 25 to 28.
+  `docs/wishlist.md`, items 25 to 28.

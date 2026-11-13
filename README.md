@@ -365,7 +365,7 @@ weights does not buy it: the loss at the start is the same at every width,
 and the curve is no longer (see [the evidence](#6-the-evidence)).
 
 What is still open is how squiggly a network with **random** weights is as it
-grows. [`docs/open-problems.md`](docs/open-problems.md) says what that reduces
+grows. [`docs/wishlist.md`](docs/wishlist.md#open-problems) says what that reduces
 to. The pictures used for networks, a wind tunnel and a stack of polarizers,
 are in [`docs/networks/wind-tunnel-and-polarizers.md`](docs/networks/wind-tunnel-and-polarizers.md)
 and [`docs/networks/three-polarizers.md`](docs/networks/three-polarizers.md).
@@ -600,7 +600,7 @@ checked whether that reading is in the literature.
 
 More in [`docs/networks/wind-tunnel-and-polarizers.md`](docs/networks/wind-tunnel-and-polarizers.md)
 and [`docs/networks/three-polarizers.md`](docs/networks/three-polarizers.md). The open question
-is item 18 of [`docs/open-problems.md`](docs/open-problems.md): what can a
+is item 18 of [`docs/wishlist.md`](docs/wishlist.md#open-problems): what can a
 network whose activation is a polarizer compute?
 
 ## 8. Supporting material
@@ -655,7 +655,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 | `docs/theorem/` | the theorem in plain words |
 | `docs/networks/` | the pictures used for networks; parameter space, travel and double descent |
 | `docs/supporting/` | the notes for the supporting material, in `training/`, `new-inputs/` and `network-shape/` |
-| `docs/open-problems.md` | what this repository leaves open, each item marked open, known but not formalised, or measured |
+| `docs/wishlist.md` | what this repository leaves open, each item marked open, known but not formalised, or measured |
 | `docs/EXPERIMENT_LOG.md`, `docs/literature-survey.md` | a re-run of every script with raw output; related work |
 | `scripts/curves.py` | shared sine-curve geometry, with an exact point-to-curve distance |
 | `scripts/` (experiments) | the scripts listed above |
@@ -691,7 +691,7 @@ sample spacing, which overestimated one control by 11% at frequency 1000
 ## Open questions
 
 The full list, with a status for each, is in
-[`docs/open-problems.md`](docs/open-problems.md). The main ones:
+[`docs/wishlist.md`](docs/wishlist.md#open-problems). The main ones:
 
 - How does the oscillation scale of a network with random weights depend on
   width, depth and weight scale? This is what the "parameters" claim reduces
@@ -704,7 +704,7 @@ The full list, with a status for each, is in
 Experiments that are specified and not yet run are in
 [`handoff.md`](handoff.md).
 
-## Wishlist
+## Wishlist and open problems
 | Graph networks blur their nodes with depth (Kipf and Welling 2017; Li et al. 2018) | A message-passing layer is an average over neighbours, so the spread of the nodes shrinks at a geometric rate. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean), when every weight has a floor |
 | The diffusion noising schedule (Ho et al. 2020) | Each noising step blends the signal with fresh noise so the total variance stays fixed while the signal's share shrinks geometrically. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |
 | The actor-critic baseline (Sutton and Barto 1998) | Subtracting a baseline from the reward leaves the average push unchanged. | [`Mixing.lean`](lean/SquigglyLine/Supporting/NewInputs/Mixing.lean) |

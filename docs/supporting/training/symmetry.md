@@ -127,7 +127,7 @@ along it, it drifts outward across it, or it holds a balance fixed.
 
 - **Normalisation over a batch.** The proofs use only that the loss does not
   change under rescaling. What batch statistics do beyond that is open
-  (`docs/open-problems.md`, item 21).
+  (`docs/wishlist.md`, item 21).
 - **The effective step size.** That the angle turned shrinks as the weights
   grow is argued, not proved.
 - **More than two layers, and matrices.** The balance law is proved for two
