@@ -25,7 +25,7 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 24 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 28 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
@@ -118,6 +118,10 @@ The papers and years are recalled from memory and have not been checked.
 | Edge of stability (Cohen et al. 2021) | A direction is stable up to strength `2 / η`. | **proved**: [`EdgeOfStability.lean`](../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean) |
 | Fourier features and NeRF (Tancik et al. 2020; Mildenhall et al. 2020) | A Fourier lift of frequency `w` stretches distances by exactly up to `w`. That stretch is where the fine detail comes from. | **proved**: [`FourierLift.lean`](../lean/SquigglyLine/Networks/FourierLift.lean) |
 | Position signals (Vaswani et al. 2017; Su et al. 2021) | The same lift applied to position. Moving along the sequence is a fixed turn, so the kernel of two positions depends only on how far apart they are. | **proved**: [`FourierLift.lean`](../lean/SquigglyLine/Networks/FourierLift.lean) |
+| Sinusoidal positions, all frequencies together (Vaswani et al. 2017) | With many frequencies the overlap of two positions is a sum of cosines of the gap between them. It still depends only on the gap, and it is largest at gap zero. | **next** |
+| Rotary positions (Su et al. 2021) | Turn the query and the key by angles set by their positions. The score then depends on the two positions only through the gap, and no vector changes length. | **next** |
+| Relative position bias (Shaw et al. 2018; Raffel et al. 2020) | Add to each score a number that depends only on the gap. Shifting the whole sequence then changes no attention weight. | **next** |
+| Learned position table (Devlin et al. 2019; Radford et al. 2019) | One free vector per position is a lookup: a lift that can give any position anything. It ties no two positions together and says nothing about a position it has not seen. | **next** |
 | Convolution (LeCun et al. 1989) | A kernel that depends only on how far apart two inputs are gives the same line when the data is shifted. | **proved**: [`FourierLift.lean`](../lean/SquigglyLine/Networks/FourierLift.lean) |
 | Platonic representations (Huh et al. 2024) | Same kernel, same learner. | **proved**: [`SameKernel.lean`](../lean/SquigglyLine/Supporting/NewInputs/SameKernel.lean) |
 | Catastrophic forgetting (Kirkpatrick et al. 2017) | A new task moves an old one through the kernel between them. | **proved**: [`Forgetting.lean`](../lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) |
