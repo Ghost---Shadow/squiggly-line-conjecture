@@ -117,3 +117,4 @@ comment. Remove a file from this list when it is ported.
 - `SquigglyLine/Supporting/Training/PolicyGradient.lean`
 - `SquigglyLine/Supporting/NewInputs/OnAverage.lean`
 - `SquigglyLine/Supporting/NetworkShape/HardChoices.lean`
+- `SquigglyLine/Networks/RandomFourier.lean`

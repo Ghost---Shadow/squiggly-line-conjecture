@@ -60,6 +60,7 @@ In `SquigglyLine/Networks/`.
 | `FourierLift`     | the Fourier lift stretches by at most `w`; its kernel sees only gaps  |
 | `RadialBasis`     | a bump of width `σ` has slope ≤ `1 / σ`; narrow bumps fit anything   |
 | `Positions`       | sinusoidal overlap sees only the gap; rotary; relative bias; table   |
+| `RandomFourier`   | the Fourier-lift kernel, averaged over frequencies, is the bump      |
 
 ## 3. Supporting material
 
@@ -167,6 +168,7 @@ import SquigglyLine.Networks.Lift
 import SquigglyLine.Networks.FourierLift
 import SquigglyLine.Networks.RadialBasis
 import SquigglyLine.Networks.Positions
+import SquigglyLine.Networks.RandomFourier
 -- 3. Supporting material: how training moves
 import SquigglyLine.Supporting.Training.LeastAction
 import SquigglyLine.Supporting.Training.SpectralBias

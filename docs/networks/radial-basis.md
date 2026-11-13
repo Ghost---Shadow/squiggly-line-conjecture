@@ -1,6 +1,6 @@
 # Radial basis functions: the width of a bump is its slope
 
-**Proofs:** [`Compression.lean`](../../lean/SquigglyLine/Theorem/Compression.lean), [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean), [`Lift.lean`](../../lean/SquigglyLine/Networks/Lift.lean), [`RadialBasis.lean`](../../lean/SquigglyLine/Networks/RadialBasis.lean).
+**Proofs:** [`Compression.lean`](../../lean/SquigglyLine/Theorem/Compression.lean), [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean), [`Lift.lean`](../../lean/SquigglyLine/Networks/Lift.lean), [`RadialBasis.lean`](../../lean/SquigglyLine/Networks/RadialBasis.lean), [`RandomFourier.lean`](../../lean/SquigglyLine/Networks/RandomFourier.lean).
 
 Notes from 13 Nov 2026. Written before the proofs, then updated once they
 were done. Each statement is marked **proved** (in
@@ -76,6 +76,27 @@ enough once `(n - 1) * exp(-(gap / width)² / 2)` is below one (**proved**:
 
 So a radial basis network memorises by narrowing, and the section above
 says what that costs: slope `1 / width`.
+
+## The Fourier lift, averaged, is the bump
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Networks/RandomFourier.lean`](../../lean/SquigglyLine/Networks/RandomFourier.lean).
+
+The kernel of the Fourier lift of frequency `w` is `cos(w * gap)`, where
+`gap` is the difference of the two inputs (`fourier-lift.md`). Draw the
+frequency from a bell curve of mean zero and variance `v`. The mean of
+`cos(w * gap)` is then `exp(-v * gap² / 2)` (**proved**:
+`integral_cos_gaussian`). That is the Gaussian bump of the gap, with width
+`1 / √v`.
+
+So the kernel of the Fourier lift, averaged over random frequencies, is the
+radial basis kernel (**proved**: `integral_liftKernel_fourierLift`). A wide
+layer of random cosine features and a network of bumps train as the same
+model, on average. A wide spread of frequencies is a narrow bump: the two
+dials of squiggliness, frequency and one over width, are the same dial.
+
+Not shown: how many random features are needed for the average to be close
+(**recalled**: Rahimi and Recht 2007).
 
 ## How this meets the squiggly line
 

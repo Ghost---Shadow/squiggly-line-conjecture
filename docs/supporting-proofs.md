@@ -226,6 +226,7 @@ from memory and have not been checked.
 | Learned position table (Devlin et al. 2019; Radford et al. 2019) | One free vector per position is a lookup: a lift that can give any position anything. It ties no two positions together and says nothing about a position it has not seen. | [`Positions.lean`](../lean/SquigglyLine/Networks/Positions.lean) |
 | Softmax bottleneck (Yang et al. 2018) | With `d` hidden numbers the table of scores over contexts and words has rank at most `d`. A lift that small cannot give every next-word distribution. | [`Mixtures.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean), for the table of scores |
 | Policy gradient (Williams 1992) | The push on the scores is the action taken minus the prediction, times the reward. That is the cross-entropy push, so the same kernel carries it. | [`PolicyGradient.lean`](../lean/SquigglyLine/Supporting/Training/PolicyGradient.lean), for one step |
+| Random Fourier features (Rahimi and Recht 2007) | Average the Fourier-lift kernel over frequencies drawn from a bell curve and the result is the Gaussian bump. The Fourier lift and the radial basis kernel are one thing. | [`RandomFourier.lean`](../lean/SquigglyLine/Networks/RandomFourier.lean) |
 
 ### Folds
 

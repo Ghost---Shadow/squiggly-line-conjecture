@@ -530,6 +530,7 @@ checks that each restyled statement says what its original said.
 | [`FourierLift`](lean/SquigglyLine/Networks/FourierLift.lean) | winding the input round a circle at frequency `w` stretches distances by at most `w`, so a wave is no steeper than its weights times its frequency; the kernel is `cos(w(x − x′))`, which sees only the gap, so shifting data and question together changes no answer ([note](docs/networks/fourier-lift.md)) |
 | [`RadialBasis`](lean/SquigglyLine/Networks/RadialBasis.lean) | a Gaussian bump of width `σ` is the unit bump squeezed by `1 / σ`, so it has slope at most `1 / σ`; a network of bumps is no steeper than its heights over its width, is a flat model on the lift by bumps, and fits any labels once the bumps hardly overlap |
 | [`Positions`](lean/SquigglyLine/Networks/Positions.lean) | position embeddings: the overlap of two sinusoidal position signals is a sum of cosines of their gap; with rotary positions the score depends on the positions only through the gap and no length changes; a relative bias survives a shift of the sequence; a learned table ties no two positions together |
+| [`RandomFourier`](lean/SquigglyLine/Networks/RandomFourier.lean) | random Fourier features: the kernel of the Fourier lift, averaged over frequencies drawn from a bell curve of variance `v`, is the Gaussian bump `exp(−v gap² / 2)`, so the Fourier lift and the radial basis kernel are one thing on average |
 
 **Not formalised:** the constant `0.2974` for sines, the length bound
 `V / (4·l)`, the rate at which travel falls with parameter count, that the
