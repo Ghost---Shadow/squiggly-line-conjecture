@@ -1,51 +1,101 @@
 /-
 Spectral bias: strong directions are learned first.
 
-Take a direction `u` of the labels that the kernel only stretches, by `lam`.
+Take a direction `direction` of the labels that the kernel only stretches, by
+`kernel_strength`.
 
 * `inner_residual_gradientStep` : one gradient step multiplies the error along
-  `u` by `1 - η * lam`.
-* `inner_residual_iterate_gradientStep` : after `t` steps the factor is
-  `(1 - η * lam) ^ t`. Each direction shrinks on its own clock.
+  `direction` by `1 - learning_rate * kernel_strength`.
+* `inner_residual_iterate_gradientStep` : after `step_count` steps the factor
+  is `(1 - learning_rate * kernel_strength) ^ step_count`. Each direction
+  shrinks on its own clock.
 * `strong_directions_first` : a stronger direction has a smaller share left.
-* `spectral_bias` : the share left after `t` steps lies between
-  `1 - t * (η * lam)` and `exp (-(t * (η * lam)))`. The clock of a direction
-  is `1 / (η * lam)` steps: it cannot be hurried, and it does run out.
+* `spectral_bias` : the share left after `step_count` steps lies between
+  `1 - step_count * rate` and `exp (-(step_count * rate))`, where
+  `rate = learning_rate * kernel_strength`. The clock of a direction is
+  `1 / rate` steps: it cannot be hurried, and it does run out.
 * `inner_residual_iterate_of_kernel_eq_zero` : a direction of strength zero is
   never learned.
+
+Also here: `pow_one_sub_anti`, `one_sub_mul_le_pow_one_sub` and
+`pow_one_sub_le_exp`, the three facts about `(1 - rate) ^ step_count` that
+these rest on.
 -/
 import Mathlib.Analysis.SpecialFunctions.Exp
 import SquigglyLine.Networks.DoubleDescent
 
 namespace SquigglyLine
 
-/-! ### The share of an error left after `t` steps -/
+/-! ### The share of an error left after `step_count` steps -/
 
 section Share
 
 /-- A larger rate leaves a smaller share. -/
-theorem pow_one_sub_anti {a b : ℝ} (hab : a ≤ b) (hb : b ≤ 1) (t : ℕ) :
-    (1 - b) ^ t ≤ (1 - a) ^ t :=
-  pow_le_pow_left₀ (by linarith) (by linarith) t
+theorem pow_one_sub_anti
+    {small_rate : ℝ}
+    {large_rate : ℝ}
+    (small_le_large : small_rate ≤ large_rate)
+    (large_rate_le_one : large_rate ≤ 1)
+    (step_count : ℕ) :
+    let large_share := (1 - large_rate) ^ step_count
+    let small_share := (1 - small_rate) ^ step_count
+    large_share ≤ small_share := by
+  unfold_named_pieces
+  exact pow_le_pow_left₀ (by linarith) (by linarith) step_count
 
-/-- **It cannot be hurried.** After `t` steps at rate `x`, at least `1 - t * x` is left. -/
-theorem one_sub_mul_le_pow_one_sub {x : ℝ} (hx : x ≤ 1) (t : ℕ) : 1 - t * x ≤ (1 - x) ^ t := by
-  have h := one_add_mul_le_pow (show (-2 : ℝ) ≤ -x by linarith) t
-  calc 1 - t * x = 1 + t * -x := by ring
-    _ ≤ (1 + -x) ^ t := h
-    _ = (1 - x) ^ t := by rw [← sub_eq_add_neg]
+/-- **It cannot be hurried.** After `step_count` steps at rate `rate`, at
+least `1 - step_count * rate` is left. -/
+theorem one_sub_mul_le_pow_one_sub
+    {rate : ℝ}
+    (rate_le_one : rate ≤ 1)
+    (step_count : ℕ) :
+    let linear_share := 1 - step_count * rate
+    let true_share   := (1 - rate) ^ step_count
+    linear_share ≤ true_share := by
+  unfold_named_pieces
+  -- Bernoulli's inequality for the number `-rate`.
+  have bernoulli := one_add_mul_le_pow
+    (show (-2 : ℝ) ≤ -rate by linarith) step_count  -- Bernoulli needs `-2 ≤ -rate`, true as `rate ≤ 1`
+  calc 1 - step_count * rate = 1 + step_count * -rate := by ring
+    _ ≤ (1 + -rate) ^ step_count := bernoulli
+    _ = (1 - rate) ^ step_count := by rw [← sub_eq_add_neg]
 
-/-- **It does run out.** After `t` steps at rate `x`, at most `exp (-(t * x))` is left. -/
-theorem pow_one_sub_le_exp {x : ℝ} (hx : x ≤ 1) (t : ℕ) : (1 - x) ^ t ≤ Real.exp (-(t * x)) := by
-  calc (1 - x) ^ t ≤ Real.exp (-x) ^ t :=
-        pow_le_pow_left₀ (by linarith) (Real.one_sub_le_exp_neg x) t
-    _ = Real.exp (-(t * x)) := by rw [← Real.exp_nat_mul, mul_neg]
+/-- **It does run out.** After `step_count` steps at rate `rate`, at most
+`exp (-(step_count * rate))` is left. -/
+theorem pow_one_sub_le_exp
+    {rate : ℝ}
+    (rate_le_one : rate ≤ 1)
+    (step_count : ℕ) :
+    let true_share := (1 - rate) ^ step_count
+    let exp_share  := Real.exp (-(step_count * rate))  -- from `1 - x ≤ exp (-x)`, raised to the power `step_count`
+    true_share ≤ exp_share := by
+  unfold_named_pieces
+  calc (1 - rate) ^ step_count ≤ Real.exp (-rate) ^ step_count :=
+        pow_le_pow_left₀ (by linarith) (Real.one_sub_le_exp_neg rate)
+          step_count
+    _ = Real.exp (-(step_count * rate)) := by
+        rw [← Real.exp_nat_mul, mul_neg]
 
-/-- **Strong directions are learned first.** With step size `η`, a direction of strength
-`lam₂` has a smaller share of its error left than a weaker direction of strength `lam₁`. -/
-theorem strong_directions_first {η lam₁ lam₂ : ℝ} (hη : 0 ≤ η) (hlam : lam₁ ≤ lam₂)
-    (hle : η * lam₂ ≤ 1) (t : ℕ) : (1 - η * lam₂) ^ t ≤ (1 - η * lam₁) ^ t :=
-  pow_one_sub_anti (mul_le_mul_of_nonneg_left hlam hη) hle t
+/-- **Strong directions are learned first.** With step size `learning_rate`,
+a direction of strength `strong_strength` has a smaller share of its error left
+than a weaker direction of strength `weak_strength`. -/
+theorem strong_directions_first
+    {learning_rate : ℝ}
+    {weak_strength : ℝ}
+    {strong_strength : ℝ}
+    (learning_rate_nonneg : 0 ≤ learning_rate)
+    (weak_le_strong : weak_strength ≤ strong_strength)
+    (strong_rate_le_one : learning_rate * strong_strength ≤ 1)
+    (step_count : ℕ) :
+    let strong_rate  := learning_rate * strong_strength
+    let weak_rate    := learning_rate * weak_strength
+    let strong_share := (1 - strong_rate) ^ step_count
+    let weak_share   := (1 - weak_rate) ^ step_count
+    strong_share ≤ weak_share := by
+  unfold_named_pieces
+  exact pow_one_sub_anti
+    (mul_le_mul_of_nonneg_left weak_le_strong learning_rate_nonneg)
+    strong_rate_le_one step_count
 
 end Share
 
@@ -55,55 +105,143 @@ section Direction
 
 open ContinuousLinearMap
 
-variable {Θ Y : Type*}
-  [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ] [CompleteSpace Θ]
-  [NormedAddCommGroup Y] [InnerProductSpace ℝ Y] [CompleteSpace Y]
+variable {Weights Outputs : Type*}
+  [NormedAddCommGroup Weights] [InnerProductSpace ℝ Weights]
+  [CompleteSpace Weights]
+  [NormedAddCommGroup Outputs] [InnerProductSpace ℝ Outputs]
+  [CompleteSpace Outputs]
 
-/-- **One step, one direction.** If the kernel stretches `u` by `lam`, a gradient step
-multiplies the error along `u` by `1 - η * lam`. -/
-theorem inner_residual_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ : Θ) {u : Y} {lam : ℝ}
-    (hu : A (adjoint A u) = lam • u) :
-    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (TAKE_GRADIENT_STEP A y η θ))
-      = (1 - η * lam) * inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ) := by
-  rw [residual_gradientStep, inner_sub_right, real_inner_smul_right, ← kernel_inner_comm, hu,
-    real_inner_smul_left]
+/-- **One step, one direction.** If the kernel stretches `direction` by
+`kernel_strength`, a gradient step multiplies the error along `direction` by
+`1 - learning_rate * kernel_strength`. -/
+theorem inner_residual_gradientStep
+    (predict : Weights →L[ℝ] Outputs)
+    (labels : Outputs)
+    (learning_rate : ℝ)
+    (weights : Weights)
+    {direction : Outputs}
+    {kernel_strength : ℝ}
+    (direction_is_stretched :
+      predict (adjoint predict direction) = kernel_strength • direction) :
+    let linear_predict : LinearPredictor Weights Outputs := predict
+    let next_weights :=
+      TAKE_GRADIENT_STEP predict labels learning_rate weights
+    let error_before := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels weights)
+    let error_after  := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels next_weights)
+    let shrink       := 1 - learning_rate * kernel_strength  -- the step removes `learning_rate * kernel_strength` of the error
+    error_after = shrink * error_before := by
+  unfold_named_pieces
+  rw [residual_gradientStep, inner_sub_right, real_inner_smul_right,
+    ← kernel_inner_comm, direction_is_stretched, real_inner_smul_left]
   ring
 
-/-- **Each direction on its own clock.** After `t` steps the error along `u` is
-`(1 - η * lam) ^ t` times what it was at the start. -/
-theorem inner_residual_iterate_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) {u : Y}
-    {lam : ℝ} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))
-      = (1 - η * lam) ^ t * inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) := by
-  induction t with
+/-- **Each direction on its own clock.** After `step_count` steps the error
+along `direction` is `(1 - learning_rate * kernel_strength) ^ step_count`
+times what it was at the start. -/
+theorem inner_residual_iterate_gradientStep
+    (predict : Weights →L[ℝ] Outputs)
+    (labels : Outputs)
+    (learning_rate : ℝ)
+    (start_weights : Weights)
+    {direction : Outputs}
+    {kernel_strength : ℝ}
+    (direction_is_stretched :
+      predict (adjoint predict direction) = kernel_strength • direction)
+    (step_count : ℕ) :
+    let linear_predict : LinearPredictor Weights Outputs := predict
+    let trained_weights :=
+      (TAKE_GRADIENT_STEP predict labels learning_rate)^[step_count]
+        start_weights
+    let start_error   := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels start_weights)
+    let trained_error := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels trained_weights)
+    let share_left    :=
+      (1 - learning_rate * kernel_strength) ^ step_count  -- one factor per step
+    trained_error = share_left * start_error := by
+  unfold_named_pieces
+  induction step_count with
   | zero => simp
-  | succ n ih =>
-    rw [Function.iterate_succ_apply', inner_residual_gradientStep A y η _ hu, ih, pow_succ]
+  | succ previous_count earlier_case =>
+    -- One more step multiplies the error by one more factor.
+    rw [Function.iterate_succ_apply',
+      inner_residual_gradientStep predict labels learning_rate _
+        direction_is_stretched,
+      earlier_case, pow_succ]
     ring
 
-/-- **Strength zero: never learned.** If the kernel sends `u` to zero, the error along `u`
-stays where it started, however long training runs. -/
-theorem inner_residual_iterate_of_kernel_eq_zero (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ)
-    {u : Y} (hu : A (adjoint A u) = 0) (t : ℕ) :
-    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))
-      = inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) := by
-  have hu' : A (adjoint A u) = (0 : ℝ) • u := by rw [hu, zero_smul]
-  rw [inner_residual_iterate_gradientStep A y η θ₀ hu' t]
+/-- **Strength zero: never learned.** If the kernel sends `direction` to zero,
+the error along `direction` stays where it started, however long training
+runs. -/
+theorem inner_residual_iterate_of_kernel_eq_zero
+    (predict : Weights →L[ℝ] Outputs)
+    (labels : Outputs)
+    (learning_rate : ℝ)
+    (start_weights : Weights)
+    {direction : Outputs}
+    (kernel_kills_direction : predict (adjoint predict direction) = 0)
+    (step_count : ℕ) :
+    let linear_predict : LinearPredictor Weights Outputs := predict
+    let trained_weights :=
+      (TAKE_GRADIENT_STEP predict labels learning_rate)^[step_count]
+        start_weights
+    let start_error   := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels start_weights)
+    let trained_error := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels trained_weights)
+    trained_error = start_error := by
+  unfold_named_pieces
+  have direction_has_strength_zero :
+      predict (adjoint predict direction) = (0 : ℝ) • direction := by
+    rw [kernel_kills_direction, zero_smul]
+  rw [inner_residual_iterate_gradientStep predict labels learning_rate
+    start_weights direction_has_strength_zero step_count]
   simp
 
-/-- **Spectral bias.** If the kernel stretches `u` by `lam` and `η * lam ≤ 1`, then after `t`
-steps the error along `u` is at least `1 - t * (η * lam)` and at most `exp (-(t * (η * lam)))`
-of what it was. The clock of the direction is `1 / (η * lam)` steps. -/
-theorem spectral_bias (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hle : η * lam ≤ 1) (θ₀ : Θ) {u : Y}
-    (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    (1 - t * (η * lam)) * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)|
-        ≤ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
-      ∧ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
-        ≤ Real.exp (-(t * (η * lam))) * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
-  have hshare : 0 ≤ (1 - η * lam) ^ t := pow_nonneg (by linarith) t
-  rw [inner_residual_iterate_gradientStep A y η θ₀ hu t, abs_mul, abs_of_nonneg hshare]
-  exact ⟨mul_le_mul_of_nonneg_right (one_sub_mul_le_pow_one_sub hle t) (abs_nonneg _),
-    mul_le_mul_of_nonneg_right (pow_one_sub_le_exp hle t) (abs_nonneg _)⟩
+/-- **Spectral bias.** If the kernel stretches `direction` by
+`kernel_strength` and `learning_rate * kernel_strength ≤ 1`, then after
+`step_count` steps the error along `direction` is at least
+`1 - step_count * rate` and at most `exp (-(step_count * rate))` of what it
+was, where `rate = learning_rate * kernel_strength`. The clock of the
+direction is `1 / rate` steps. -/
+theorem spectral_bias
+    (predict : Weights →L[ℝ] Outputs)
+    (labels : Outputs)
+    {learning_rate : ℝ}
+    {kernel_strength : ℝ}
+    (rate_le_one : learning_rate * kernel_strength ≤ 1)
+    (start_weights : Weights)
+    {direction : Outputs}
+    (direction_is_stretched :
+      predict (adjoint predict direction) = kernel_strength • direction)
+    (step_count : ℕ) :
+    let linear_predict : LinearPredictor Weights Outputs := predict
+    let trained_weights :=
+      (TAKE_GRADIENT_STEP predict labels learning_rate)^[step_count]
+        start_weights
+    let start_error   := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels start_weights)
+    let trained_error := inner ℝ direction
+      (GET_RESIDUAL linear_predict labels trained_weights)
+    let rate          := learning_rate * kernel_strength
+    let lower_bound   := (1 - step_count * rate) * |start_error|
+    let upper_bound   := Real.exp (-(step_count * rate)) * |start_error|
+    let not_hurried   := lower_bound ≤ |trained_error|
+    let runs_out      := |trained_error| ≤ upper_bound
+    not_hurried ∧ runs_out := by
+  unfold_named_pieces
+  have share_nonneg :
+      0 ≤ (1 - learning_rate * kernel_strength) ^ step_count :=
+    pow_nonneg (by linarith) step_count
+  rw [inner_residual_iterate_gradientStep predict labels learning_rate
+    start_weights direction_is_stretched step_count, abs_mul,
+    abs_of_nonneg share_nonneg]
+  exact ⟨mul_le_mul_of_nonneg_right
+      (one_sub_mul_le_pow_one_sub rate_le_one step_count) (abs_nonneg _),
+    mul_le_mul_of_nonneg_right
+      (pow_one_sub_le_exp rate_le_one step_count) (abs_nonneg _)⟩
 
 end Direction
 

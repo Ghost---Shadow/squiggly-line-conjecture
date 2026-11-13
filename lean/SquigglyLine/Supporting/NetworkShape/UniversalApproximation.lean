@@ -1,18 +1,29 @@
 /-
 Universal approximation, and what it costs.
 
-Cut the interval `[0, 1]` into `n` pieces. A `EVALUATE_RAMP` is flat, then rises across
-one piece, then is flat again: two ReLU units. `reluInterp f n k` is the
-network made of the first `k` ramps, each scaled to follow `f` across its
-piece. It has one hidden layer of `2 k` units.
+Cut the interval `[0, 1]` into `piece_count` pieces. An `EVALUATE_RAMP` is
+flat, then rises across one piece, then is flat again: two ReLU units.
+`INTERPOLATE_WITH_RELU model piece_count ramp_count` is the network made of
+the first `ramp_count` ramps, each scaled to follow `model` across its piece.
+It has one hidden layer of `2 * ramp_count` units.
+
+Definitions:
+
+* `EVALUATE_RAMP`           one ramp, flat then rising then flat;
+* `INTERPOLATE_WITH_RELU`   the network made of the first ramps.
+
+Theorems:
 
 * `ramp_of_le`, `ramp_of_mem`, `ramp_of_ge` : the three stretches of a ramp.
-* `reluInterp_spec` : after `k` ramps the network is within `2 K / n` of `f`
-  on the first `k` pieces, and sits exactly on `f (k / n)` beyond them.
-* `relu_network_close` : so `2 n` units are within `2 K / n` of `f` on the
-  whole interval.
-* `universal_approximation` : for any `ε > 0` there is such a network within
-  `ε` of `f`.
+* `slope_nonneg` : a slope bound is never negative.
+* `reluInterp_succ` : adding one more ramp.
+* `reluInterp_spec` : after `ramp_count` ramps the network is within
+  `2 * slope_limit / piece_count` of `model` on the first `ramp_count` pieces,
+  and sits exactly on `model (ramp_count / piece_count)` beyond them.
+* `relu_network_close` : so `2 * piece_count` units are within
+  `2 * slope_limit / piece_count` of `model` on the whole interval.
+* `universal_approximation` : for any `tolerance > 0` there is such a network
+  within `tolerance` of `model`.
 -/
 import SquigglyLine.Supporting.NetworkShape.DepthSeparation
 
@@ -22,134 +33,295 @@ namespace SquigglyLine
 
 section Ramp
 
-/-- A ramp across the `k`-th of `n` pieces: flat at zero, rising with slope one, then flat
-at `1 / n`. It is the difference of two ReLU units. -/
-noncomputable def EVALUATE_RAMP (n k : ℕ) (x : ℝ) : ℝ :=
-  max (x - k / n) 0 - max (x - (k + 1) / n) 0
+/-- A ramp across the piece number `piece_index` of `piece_count` pieces: flat
+at zero, rising with slope one, then flat at `1 / piece_count`. It is the
+difference of two ReLU units.
+Python: `max(input - k / n, 0) - max(input - (k + 1) / n, 0)`. -/
+noncomputable def EVALUATE_RAMP
+    (piece_count : ℕ)
+    (piece_index : ℕ)
+    (input : ℝ) : ℝ :=
+  let rises_at_start := max (input - piece_index / piece_count) 0
+  let rises_at_end   := max (input - (piece_index + 1) / piece_count) 0
+  rises_at_start - rises_at_end  -- the second unit cancels the slope after the piece
 
-variable {n k : ℕ} {x : ℝ}
+variable {piece_count piece_index : ℕ} {input : ℝ}
 
 /-- Before its piece, a ramp is zero. -/
-theorem ramp_of_le (hn : (0 : ℝ) < n) (hx : x ≤ k / n) : EVALUATE_RAMP n k x = 0 := by
-  have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
-  rw [EVALUATE_RAMP, add_div, max_eq_right (by linarith), max_eq_right (by linarith), sub_self]
+theorem ramp_of_le
+    (piece_count_pos : (0 : ℝ) < piece_count)
+    (input_before_piece : input ≤ piece_index / piece_count) :
+    let ramp_value := EVALUATE_RAMP piece_count piece_index input
+    ramp_value = 0 := by
+  unfold_named_pieces
+  have piece_width_pos : 0 < 1 / (piece_count : ℝ) :=
+    one_div_pos.mpr piece_count_pos
+  rw [EVALUATE_RAMP, add_div, max_eq_right (by linarith),
+    max_eq_right (by linarith), sub_self]
 
 /-- Inside its piece, a ramp rises with slope one. -/
-theorem ramp_of_mem (h1 : (k : ℝ) / n ≤ x) (h2 : x ≤ (k + 1) / n) :
-    EVALUATE_RAMP n k x = x - k / n := by
-  rw [EVALUATE_RAMP, max_eq_left (by linarith), max_eq_right (by linarith), sub_zero]
+theorem ramp_of_mem
+    (input_after_start : (piece_index : ℝ) / piece_count ≤ input)
+    (input_before_end : input ≤ (piece_index + 1) / piece_count) :
+    let ramp_value := EVALUATE_RAMP piece_count piece_index input
+    let rising_line := input - piece_index / piece_count  -- slope one, starting at zero
+    ramp_value = rising_line := by
+  unfold_named_pieces
+  rw [EVALUATE_RAMP, max_eq_left (by linarith), max_eq_right (by linarith),
+    sub_zero]
 
 /-- After its piece, a ramp stays at its full height. -/
-theorem ramp_of_ge (hn : (0 : ℝ) < n) (hx : ((k : ℝ) + 1) / n ≤ x) : EVALUATE_RAMP n k x = 1 / n := by
-  have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
-  rw [add_div] at hx
-  rw [EVALUATE_RAMP, add_div, max_eq_left (by linarith), max_eq_left (by linarith)]
+theorem ramp_of_ge
+    (piece_count_pos : (0 : ℝ) < piece_count)
+    (input_after_piece : ((piece_index : ℝ) + 1) / piece_count ≤ input) :
+    let ramp_value  := EVALUATE_RAMP piece_count piece_index input
+    let full_height : ℝ := 1 / piece_count  -- one piece wide, at slope one
+    ramp_value = full_height := by
+  unfold_named_pieces
+  have piece_width_pos : 0 < 1 / (piece_count : ℝ) :=
+    one_div_pos.mpr piece_count_pos
+  rw [add_div] at input_after_piece
+  rw [EVALUATE_RAMP, add_div, max_eq_left (by linarith),
+    max_eq_left (by linarith)]
   ring
 
 end Ramp
 
-/-! ### The network that follows `f` -/
+/-! ### The network that follows `model` -/
 
 section Network
 
-/-- The network made of the first `k` ramps, each scaled to follow `f` across its piece. -/
-noncomputable def INTERPOLATE_WITH_RELU (f : ℝ → ℝ) (n k : ℕ) (x : ℝ) : ℝ :=
-  f 0 + ∑ i ∈ Finset.range k, n * (f (((i : ℝ) + 1) / n) - f ((i : ℝ) / n)) * EVALUATE_RAMP n i x
+/-- The network made of the first `ramp_count` ramps, each scaled to follow
+`model` across its piece.
+Python: `model(0) + sum(piece_count * (model((i + 1) / piece_count)
+- model(i / piece_count)) * ramp(i, input) for i in range(ramp_count))`. -/
+noncomputable def INTERPOLATE_WITH_RELU
+    (model : RealFunction)
+    (piece_count : ℕ)
+    (ramp_count : ℕ)
+    (input : ℝ) : ℝ :=
+  model 0 + ∑ i ∈ Finset.range ramp_count,
+    piece_count * (model (((i : ℝ) + 1) / piece_count)
+      - model ((i : ℝ) / piece_count)) * EVALUATE_RAMP piece_count i input
 
-variable {f : ℝ → ℝ} {K : ℝ} {n : ℕ}
+variable {model : RealFunction} {slope_limit : ℝ} {piece_count : ℕ}
 
 /-- A slope bound is never negative. -/
-theorem slope_nonneg (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) : 0 ≤ K := by
-  have h01 := hf 0 1
-  rw [zero_sub, abs_neg, abs_one, mul_one] at h01
-  exact (abs_nonneg _).trans h01
+theorem slope_nonneg
+    (slope_is_bounded :
+      ∀ input other_input,
+        |model input - model other_input|
+          ≤ slope_limit * |input - other_input|) :
+    0 ≤ slope_limit := by
+  have unit_step_bound := slope_is_bounded 0 1
+  rw [zero_sub, abs_neg, abs_one, mul_one] at unit_step_bound
+  exact (abs_nonneg _).trans unit_step_bound
 
 /-- Adding one more ramp. -/
-theorem reluInterp_succ (f : ℝ → ℝ) (n k : ℕ) (x : ℝ) :
-    INTERPOLATE_WITH_RELU f n (k + 1) x
-      = INTERPOLATE_WITH_RELU f n k x + n * (f (((k : ℝ) + 1) / n) - f ((k : ℝ) / n)) * EVALUATE_RAMP n k x := by
-  rw [INTERPOLATE_WITH_RELU, Finset.sum_range_succ, INTERPOLATE_WITH_RELU, add_assoc]
+theorem reluInterp_succ
+    (model : RealFunction)
+    (piece_count : ℕ)
+    (ramp_count : ℕ)
+    (input : ℝ) :
+    let with_one_more :=
+      INTERPOLATE_WITH_RELU model piece_count (ramp_count + 1) input
+    let before :=
+      INTERPOLATE_WITH_RELU model piece_count ramp_count input
+    let new_ramp : ℝ  :=
+      piece_count * (model (((ramp_count : ℝ) + 1) / piece_count)
+        - model ((ramp_count : ℝ) / piece_count))
+      * EVALUATE_RAMP piece_count ramp_count input  -- the ramp scaled to rise by the change of `model`
+    with_one_more = before + new_ramp := by
+  unfold_named_pieces
+  rw [INTERPOLATE_WITH_RELU, Finset.sum_range_succ, INTERPOLATE_WITH_RELU,
+    add_assoc]
 
-/-- **Piece by piece.** After `k` ramps the network is within `2 K / n` of `f` on the first
-`k` pieces, and sits exactly on `f (k / n)` beyond them. -/
-theorem reluInterp_spec (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : ℝ) < n) (k : ℕ) :
-    (∀ x : ℝ, 0 ≤ x → x ≤ k / n → |INTERPOLATE_WITH_RELU f n k x - f x| ≤ 2 * K / n)
-      ∧ ∀ x, (k : ℝ) / n ≤ x → INTERPOLATE_WITH_RELU f n k x = f (k / n) := by
-  have hK := slope_nonneg hf
-  have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
-  induction k with
+/-- **Piece by piece.** After `ramp_count` ramps the network is within
+`2 * slope_limit / piece_count` of `model` on the first `ramp_count` pieces,
+and sits exactly on `model (ramp_count / piece_count)` beyond them. -/
+theorem reluInterp_spec
+    (slope_is_bounded :
+      ∀ input other_input,
+        |model input - model other_input|
+          ≤ slope_limit * |input - other_input|)
+    (piece_count_pos : (0 : ℝ) < piece_count)
+    (ramp_count : ℕ) :
+    let network_value := INTERPOLATE_WITH_RELU model piece_count ramp_count
+    let covered_is_close := ∀ input : ℝ, 0 ≤ input →
+      input ≤ ramp_count / piece_count →
+      |network_value input - model input|
+        ≤ 2 * slope_limit / piece_count  -- two errors of `slope_limit * piece width`
+    let rest_is_flat := ∀ input : ℝ, (ramp_count : ℝ) / piece_count ≤ input →
+      network_value input = model (ramp_count / piece_count)
+    covered_is_close ∧ rest_is_flat := by
+  unfold_named_pieces
+  have slope_limit_nonneg := slope_nonneg slope_is_bounded
+  have piece_width_pos : 0 < 1 / (piece_count : ℝ) :=
+    one_div_pos.mpr piece_count_pos
+  induction ramp_count with
   | zero =>
     constructor
-    · intro x h0 hx
-      have hx0 : x = 0 := le_antisymm (by simpa using hx) h0
-      subst hx0
-      rw [show INTERPOLATE_WITH_RELU f n 0 0 - f 0 = 0 by simp [INTERPOLATE_WITH_RELU], abs_zero]
-      exact div_nonneg (by linarith) hn.le
-    · intro x _
+    · -- No ramps yet: the only covered input is 0, where the network is exact.
+      intro input input_nonneg input_le_start
+      have input_is_zero : input = 0 :=
+        le_antisymm (by simpa using input_le_start) input_nonneg
+      subst input_is_zero
+      rw [show INTERPOLATE_WITH_RELU model piece_count 0 0 - model 0 = 0 by
+            simp [INTERPOLATE_WITH_RELU],
+        abs_zero]
+      exact div_nonneg (by linarith) piece_count_pos.le
+    · intro input _
       simp [INTERPOLATE_WITH_RELU]
-  | succ k ih =>
-    obtain ⟨ih1, ih2⟩ := ih
+  | succ ramp_count spec_for_fewer_ramps =>
+    obtain ⟨close_on_covered, flat_beyond⟩ := spec_for_fewer_ramps
     constructor
-    · intro x h0 hx
-      rw [Nat.cast_succ] at hx
-      rcases le_total x (k / n) with hle | hge
-      · rw [reluInterp_succ, ramp_of_le hn hle, mul_zero, add_zero]
-        exact ih1 x h0 hle
-      · have hd0 : 0 ≤ x - k / n := by linarith
-        have hd1 : x - k / n ≤ 1 / n := by
-          rw [add_div] at hx
+    · intro input input_nonneg input_le_end
+      rw [Nat.cast_succ] at input_le_end
+      rcases le_total input (ramp_count / piece_count) with
+        input_in_covered | input_in_new_piece
+      · -- The new ramp is still flat here, so nothing changes.
+        rw [reluInterp_succ, ramp_of_le piece_count_pos input_in_covered,
+          mul_zero, add_zero]
+        exact close_on_covered input input_nonneg input_in_covered
+      · -- Inside the new piece the old network is flat, and the new ramp
+        -- adds at most one piece width of change, twice over.
+        have offset_nonneg : 0 ≤ input - ramp_count / piece_count := by
           linarith
-        have hA : |f (k / n) - f x| ≤ K * (1 / n) :=
-          calc |f (k / n) - f x| ≤ K * |(k : ℝ) / n - x| := hf _ _
-            _ = K * (x - k / n) := by rw [abs_sub_comm, abs_of_nonneg hd0]
-            _ ≤ K * (1 / n) := mul_le_mul_of_nonneg_left hd1 hK
-        have hF : |f (((k : ℝ) + 1) / n) - f (k / n)| ≤ K * (1 / n) :=
-          calc |f (((k : ℝ) + 1) / n) - f (k / n)|
-              ≤ K * |((k : ℝ) + 1) / n - k / n| := hf _ _
-            _ = K * (1 / n) := by rw [add_div, add_sub_cancel_left, abs_of_pos h1n]
-        have hB : |n * (f (((k : ℝ) + 1) / n) - f (k / n)) * (x - k / n)| ≤ K * (1 / n) := by
-          rw [abs_mul, abs_mul, abs_of_pos hn, abs_of_nonneg hd0]
-          calc n * |f (((k : ℝ) + 1) / n) - f (k / n)| * (x - k / n)
-              ≤ n * (K * (1 / n)) * (1 / n) :=
-                mul_le_mul (mul_le_mul_of_nonneg_left hF hn.le) hd1 hd0
-                  (mul_nonneg hn.le (mul_nonneg hK h1n.le))
-            _ = K * (1 / n) := by
+        have offset_le_width :
+            input - ramp_count / piece_count ≤ 1 / piece_count := by
+          rw [add_div] at input_le_end
+          linarith
+        have old_value_error :
+            |model (ramp_count / piece_count) - model input|
+              ≤ slope_limit * (1 / piece_count) :=
+          calc |model (ramp_count / piece_count) - model input|
+              ≤ slope_limit * |(ramp_count : ℝ) / piece_count - input| :=
+                slope_is_bounded _ _
+            _ = slope_limit * (input - ramp_count / piece_count) := by
+                rw [abs_sub_comm, abs_of_nonneg offset_nonneg]
+            _ ≤ slope_limit * (1 / piece_count) :=
+                mul_le_mul_of_nonneg_left offset_le_width slope_limit_nonneg
+        have step_size :
+            |model (((ramp_count : ℝ) + 1) / piece_count)
+              - model (ramp_count / piece_count)|
+              ≤ slope_limit * (1 / piece_count) :=
+          calc |model (((ramp_count : ℝ) + 1) / piece_count)
+                - model (ramp_count / piece_count)|
+              ≤ slope_limit
+                * |((ramp_count : ℝ) + 1) / piece_count
+                  - ramp_count / piece_count| :=
+                slope_is_bounded _ _
+            _ = slope_limit * (1 / piece_count) := by
+                rw [add_div, add_sub_cancel_left,
+                  abs_of_pos piece_width_pos]
+        have ramp_term_size :
+            |piece_count * (model (((ramp_count : ℝ) + 1) / piece_count)
+                - model (ramp_count / piece_count))
+              * (input - ramp_count / piece_count)|
+              ≤ slope_limit * (1 / piece_count) := by
+          rw [abs_mul, abs_mul, abs_of_pos piece_count_pos,
+            abs_of_nonneg offset_nonneg]
+          calc piece_count * |model (((ramp_count : ℝ) + 1) / piece_count)
+                  - model (ramp_count / piece_count)|
+                * (input - ramp_count / piece_count)
+              ≤ piece_count * (slope_limit * (1 / piece_count))
+                  * (1 / piece_count) :=
+                mul_le_mul (mul_le_mul_of_nonneg_left step_size
+                    piece_count_pos.le)
+                  offset_le_width offset_nonneg
+                  (mul_nonneg piece_count_pos.le
+                    (mul_nonneg slope_limit_nonneg piece_width_pos.le))
+            _ = slope_limit * (1 / piece_count) := by
                 field_simp
-        rw [reluInterp_succ, ih2 x hge, ramp_of_mem hge hx]
-        calc |f (k / n) + n * (f (((k : ℝ) + 1) / n) - f (k / n)) * (x - k / n) - f x|
-            = |(f (k / n) - f x) + n * (f (((k : ℝ) + 1) / n) - f (k / n)) * (x - k / n)| := by
+        rw [reluInterp_succ, flat_beyond input input_in_new_piece,
+          ramp_of_mem input_in_new_piece input_le_end]
+        calc |model (ramp_count / piece_count)
+                + piece_count * (model (((ramp_count : ℝ) + 1) / piece_count)
+                  - model (ramp_count / piece_count))
+                  * (input - ramp_count / piece_count)
+                - model input|
+            = |(model (ramp_count / piece_count) - model input)
+                + piece_count * (model (((ramp_count : ℝ) + 1) / piece_count)
+                  - model (ramp_count / piece_count))
+                  * (input - ramp_count / piece_count)| := by
               congr 1
               ring
-          _ ≤ |f (k / n) - f x| + |n * (f (((k : ℝ) + 1) / n) - f (k / n)) * (x - k / n)| :=
+          _ ≤ |model (ramp_count / piece_count) - model input|
+                + |piece_count
+                  * (model (((ramp_count : ℝ) + 1) / piece_count)
+                    - model (ramp_count / piece_count))
+                  * (input - ramp_count / piece_count)| :=
               abs_add_le _ _
-          _ ≤ K * (1 / n) + K * (1 / n) := add_le_add hA hB
-          _ = 2 * K / n := by ring
-    · intro x hx
-      rw [Nat.cast_succ] at hx ⊢
-      have hprev : (k : ℝ) / n ≤ x := by
-        rw [add_div] at hx
+          _ ≤ slope_limit * (1 / piece_count)
+                + slope_limit * (1 / piece_count) :=
+              add_le_add old_value_error ramp_term_size
+          _ = 2 * slope_limit / piece_count := by ring
+    · -- Beyond the new piece the new ramp is at full height, which lands the
+      -- network exactly on the next grid value.
+      intro input input_after_new_piece
+      rw [Nat.cast_succ] at input_after_new_piece ⊢
+      have input_after_covered : (ramp_count : ℝ) / piece_count ≤ input := by
+        rw [add_div] at input_after_new_piece
         linarith
-      rw [reluInterp_succ, ih2 x hprev, ramp_of_ge hn hx]
+      rw [reluInterp_succ, flat_beyond input input_after_covered,
+        ramp_of_ge piece_count_pos input_after_new_piece]
       field_simp
       ring
 
-/-- **A network of `2 n` units is within `2 K / n` of `f`.** -/
-theorem relu_network_close (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : ℝ) < n) {x : ℝ}
-    (h0 : 0 ≤ x) (h1 : x ≤ 1) : |INTERPOLATE_WITH_RELU f n n x - f x| ≤ 2 * K / n :=
-  (reluInterp_spec hf hn n).1 x h0 (by rwa [div_self hn.ne'])
+/-- **A network of `2 * piece_count` units is within
+`2 * slope_limit / piece_count` of `model`.** -/
+theorem relu_network_close
+    (slope_is_bounded :
+      ∀ input other_input,
+        |model input - model other_input|
+          ≤ slope_limit * |input - other_input|)
+    (piece_count_pos : (0 : ℝ) < piece_count)
+    {input : ℝ}
+    (input_nonneg : 0 ≤ input)
+    (input_le_one : input ≤ 1) :
+    let approximation_error :=
+      |INTERPOLATE_WITH_RELU model piece_count piece_count input - model input|
+    let error_bound := 2 * slope_limit / piece_count  -- from `reluInterp_spec`
+    approximation_error ≤ error_bound := by
+  unfold_named_pieces
+  exact (reluInterp_spec slope_is_bounded piece_count_pos piece_count).1
+    input input_nonneg (by rwa [div_self piece_count_pos.ne'])
 
-/-- **Universal approximation.** A function on `[0, 1]` with slope at most `K` is within any
-`ε > 0` of a ReLU network with one hidden layer. -/
-theorem universal_approximation (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) {ε : ℝ} (hε : 0 < ε) :
-    ∃ n : ℕ, ∀ x ∈ Set.Icc (0 : ℝ) 1, |INTERPOLATE_WITH_RELU f n n x - f x| ≤ ε := by
-  have hK := slope_nonneg hf
-  obtain ⟨n, hn⟩ := exists_nat_gt (2 * K / ε)
-  have hnpos : (0 : ℝ) < n := lt_of_le_of_lt (div_nonneg (by linarith) hε.le) hn
-  refine ⟨n, fun x hx => ?_⟩
-  calc |INTERPOLATE_WITH_RELU f n n x - f x| ≤ 2 * K / n := relu_network_close hf hnpos hx.1 hx.2
-    _ ≤ ε := by
-        rw [div_lt_iff₀ hε] at hn
-        rw [div_le_iff₀ hnpos]
+/-- **Universal approximation.** A function on `[0, 1]` with slope at most
+`slope_limit` is within any `tolerance > 0` of a ReLU network with one hidden
+layer. -/
+theorem universal_approximation
+    (slope_is_bounded :
+      ∀ input other_input,
+        |model input - model other_input|
+          ≤ slope_limit * |input - other_input|)
+    {tolerance : ℝ}
+    (tolerance_pos : 0 < tolerance) :
+    let unit_interval := Set.Icc (0 : ℝ) 1
+    let is_within_tolerance := fun (pieces_used : ℕ) (input : ℝ) =>
+      |INTERPOLATE_WITH_RELU model pieces_used pieces_used input - model input|
+        ≤ tolerance
+    ∃ needed_piece_count : ℕ, ∀ input ∈ unit_interval,
+      is_within_tolerance needed_piece_count input := by
+  unfold_named_pieces
+  beta_reduce
+  have slope_limit_nonneg := slope_nonneg slope_is_bounded
+  -- Enough pieces that `2 * slope_limit / piece_count` drops below the
+  -- tolerance.
+  obtain ⟨chosen_piece_count, chosen_count_large⟩ :=
+    exists_nat_gt (2 * slope_limit / tolerance)
+  have chosen_count_pos : (0 : ℝ) < chosen_piece_count :=
+    lt_of_le_of_lt (div_nonneg (by linarith) tolerance_pos.le)
+      chosen_count_large
+  refine ⟨chosen_piece_count, fun input input_in_unit => ?_⟩
+  calc |INTERPOLATE_WITH_RELU model chosen_piece_count chosen_piece_count input
+        - model input|
+      ≤ 2 * slope_limit / chosen_piece_count :=
+        relu_network_close slope_is_bounded chosen_count_pos
+          input_in_unit.1 input_in_unit.2
+    _ ≤ tolerance := by
+        rw [div_lt_iff₀ tolerance_pos] at chosen_count_large
+        rw [div_le_iff₀ chosen_count_pos]
         linarith
 
 end Network

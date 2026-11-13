@@ -2,11 +2,12 @@
 Compression: folds, code length and travel.
 
 Counting:
-* `card_le_two_pow_of_code` : `b` binary digits name at most `2 ^ b` things.
+* `card_le_two_pow_of_code` : `digit_count` binary digits name at most
+  `2 ^ digit_count` things.
 * `tent_one_sub`, `eq_or_eq_one_sub_of_tent_eq` : a fold merges an input with
   its mirror image and with nothing else. It throws away one bit.
-* `card_le_two_pow_of_iterate_tent_eq` : `L` folds send at most `2 ^ L` inputs
-  to the same output.
+* `card_le_two_pow_of_iterate_tent_eq` : `fold_count` folds send at most
+  `2 ^ fold_count` inputs to the same output.
 
 Loss:
 * `gibbs` : the average log-loss of any model is at least the entropy of the
@@ -14,11 +15,15 @@ Loss:
 * `expected_length_ge_entropy` : so is the average length of any code whose
   lengths satisfy Kraft's inequality.
 
-Distance (description length taken as squared distance over `2 σ²`):
+Distance (description length taken as squared distance over
+`2 * noise_scale ^ 2`):
+* `GET_DESCRIPTION_LENGTH` : the cost of describing the weights to someone who
+  has the starting weights.
 * `descriptionLength_gradientDescent_le` : gradient descent reaches the fit
   that is cheapest to describe.
-* `travel_sq_div_eq_of_tight` : with orthogonal features of strength `c` that
-  cost is the squared error at the start over `2 σ² c`.
+* `travel_sq_div_eq_of_tight` : with orthogonal features of strength
+  `strength` that cost is the squared error at the start over
+  `2 * noise_scale ^ 2 * strength`.
 -/
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import SquigglyLine.Networks.Bridge
@@ -30,72 +35,122 @@ namespace SquigglyLine
 
 section Counting
 
-/-- **`b` binary digits name at most `2 ^ b` things.** -/
-theorem card_le_two_pow_of_code {α : Type*} (S : Finset α) {b : ℕ} (code : α → Fin b → Bool)
-    (hinj : Set.InjOn code S) : S.card ≤ 2 ^ b := by
+/-- **`digit_count` binary digits name at most `2 ^ digit_count` things.** -/
+theorem card_le_two_pow_of_code
+    {Items : Type*}
+    (items : Finset Items)
+    {digit_count : ℕ}
+    (code : Items → Fin digit_count → Bool)
+    (code_is_injective : Set.InjOn code items) :
+    let item_count := items.card
+    let name_count := 2 ^ digit_count  -- each digit is one of two values
+    item_count ≤ name_count := by
+  unfold_named_pieces
   classical
-  calc S.card = (S.image code).card := (Finset.card_image_of_injOn hinj).symm
-    _ ≤ Fintype.card (Fin b → Bool) := Finset.card_le_univ _
-    _ = 2 ^ b := by rw [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
+  -- Distinct items get distinct names, so the names are as many as the items.
+  calc items.card = (items.image code).card :=
+        (Finset.card_image_of_injOn code_is_injective).symm
+    _ ≤ Fintype.card (Fin digit_count → Bool) := Finset.card_le_univ _
+    _ = 2 ^ digit_count := by
+        rw [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
 
 /-- **A fold merges an input with its mirror image.** -/
-theorem tent_one_sub {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : APPLY_TENT (1 - x) = APPLY_TENT x := by
-  rcases le_total x (1 / 2) with h | h
-  · rw [tent_of_le_half h0 h, tent_of_half_le (by linarith)]
+theorem tent_one_sub
+    {input : ℝ}
+    (input_nonneg : 0 ≤ input)
+    (input_le_one : input ≤ 1) :
+    let mirror_output := APPLY_TENT (1 - input)  -- the mirror image of the input
+    let output        := APPLY_TENT input
+    mirror_output = output := by
+  unfold_named_pieces
+  rcases le_total input (1 / 2) with in_left_half | in_right_half
+  · rw [tent_of_le_half input_nonneg in_left_half,
+      tent_of_half_le (by linarith)]
     ring
-  · rw [tent_of_half_le h, tent_of_le_half (by linarith) (by linarith)]
+  · rw [tent_of_half_le in_right_half,
+      tent_of_le_half (by linarith) (by linarith)]
     ring
 
-/-- **And with nothing else.** Two inputs with the same output are equal or are mirror
-images. -/
-theorem eq_or_eq_one_sub_of_tent_eq {x x' : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1)
-    (hx' : x' ∈ Set.Icc (0 : ℝ) 1) (h : APPLY_TENT x' = APPLY_TENT x) : x' = x ∨ x' = 1 - x := by
-  rcases le_total x (1 / 2) with hl | hr <;> rcases le_total x' (1 / 2) with hl' | hr'
-  · rw [tent_of_le_half hx'.1 hl', tent_of_le_half hx.1 hl] at h
+/-- **And with nothing else.** Two inputs with the same output are equal or
+are mirror images. -/
+theorem eq_or_eq_one_sub_of_tent_eq
+    {input other_input : ℝ}
+    (input_mem : input ∈ Set.Icc (0 : ℝ) 1)
+    (other_input_mem : other_input ∈ Set.Icc (0 : ℝ) 1)
+    (same_output : APPLY_TENT other_input = APPLY_TENT input) :
+    let are_equal  := other_input = input
+    let are_mirror := other_input = 1 - input
+    are_equal ∨ are_mirror := by
+  unfold_named_pieces
+  rcases le_total input (1 / 2) with in_left | in_right <;>
+    rcases le_total other_input (1 / 2) with other_left | other_right
+  · rw [tent_of_le_half other_input_mem.1 other_left,
+      tent_of_le_half input_mem.1 in_left] at same_output
     exact Or.inl (by linarith)
-  · rw [tent_of_half_le hr', tent_of_le_half hx.1 hl] at h
+  · rw [tent_of_half_le other_right,
+      tent_of_le_half input_mem.1 in_left] at same_output
     exact Or.inr (by linarith)
-  · rw [tent_of_le_half hx'.1 hl', tent_of_half_le hr] at h
+  · rw [tent_of_le_half other_input_mem.1 other_left,
+      tent_of_half_le in_right] at same_output
     exact Or.inr (by linarith)
-  · rw [tent_of_half_le hr', tent_of_half_le hr] at h
+  · rw [tent_of_half_le other_right, tent_of_half_le in_right] at same_output
     exact Or.inl (by linarith)
 
-/-- **`L` folds throw away at most `L` bits.** At most `2 ^ L` inputs are sent to the same
-output. -/
-theorem card_le_two_pow_of_iterate_tent_eq (L : ℕ) (S : Finset ℝ)
-    (hS : ∀ x ∈ S, x ∈ Set.Icc (0 : ℝ) 1) (c : ℝ) (hconst : ∀ x ∈ S, APPLY_TENT^[L] x = c) :
-    S.card ≤ 2 ^ L := by
+/-- **`fold_count` folds throw away at most `fold_count` bits.** At most
+`2 ^ fold_count` inputs are sent to the same output. -/
+theorem card_le_two_pow_of_iterate_tent_eq
+    (fold_count : ℕ)
+    (inputs : Finset ℝ)
+    (inputs_in_unit : ∀ input ∈ inputs, input ∈ Set.Icc (0 : ℝ) 1)
+    (common_output : ℝ)
+    (all_same_output :
+      ∀ input ∈ inputs, APPLY_TENT^[fold_count] input = common_output) :
+    let input_count := inputs.card
+    let input_limit := 2 ^ fold_count  -- each fold at most halves the inputs
+    input_count ≤ input_limit := by
+  unfold_named_pieces
   classical
-  induction L generalizing S c with
+  induction fold_count generalizing inputs common_output with
   | zero =>
     rw [pow_zero, Finset.card_le_one]
-    intro a ha b hb
-    have h1 : a = c := by simpa using hconst a ha
-    have h2 : b = c := by simpa using hconst b hb
-    rw [h1, h2]
-  | succ L ih =>
-    have himage : (S.image APPLY_TENT).card ≤ 2 ^ L := by
-      refine ih (S.image APPLY_TENT) (fun y hy => ?_) c (fun y hy => ?_)
-      · obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hy
-        exact tent_mem_Icc (hS x hx).1 (hS x hx).2
-      · obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hy
+    intro first first_mem second second_mem
+    have first_eq : first = common_output := by
+      simpa using all_same_output first first_mem
+    have second_eq : second = common_output := by
+      simpa using all_same_output second second_mem
+    rw [first_eq, second_eq]
+  | succ previous_count ih =>
+    -- After one fold, `previous_count` folds are left to do.
+    have image_card_le : (inputs.image APPLY_TENT).card ≤ 2 ^ previous_count := by
+      refine ih (inputs.image APPLY_TENT) (fun folded folded_mem => ?_)
+        common_output (fun folded folded_mem => ?_)
+      · obtain ⟨input, input_mem, rfl⟩ := Finset.mem_image.mp folded_mem
+        exact tent_mem_Icc (inputs_in_unit input input_mem).1
+          (inputs_in_unit input input_mem).2
+      · obtain ⟨input, input_mem, rfl⟩ := Finset.mem_image.mp folded_mem
         rw [← Function.iterate_succ_apply]
-        exact hconst x hx
-    have hfiber : ∀ a ∈ S.image APPLY_TENT, (S.filter fun x => APPLY_TENT x = a).card ≤ 2 := by
-      intro a ha
-      obtain ⟨x₀, hx₀, rfl⟩ := Finset.mem_image.mp ha
-      have hsub : (S.filter fun x => APPLY_TENT x = APPLY_TENT x₀) ⊆ {x₀, 1 - x₀} := by
-        intro x hx
-        obtain ⟨hxS, hxa⟩ := Finset.mem_filter.mp hx
-        rcases eq_or_eq_one_sub_of_tent_eq (hS x₀ hx₀) (hS x hxS) hxa with h | h
-        · rw [h]
+        exact all_same_output input input_mem
+    -- One fold sends at most two inputs (an input and its mirror) to a value.
+    have fiber_card_le : ∀ output ∈ inputs.image APPLY_TENT,
+        (inputs.filter fun input => APPLY_TENT input = output).card ≤ 2 := by
+      intro output output_mem
+      obtain ⟨base_input, base_mem, rfl⟩ := Finset.mem_image.mp output_mem
+      have fiber_sub :
+          (inputs.filter fun input => APPLY_TENT input = APPLY_TENT base_input)
+            ⊆ {base_input, 1 - base_input} := by
+        intro input input_mem
+        obtain ⟨input_in_inputs, same_output⟩ := Finset.mem_filter.mp input_mem
+        rcases eq_or_eq_one_sub_of_tent_eq (inputs_in_unit base_input base_mem)
+            (inputs_in_unit input input_in_inputs) same_output with equal | mirror
+        · rw [equal]
           exact Finset.mem_insert_self _ _
-        · rw [h]
+        · rw [mirror]
           exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-      exact (Finset.card_le_card hsub).trans Finset.card_le_two
-    calc S.card ≤ 2 * (S.image APPLY_TENT).card := Finset.card_le_mul_card_image S 2 hfiber
-      _ ≤ 2 * 2 ^ L := Nat.mul_le_mul_left 2 himage
-      _ = 2 ^ (L + 1) := by rw [pow_succ, mul_comm]
+      exact (Finset.card_le_card fiber_sub).trans Finset.card_le_two
+    calc inputs.card ≤ 2 * (inputs.image APPLY_TENT).card :=
+          Finset.card_le_mul_card_image inputs 2 fiber_card_le
+      _ ≤ 2 * 2 ^ previous_count := Nat.mul_le_mul_left 2 image_card_le
+      _ = 2 ^ (previous_count + 1) := by rw [pow_succ, mul_comm]
 
 end Counting
 
@@ -103,38 +158,61 @@ end Counting
 
 section Entropy
 
-variable {ι : Type*} [Fintype ι]
+variable {Outcomes : Type*} [Fintype Outcomes]
 
-/-- **No model beats the entropy.** If the data has probabilities `p` and the model gives
-probabilities `q`, the average log-loss is at least the entropy of the data. -/
-theorem gibbs (p q : ι → ℝ) (hp : ∀ i, 0 ≤ p i) (hq : ∀ i, 0 < q i)
-    (hsum : ∑ i, q i ≤ ∑ i, p i) :
-    ∑ i, p i * -Real.log (p i) ≤ ∑ i, p i * -Real.log (q i) := by
-  have hterm : ∀ i, p i * Real.log (q i) - p i * Real.log (p i) ≤ q i - p i := by
+/-- **No model beats the entropy.** If the data has probabilities `data_prob`
+and the model gives probabilities `model_prob`, the average log-loss is at
+least the entropy of the data. -/
+theorem gibbs
+    (data_prob : Outcomes → ℝ)
+    (model_prob : Outcomes → ℝ)
+    (data_prob_nonneg : ∀ i, 0 ≤ data_prob i)
+    (model_prob_pos : ∀ i, 0 < model_prob i)
+    (model_total_le : ∑ i, model_prob i ≤ ∑ i, data_prob i) :
+    let entropy  := ∑ i, data_prob i * -Real.log (data_prob i)
+    let log_loss := ∑ i, data_prob i * -Real.log (model_prob i)
+    entropy ≤ log_loss := by
+  unfold_named_pieces
+  -- Termwise, `log x ≤ x - 1` applied to `model_prob / data_prob`.
+  have term_bound : ∀ i, data_prob i * Real.log (model_prob i)
+      - data_prob i * Real.log (data_prob i) ≤ model_prob i - data_prob i := by
     intro i
-    rcases (hp i).eq_or_lt with h0 | hpos
-    · rw [← h0]
-      simpa using (hq i).le
-    · have hlog := Real.log_le_sub_one_of_pos (div_pos (hq i) hpos)
-      rw [Real.log_div (hq i).ne' hpos.ne'] at hlog
-      have hscaled := mul_le_mul_of_nonneg_left hlog hpos.le
-      have hcancel : p i * (q i / p i - 1) = q i - p i := by
+    rcases (data_prob_nonneg i).eq_or_lt with prob_zero | prob_pos
+    · rw [← prob_zero]
+      simpa using (model_prob_pos i).le
+    · have log_bound :=
+        Real.log_le_sub_one_of_pos (div_pos (model_prob_pos i) prob_pos)
+      rw [Real.log_div (model_prob_pos i).ne' prob_pos.ne'] at log_bound
+      have scaled_bound := mul_le_mul_of_nonneg_left log_bound prob_pos.le
+      have cancelled : data_prob i * (model_prob i / data_prob i - 1)
+          = model_prob i - data_prob i := by
         field_simp
       linarith
-  have htotal : ∑ i, (p i * Real.log (q i) - p i * Real.log (p i)) ≤ ∑ i, (q i - p i) :=
-    Finset.sum_le_sum fun i _ => hterm i
-  rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib] at htotal
+  have total_bound : ∑ i, (data_prob i * Real.log (model_prob i)
+      - data_prob i * Real.log (data_prob i)) ≤ ∑ i, (model_prob i - data_prob i) :=
+    Finset.sum_le_sum fun i _ => term_bound i
+  rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib] at total_bound
   simp_rw [mul_neg, Finset.sum_neg_distrib]
   linarith
 
-/-- **No code beats the entropy.** If the code lengths satisfy Kraft's inequality (here in
-natural units), the average length is at least the entropy. -/
-theorem expected_length_ge_entropy (p len : ι → ℝ) (hp : ∀ i, 0 ≤ p i) (hone : ∑ i, p i = 1)
-    (hkraft : ∑ i, Real.exp (-len i) ≤ 1) :
-    ∑ i, p i * -Real.log (p i) ≤ ∑ i, p i * len i := by
-  have h := gibbs p (fun i => Real.exp (-len i)) hp (fun i => Real.exp_pos _)
-    (by rw [hone]; exact hkraft)
-  simpa [Real.log_exp] using h
+/-- **No code beats the entropy.** If the code lengths satisfy Kraft's
+inequality (here in natural units), the average length is at least the
+entropy. -/
+theorem expected_length_ge_entropy
+    (data_prob : Outcomes → ℝ)
+    (code_length : Outcomes → ℝ)
+    (data_prob_nonneg : ∀ i, 0 ≤ data_prob i)
+    (data_total_is_one : ∑ i, data_prob i = 1)
+    (kraft_holds : ∑ i, Real.exp (-code_length i) ≤ 1) :
+    let entropy         := ∑ i, data_prob i * -Real.log (data_prob i)
+    let expected_length := ∑ i, data_prob i * code_length i
+    entropy ≤ expected_length := by
+  unfold_named_pieces
+  -- Treat `exp (-length)` as the model's probabilities and use `gibbs`.
+  have gibbs_bound := gibbs data_prob (fun i => Real.exp (-code_length i))
+    data_prob_nonneg (fun i => Real.exp_pos _)
+    (by rw [data_total_is_one]; exact kraft_holds)
+  simpa [Real.log_exp] using gibbs_bound
 
 end Entropy
 
@@ -142,33 +220,71 @@ end Entropy
 
 section Description
 
-/-- The cost of describing weights `θ` to someone who has the starting weights `θ₀`, at
-precision `σ`: the squared distance over `2 σ²`. -/
-noncomputable def GET_DESCRIPTION_LENGTH {Θ : Type*} [NormedAddCommGroup Θ] (σ : ℝ) (θ₀ θ : Θ) : ℝ :=
-  ‖θ - θ₀‖ ^ 2 / (2 * σ ^ 2)
+/-- The cost of describing `weights` to someone who has the `start_weights`,
+at precision `noise_scale`: the squared distance over `2 * noise_scale ^ 2`. -/
+noncomputable def GET_DESCRIPTION_LENGTH
+    {Weights : Type*} [NormedAddCommGroup Weights]
+    (noise_scale : ℝ)
+    (start_weights weights : Weights) : ℝ :=
+  ‖weights - start_weights‖ ^ 2 / (2 * noise_scale ^ 2)  -- Gaussian code: squared distance over 2 variances
 
 open ContinuousLinearMap
 
-variable {Θ Y : Type*}
-  [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ] [CompleteSpace Θ]
-  [NormedAddCommGroup Y] [InnerProductSpace ℝ Y] [CompleteSpace Y]
+variable {Weights Outputs : Type*}
+  [NormedAddCommGroup Weights] [InnerProductSpace ℝ Weights]
+  [CompleteSpace Weights]
+  [NormedAddCommGroup Outputs] [InnerProductSpace ℝ Outputs]
+  [CompleteSpace Outputs]
 
 /-- **Gradient descent finds the fit that is cheapest to describe.** -/
-theorem descriptionLength_gradientDescent_le (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) (t : ℕ)
-    (hfit : A ((TAKE_GRADIENT_STEP A y η)^[t] θ₀) = y) {θ' : Θ} (hfit' : A θ' = y) (σ : ℝ) :
-    GET_DESCRIPTION_LENGTH σ θ₀ ((TAKE_GRADIENT_STEP A y η)^[t] θ₀) ≤ GET_DESCRIPTION_LENGTH σ θ₀ θ' :=
-  div_le_div_of_nonneg_right
-    (pow_le_pow_left₀ (norm_nonneg _) (gradientDescent_fit_is_nearest A y η θ₀ t hfit hfit') 2)
+theorem descriptionLength_gradientDescent_le
+    (predict : Weights →L[ℝ] Outputs)
+    (labels : Outputs)
+    (learning_rate : ℝ)
+    (start_weights : Weights)
+    (step_count : ℕ)
+    (trained_fits :
+      predict ((TAKE_GRADIENT_STEP predict labels learning_rate)^[step_count]
+        start_weights) = labels)
+    {other_weights : Weights}
+    (other_fits : predict other_weights = labels)
+    (noise_scale : ℝ) :
+    let trained_weights :=
+      (TAKE_GRADIENT_STEP predict labels learning_rate)^[step_count]
+        start_weights
+    let trained_length :=
+      GET_DESCRIPTION_LENGTH noise_scale start_weights trained_weights
+    let other_length :=
+      GET_DESCRIPTION_LENGTH noise_scale start_weights other_weights
+    trained_length ≤ other_length := by
+  unfold_named_pieces
+  -- The trained fit is the nearest, and the cost grows with the distance.
+  exact div_le_div_of_nonneg_right
+    (pow_le_pow_left₀ (norm_nonneg _)
+      (gradientDescent_fit_is_nearest predict labels learning_rate
+        start_weights step_count trained_fits other_fits) 2)
     (by positivity)
 
-/-- **A bigger model's fit is cheaper to describe.** With orthogonal features of strength
-`c`, the description length of the nearest fit is the squared error at the start over
-`2 σ² c`. -/
-theorem travel_sq_div_eq_of_tight {A : Θ →L[ℝ] Y} {c : ℝ} (h : HAS_TIGHT_FEATURES A c) (hc : 0 < c)
-    (y : Y) (θ₀ : Θ) (σ : ℝ) :
-    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ ^ 2 / (2 * σ ^ 2)
-      = ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ ^ 2 / (2 * σ ^ 2 * c) := by
-  rw [h.travel_eq hc, div_pow, Real.sq_sqrt hc.le, div_div, mul_comm c]
+/-- **A bigger model's fit is cheaper to describe.** With orthogonal features
+of strength `strength`, the description length of the nearest fit is the
+squared error at the start over `2 * noise_scale ^ 2 * strength`. -/
+theorem travel_sq_div_eq_of_tight
+    {predict : Weights →L[ℝ] Outputs}
+    {strength : ℝ}
+    (features_are_tight : HAS_TIGHT_FEATURES predict strength)
+    (strength_pos : 0 < strength)
+    (labels : Outputs)
+    (start_weights : Weights)
+    (noise_scale : ℝ) :
+    let travel := GET_TRAVEL (predict : Weights →ₗ[ℝ] Outputs) labels start_weights
+    let residual :=
+      GET_RESIDUAL (predict : Weights →ₗ[ℝ] Outputs) labels start_weights
+    let travel_cost := travel ^ 2 / (2 * noise_scale ^ 2)
+    let error_cost  := ‖residual‖ ^ 2 / (2 * noise_scale ^ 2 * strength)
+    travel_cost = error_cost := by
+  unfold_named_pieces
+  rw [features_are_tight.travel_eq strength_pos, div_pow,
+    Real.sq_sqrt strength_pos.le, div_div, mul_comm strength]
 
 end Description
 
