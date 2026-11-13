@@ -2,62 +2,22 @@
 
 **Proofs:** [`Coverage.lean`](../lean/SquigglyLine/Theorem/Coverage.lean), [`Oscillation.lean`](../lean/SquigglyLine/Theorem/Oscillation.lean), [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`ExchangeRate.lean`](../lean/SquigglyLine/Networks/ExchangeRate.lean), [`Kernel.lean`](../lean/SquigglyLine/Networks/Kernel.lean), [`Lift.lean`](../lean/SquigglyLine/Networks/Lift.lean), [`LinearModel.lean`](../lean/SquigglyLine/Networks/LinearModel.lean), [`Polarizer.lean`](../lean/SquigglyLine/Networks/Polarizer.lean), [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`DepthSeparation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean), [`Mixtures.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Mixtures.lean), [`ModeConnectivity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean), [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`CrossEntropy.lean`](../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`LeastAction.lean`](../lean/SquigglyLine/Supporting/Training/LeastAction.lean), [`Perceptron.lean`](../lean/SquigglyLine/Supporting/Training/Perceptron.lean), [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean).
 
-Written 12 Nov 2026. The aim is to say all of deep learning in the terms of
-the squiggly line, with every step machine-checked. This file lists
-well-known papers and ideas, says each one in those terms, and says where it
-stands.
+Written 12 Nov 2026, last revised 14 Nov 2026. The aim is to say all of deep
+learning in the terms of the squiggly line, with every step machine-checked.
+This file lists what is still wanted.
 
-Nothing goes on the worklist unless it connects to the squiggly line through
-one of six things. The list is grouped by them. It keeps to ideas that are
-well established and in common use. Niche results and rarely used
-optimisers are left to others.
+What is proved is not listed here. It is in
+[`supporting-proofs.md`](supporting-proofs.md#paper-by-paper), paper by
+paper, grouped by the six things a result can connect through: slope,
+nearness, travel, the kernel and the lift, folds, and averages. Every item
+that was marked "next" in the first two rounds has been proved and moved
+there, so five of those six groups have nothing left in this file.
 
-- **Slope.** How steep the line is. The theorem: nearness is bought with
-  slope and with nothing else.
-- **Nearness.** The distance from a data point to the line, or to a boundary.
-- **Travel.** The distance the weights move to reach a fit.
-- **The kernel and the lift.** A squiggly line is a flat plane seen through a
-  lift, and training sees only the kernel.
-- **Folds.** A ReLU layer folds the line. Folds are how depth makes squiggle.
-- **Averages.** An average is never squigglier than what it averages.
-
-What is proved is not listed here. It is in the
-[`supporting-proofs.md`](supporting-proofs.md#paper-by-paper), paper by paper. Each row here
-has a status.
-
-- **next**: looks within reach of the tools already here. Worked through in
-  order. 0 are marked as of 14 Nov 2026, from a second pass over the list
-  made once the first one was finished. AdamW and RMSNorm go first. The
-  list is frozen for this round.
-- **out of reach**: needs mathematics or library support that is missing.
-  The last two sections say what is in the way.
+The list keeps to ideas that are well established and in common use. Niche
+results and rarely used optimisers are left to others. Nothing goes on it
+unless it connects to the squiggly line.
 
 The papers and years are recalled from memory and have not been checked.
-
-## Slope
-
-| Paper or idea | In squiggly terms | Status |
-|---|---|---|
-
-## Nearness
-
-| Paper or idea | In squiggly terms | Status |
-|---|---|---|
-
-## Travel
-
-| Paper or idea | In squiggly terms | Status |
-|---|---|---|
-
-## The kernel and the lift
-
-| Paper or idea | In squiggly terms | Status |
-|---|---|---|
-
-## Folds
-
-| Paper or idea | In squiggly terms | Status |
-|---|---|---|
 
 ## Averages
 
