@@ -79,6 +79,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `ComputeBudget`   | `A / N + B / D` with `N D` fixed is least when the terms balance |
 | `CrossEntropy`    | softmax loss pushes by prediction minus label; same kernel       |
 | `GanGame`         | the best critic predicts the real share; the players spiral      |
+| `PolicyGradient`  | the push is action taken minus prediction, times the reward      |
 | `Dropout`         | expected dropout loss = loss + `v` × squared shares: weight decay |
 | `Perceptron`      | margin is nearness; at most `(R / γ)²` mistakes; XOR; no free lunch |
 | `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
@@ -102,6 +103,7 @@ In `SquigglyLine/Supporting/NewInputs/`.
 | `Averaging`         | ensemble error = mean error − spread; the ideal denoiser averages |
 | `Neighbours`        | nearest-neighbour error ≤ slope × distance; k-means; contrastive   |
 | `Mixing`            | graph nets blur; noising schedule; augmentation; baseline; guidance |
+| `OnAverage`         | absolute error is least at a median; random directions overlap 1/d |
 
 ### The shape of a network
 
@@ -175,6 +177,8 @@ import SquigglyLine.Supporting.Training.BatchSize
 import SquigglyLine.Supporting.Training.ComputeBudget
 import SquigglyLine.Supporting.Training.CrossEntropy
 import SquigglyLine.Supporting.Training.GanGame
+import SquigglyLine.Supporting.Training.PolicyGradient
+import SquigglyLine.Supporting.NewInputs.OnAverage
 import SquigglyLine.Supporting.Training.Dropout
 import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry

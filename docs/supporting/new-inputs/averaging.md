@@ -1,6 +1,6 @@
 # Averages: ensembles, weight averaging and the ideal denoiser
 
-**Proofs:** [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Mixing.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Mixing.lean), [`Neighbours.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Neighbours.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
+**Proofs:** [`ModeConnectivity.lean`](../../../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean), [`Averaging.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Mixing.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Mixing.lean), [`Neighbours.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/Neighbours.lean), [`OnAverage.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/OnAverage.lean), [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -155,6 +155,27 @@ Notes from 14 Nov 2026. Proofs in
   (**proved**: `guidance_notMem_segment`). One weight is negative, so this
   is not an average. It is the one step of a diffusion sampler that can
   leave the region the examples span.
+
+## The median, and random directions
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NewInputs/OnAverage.lean`](../../../lean/SquigglyLine/Supporting/NewInputs/OnAverage.lean).
+
+- **The loss chooses the average.** Squared error is least at the mean
+  (`weightedMean_isBest`). Absolute error is least at a median: a value
+  with at most half the points below it and at most half above
+  (**proved**: `sum_abs_sub_median_le`). So a line trained on squared error
+  goes through the mean of the labels at each input, and one trained on
+  absolute error through their median, which a few wild labels do not move.
+- **Random directions are nearly at right angles, on average.** Take a
+  random vector whose coordinates are uncorrelated, each with mean square
+  `s`. Its overlap with a fixed vector has mean square `s` times that
+  vector's squared length (**proved**: `sum_mul_sq_overlap`). For vectors
+  of length one in `d` dimensions, `s = 1 / d` and the mean squared overlap
+  is `1 / d`. This is the on-average form of the fact behind section 5 of
+  the README: random features in many dimensions hardly overlap, which is
+  why travel falls as the model grows. That the overlap is small with high
+  chance, and not just on average, is not shown.
 
 ## How this meets the squiggly line
 

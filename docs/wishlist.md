@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 4 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 2 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,6 +38,8 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
+| Straight-through estimator (Bengio et al. 2013) | A hard step such as rounding has slope zero almost everywhere, so no gradient comes back through it. The trick keeps the value of the hard step and borrows the slope of a gentle stand-in. | **next** |
+| Gumbel-softmax (Jang et al. 2017; Maddison et al. 2017) | A softmax at temperature `τ` is a gentle stand-in for picking the top score. As `τ` falls it tends to the pick itself, and its slope grows without limit. | **next** for the limit. That the top score after adding Gumbel noise is a draw from the softmax needs integrals the library may not have: **out of reach** for now |
 
 ## Nearness
 
@@ -48,14 +50,12 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Random features are nearly at right angles, on average | Two random directions in `d` dimensions have expected squared overlap `1 / d`. This is the on-average form of the fact that makes travel fall with size. | **next** |
 
 ## The kernel and the lift
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Random Fourier features (Rahimi and Recht 2007) | Average the Fourier-lift kernel over frequencies drawn from a bell curve and the result is the Gaussian bump. The Fourier lift and the radial basis kernel are one thing. | **next** |
-| Policy gradient (Williams 1992) | The push on the scores is the action taken minus the prediction, times the reward. That is the cross-entropy push, so the same kernel carries it. | **next** |
 
 ## Folds
 
@@ -67,7 +67,6 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
-| Squared error fits the mean, absolute error the median | The loss chooses which average the line goes through. | Mean **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). Median **next** |
 | Averaging the weights over time (Polyak and Juditsky 1992) | A running average of the weights is an average of lines, for a model linear in its weights. | Argued from [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 
 ## No link to the squiggly line yet

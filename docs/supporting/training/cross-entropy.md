@@ -1,6 +1,6 @@
 # Cross-entropy: classification in the same picture
 
-**Proofs:** [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
+**Proofs:** [`CrossEntropy.lean`](../../../lean/SquigglyLine/Supporting/Training/CrossEntropy.lean), [`EdgeOfStability.lean`](../../../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean), [`PolicyGradient.lean`](../../../lean/SquigglyLine/Supporting/Training/PolicyGradient.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -85,6 +85,36 @@ Three things follow (**argued**).
   **proved**: for a label strictly between zero and one, the score whose
   prediction equals the label has the least loss (`logLoss_le_of_sigmoid_eq`,
   `exists_best_score`).
+
+## Policy gradient is the same push, times the reward
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/Training/PolicyGradient.lean`](../../../lean/SquigglyLine/Supporting/Training/PolicyGradient.lean).
+
+A policy picks an action with the softmax of its scores. Reinforcement
+learning by policy gradient raises the log of the share of the action that
+was taken, in proportion to the reward that followed (**recalled**:
+Williams 1992).
+
+- **The log of a share is minus a cross-entropy.** Label the action taken
+  with a one and every other action with a zero. The log of the policy's
+  share for that action is minus the cross-entropy of the scores against
+  that label (**proved**: `log_softmax_eq_neg_crossEntropy`).
+- **So the push is "action taken minus prediction".** Moving the scores in
+  any direction changes that log at the rate "label minus share", summed
+  against the direction (**proved**: `hasDerivAt_log_policy`). It is the
+  push of this note with the sign turned, because a reward is raised and a
+  loss is lowered.
+- **The policy gradient.** The expected reward changes at the rate: the
+  share of each action, times its reward, times that push (**proved**:
+  `hasDerivAt_expectedReward`). Sampling an action and applying its push
+  times its reward gives this on average.
+
+So a policy-gradient step is a cross-entropy step toward the action taken,
+weighted by the reward. For a model linear in its weights the same kernel
+carries it. The baseline is in `docs/supporting/new-inputs/averaging.md`.
+
+Not shown: more than one step, where the reward depends on later actions.
 
 ## How this meets the squiggly line
 
