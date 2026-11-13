@@ -100,6 +100,7 @@ In `SquigglyLine/Supporting/NewInputs/`.
 | `Pruning`           | pruning subtracts a kernel: slower, farther; when a ticket wins  |
 | `Dimple`            | gentle on the data manifold, steep off it: loss blind, fragile   |
 | `Averaging`         | ensemble error = mean error − spread; the ideal denoiser averages |
+| `Neighbours`        | nearest-neighbour error ≤ slope × distance; k-means; contrastive   |
 
 ### The shape of a network
 
@@ -189,6 +190,7 @@ import SquigglyLine.Supporting.NewInputs.Forgetting
 import SquigglyLine.Supporting.NewInputs.Pruning
 import SquigglyLine.Supporting.NewInputs.Dimple
 import SquigglyLine.Supporting.NewInputs.Averaging
+import SquigglyLine.Supporting.NewInputs.Neighbours
 -- 3. Supporting material: the shape of a network
 import SquigglyLine.Supporting.NetworkShape.DepthSeparation
 import SquigglyLine.Supporting.NetworkShape.UniversalApproximation

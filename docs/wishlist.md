@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 19 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 16 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -48,9 +48,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Nearest neighbours (Cover and Hart 1967) | Copying the label of the nearest training input is wrong by at most the slope of the truth times the distance to that input. | **next** |
-| k-means and vector quantisation (Lloyd 1982; van den Oord et al. 2017) | Each half of a step brings the data nearer to its codes: moving a point to its nearest code, and moving a code to the average of its points. The cost never rises. | **next** |
-| Contrastive learning (Chen et al. 2020; Radford et al. 2021) | For vectors of length one, a softmax over cosine similarity is a softmax over squared distance. So the loss scores pairs by nearness upstairs, with the same weights as the ideal denoiser of [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). | **next** |
 
 ## Travel
 
