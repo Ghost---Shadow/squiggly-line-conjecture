@@ -27,17 +27,17 @@ variable {Θ Y : Type*}
   {A : Θ →L[ℝ] Y} {c : ℝ}
 
 /-- The features are orthogonal on the data side, each with squared length `c`. -/
-def TightFeatures (A : Θ →L[ℝ] Y) (c : ℝ) : Prop :=
+def HAS_TIGHT_FEATURES (A : Θ →L[ℝ] Y) (c : ℝ) : Prop :=
   ∀ v, A (adjoint A v) = c • v
 
-namespace TightFeatures
+namespace HAS_TIGHT_FEATURES
 
-theorem norm_adjoint_sq (h : TightFeatures A c) (v : Y) : ‖adjoint A v‖ ^ 2 = c * ‖v‖ ^ 2 := by
+theorem norm_adjoint_sq (h : HAS_TIGHT_FEATURES A c) (v : Y) : ‖adjoint A v‖ ^ 2 = c * ‖v‖ ^ 2 := by
   rw [← real_inner_self_eq_norm_sq, adjoint_inner_left, h v, real_inner_smul_right,
     real_inner_self_eq_norm_sq]
 
 /-- A move of size `‖δ‖` in parameter space changes the outputs by at most `√c ‖δ‖`. -/
-theorem norm_map_sq_le (h : TightFeatures A c) (hc : 0 < c) (δ : Θ) :
+theorem norm_map_sq_le (h : HAS_TIGHT_FEATURES A c) (hc : 0 < c) (δ : Θ) :
     ‖A δ‖ ^ 2 ≤ c * ‖δ‖ ^ 2 := by
   have hle : ‖A δ‖ ^ 2 ≤ ‖adjoint A (A δ)‖ * ‖δ‖ := by
     rw [← real_inner_self_eq_norm_sq, ← adjoint_inner_left]
@@ -54,16 +54,16 @@ theorem norm_map_sq_le (h : TightFeatures A c) (hc : 0 < c) (δ : Θ) :
 
 /-- **The exchange rate.** With tight features, the distance in parameter space from the
 start to the nearest fit is the size of the residual divided by `√c`. -/
-theorem travel_eq (h : TightFeatures A c) (hc : 0 < c) (y : Y) (θ₀ : Θ) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √c := by
-  set r := residual (A : Θ →ₗ[ℝ] Y) y θ₀ with hr
+theorem travel_eq (h : HAS_TIGHT_FEATURES A c) (hc : 0 < c) (y : Y) (θ₀ : Θ) :
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √c := by
+  set r := GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ with hr
   have hs : 0 < √c := Real.sqrt_pos.mpr hc
-  rw [travel]
+  rw [GET_TRAVEL]
   refine IsLeast.csInf_eq ⟨?_, ?_⟩
   · refine ⟨θ₀ + c⁻¹ • adjoint A r, ?_, ?_⟩
     · simp only [ContinuousLinearMap.coe_coe, map_add, map_smul, h r, smul_smul,
         inv_mul_cancel₀ hc.ne', one_smul]
-      simp [hr, residual]
+      simp [hr, GET_RESIDUAL]
     · have hn : ‖adjoint A r‖ = √c * ‖r‖ := by
         rw [← Real.sqrt_sq (norm_nonneg (adjoint A r)), h.norm_adjoint_sq r,
           Real.sqrt_mul hc.le, Real.sqrt_sq (norm_nonneg r)]
@@ -74,7 +74,7 @@ theorem travel_eq (h : TightFeatures A c) (hc : 0 < c) (y : Y) (θ₀ : Θ) :
   · rintro d ⟨θ, hθ, rfl⟩
     have hmap : A (θ - θ₀) = r := by
       have hθ' : A θ = y := hθ
-      simp [hr, residual, map_sub, hθ']
+      simp [hr, GET_RESIDUAL, map_sub, hθ']
     have hsq := h.norm_map_sq_le hc (θ - θ₀)
     rw [hmap] at hsq
     rw [div_le_iff₀ hs]
@@ -86,10 +86,10 @@ theorem travel_eq (h : TightFeatures A c) (hc : 0 < c) (y : Y) (θ₀ : Θ) :
 
 /-- **Parameter space is data space.** With orthonormal features, the distance to the nearest
 fit is exactly the size of the residual. -/
-theorem travel_eq_norm_residual (h : TightFeatures A 1) (y : Y) (θ₀ : Θ) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ := by
+theorem travel_eq_norm_residual (h : HAS_TIGHT_FEATURES A 1) (y : Y) (θ₀ : Θ) :
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ := by
   simpa using h.travel_eq one_pos y θ₀
 
-end TightFeatures
+end HAS_TIGHT_FEATURES
 
 end SquigglyLine

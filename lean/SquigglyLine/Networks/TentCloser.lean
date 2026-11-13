@@ -17,7 +17,7 @@ namespace SquigglyLine
 the `L`-fold network takes that label at some input within `1 / 2 ^ L`. -/
 theorem iterate_tent_covers (L : ℕ) {x y : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1)
     (hy : y ∈ Set.Icc (0 : ℝ) 1) :
-    ∃ x' ∈ Set.Icc (0 : ℝ) 1, |x - x'| ≤ 1 / 2 ^ L ∧ tent^[L] x' = y := by
+    ∃ x' ∈ Set.Icc (0 : ℝ) 1, |x - x'| ≤ 1 / 2 ^ L ∧ APPLY_TENT^[L] x' = y := by
   induction L generalizing x with
   | zero =>
     refine ⟨y, hy, ?_, rfl⟩
@@ -45,11 +45,11 @@ theorem iterate_tent_covers (L : ℕ) {x y : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 
 /-- **More layers, closer.** The curve drawn by `L` two-neuron layers passes within
 `1 / 2 ^ L` of every point of the unit square. -/
 theorem nearestDist_iterate_tent_le (L : ℕ) (p : DataPoint ℝ) (hx : p.1 ∈ Set.Icc (0 : ℝ) 1)
-    (hy : p.2 ∈ Set.Icc (0 : ℝ) 1) : nearestDist (tent^[L]) p ≤ 1 / 2 ^ L := by
+    (hy : p.2 ∈ Set.Icc (0 : ℝ) 1) : GET_NEAREST_DISTANCE (APPLY_TENT^[L]) p ≤ 1 / 2 ^ L := by
   obtain ⟨x', -, hclose, hfit⟩ := iterate_tent_covers L hx hy
-  calc nearestDist (tent^[L]) p
-      ≤ dist (embed p) (embed (x', tent^[L] x')) :=
-        Metric.infDist_le_dist_of_mem (footpoint_mem_curve _ (x', tent^[L] x'))
+  calc GET_NEAREST_DISTANCE (APPLY_TENT^[L]) p
+      ≤ dist (EMBED_DATA_POINT p) (EMBED_DATA_POINT (x', APPLY_TENT^[L] x')) :=
+        Metric.infDist_le_dist_of_mem (footpoint_mem_curve _ (x', APPLY_TENT^[L] x'))
     _ = |p.1 - x'| := by simp [dist_embed, hfit, Real.dist_eq, Real.sqrt_sq_eq_abs]
     _ ≤ 1 / 2 ^ L := hclose
 

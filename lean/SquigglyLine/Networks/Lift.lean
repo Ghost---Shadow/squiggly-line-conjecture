@@ -31,15 +31,15 @@ open NNReal
 variable {X Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- The flat function upstairs: the inner product of a feature vector with the weights. -/
-def flatModel (θ v : Θ) : ℝ :=
+def EVALUATE_FLAT_MODEL (θ v : Θ) : ℝ :=
   inner ℝ θ v
 
 /-- A model linear in its weights: lift the input, then apply the flat function. -/
-def liftedModel (φ : X → Θ) (θ : Θ) (x : X) : ℝ :=
+def EVALUATE_LIFTED_MODEL (φ : X → Θ) (θ : Θ) (x : X) : ℝ :=
   inner ℝ θ (φ x)
 
 /-- The kernel of a lift: how much two inputs overlap upstairs. -/
-def liftKernel (φ : X → Θ) (x x' : X) : ℝ :=
+def GET_LIFT_KERNEL (φ : X → Θ) (x x' : X) : ℝ :=
   inner ℝ (φ x) (φ x')
 
 /-! ### Flat above, squiggly below -/
@@ -48,26 +48,26 @@ section Flat
 
 variable (φ : X → Θ) (θ : Θ)
 
-theorem liftedModel_eq_comp : liftedModel φ θ = flatModel θ ∘ φ :=
+theorem liftedModel_eq_comp : EVALUATE_LIFTED_MODEL φ θ = EVALUATE_FLAT_MODEL θ ∘ φ :=
   rfl
 
 /-- **Flat above.** Upstairs, the value at a blend of two feature vectors is the same blend
 of the two values. -/
 theorem flatModel_blend (v w : Θ) (t : ℝ) :
-    flatModel θ ((1 - t) • v + t • w) = (1 - t) * flatModel θ v + t * flatModel θ w := by
-  simp only [flatModel, inner_add_right, inner_smul_right]
+    EVALUATE_FLAT_MODEL θ ((1 - t) • v + t • w) = (1 - t) * EVALUATE_FLAT_MODEL θ v + t * EVALUATE_FLAT_MODEL θ w := by
+  simp only [EVALUATE_FLAT_MODEL, inner_add_right, inner_smul_right]
 
 /-- **The squiggly line is the flat plane, seen through the lift.** A point is on the line
 downstairs exactly when its lift is on the plane upstairs. -/
 theorem embed_mem_curve_liftedModel_iff (p : DataPoint X) :
-    embed p ∈ curve (liftedModel φ θ) ↔ embed (φ p.1, p.2) ∈ curve (flatModel θ) := by
+    EMBED_DATA_POINT p ∈ GET_GRAPH (EVALUATE_LIFTED_MODEL φ θ) ↔ EMBED_DATA_POINT (φ p.1, p.2) ∈ GET_GRAPH (EVALUATE_FLAT_MODEL θ) := by
   rw [embed_mem_curve_iff, embed_mem_curve_iff]
   rfl
 
 /-- **A squiggly boundary is a flat one upstairs.** The inputs a classifier scores zero are
 the ones whose lifts lie on a flat plane through the origin. -/
 theorem boundary_eq_preimage :
-    {x | liftedModel φ θ x = 0} = φ ⁻¹' {v | flatModel θ v = 0} :=
+    {x | EVALUATE_LIFTED_MODEL φ θ x = 0} = φ ⁻¹' {v | EVALUATE_FLAT_MODEL θ v = 0} :=
   rfl
 
 end Flat
@@ -78,14 +78,14 @@ section Slope
 
 /-- The line changes by at most the size of the weights times how far the lift moves. -/
 theorem abs_liftedModel_sub_le (φ : X → Θ) (θ : Θ) (x x' : X) :
-    |liftedModel φ θ x - liftedModel φ θ x'| ≤ ‖θ‖ * ‖φ x - φ x'‖ := by
-  rw [liftedModel, liftedModel, ← inner_sub_right]
+    |EVALUATE_LIFTED_MODEL φ θ x - EVALUATE_LIFTED_MODEL φ θ x'| ≤ ‖θ‖ * ‖φ x - φ x'‖ := by
+  rw [EVALUATE_LIFTED_MODEL, EVALUATE_LIFTED_MODEL, ← inner_sub_right]
   exact abs_real_inner_le_norm _ _
 
 /-- **Slope is tilt times stretch.** If the lift stretches distances by at most `K`, the
 line is no steeper than the size of the weights times `K`. -/
 theorem lipschitzWith_liftedModel [PseudoMetricSpace X] {φ : X → Θ} {K : ℝ≥0}
-    (hφ : LipschitzWith K φ) (θ : Θ) : LipschitzWith (‖θ‖₊ * K) (liftedModel φ θ) :=
+    (hφ : LipschitzWith K φ) (θ : Θ) : LipschitzWith (‖θ‖₊ * K) (EVALUATE_LIFTED_MODEL φ θ) :=
   LipschitzWith.of_dist_le_mul fun x x' => by
     have hstretch : ‖φ x - φ x'‖ ≤ K * dist x x' := dist_eq_norm (φ x) (φ x') ▸ hφ.dist_le_mul x x'
     rw [Real.dist_eq, NNReal.coe_mul, coe_nnnorm, mul_assoc]
@@ -96,8 +96,8 @@ theorem lipschitzWith_liftedModel [PseudoMetricSpace X] {φ : X → Θ} {K : ℝ
 vertical error only by the factor `√(1 + (‖θ‖ K)²)`. -/
 theorem verticalDist_liftedModel_le {X : Type*} [SeminormedAddCommGroup X] {φ : X → Θ}
     {K : ℝ≥0} (hφ : LipschitzWith K φ) (θ : Θ) (p : DataPoint X) :
-    verticalDist (liftedModel φ θ) p
-      ≤ √(1 + (‖θ‖ * K) ^ 2) * nearestDist (liftedModel φ θ) p := by
+    GET_VERTICAL_ERROR (EVALUATE_LIFTED_MODEL φ θ) p
+      ≤ √(1 + (‖θ‖ * K) ^ 2) * GET_NEAREST_DISTANCE (EVALUATE_LIFTED_MODEL φ θ) p := by
   simpa using verticalDist_le_of_lipschitz (lipschitzWith_liftedModel hφ θ) p
 
 end Slope
@@ -112,30 +112,30 @@ variable {ι : Type*} (φ : X → Θ)
 along the lift of `xs i`. The new prediction at any input is the old one plus the kernel
 between that input and each data point, weighted by `c`. The lift itself is never needed. -/
 theorem liftedModel_add_sum (s : Finset ι) (θ₀ : Θ) (xs : ι → X) (c : ι → ℝ) (x : X) :
-    liftedModel φ (θ₀ + ∑ i ∈ s, c i • φ (xs i)) x
-      = liftedModel φ θ₀ x + ∑ i ∈ s, c i * liftKernel φ (xs i) x := by
-  simp only [liftedModel, liftKernel, inner_add_left, sum_inner, inner_smul_left]
+    EVALUATE_LIFTED_MODEL φ (θ₀ + ∑ i ∈ s, c i • φ (xs i)) x
+      = EVALUATE_LIFTED_MODEL φ θ₀ x + ∑ i ∈ s, c i * GET_LIFT_KERNEL φ (xs i) x := by
+  simp only [EVALUATE_LIFTED_MODEL, GET_LIFT_KERNEL, inner_add_left, sum_inner, inner_smul_left]
   rfl
 
 /-- The kernel does not care which input comes first. -/
-theorem liftKernel_comm (x x' : X) : liftKernel φ x x' = liftKernel φ x' x :=
+theorem liftKernel_comm (x x' : X) : GET_LIFT_KERNEL φ x x' = GET_LIFT_KERNEL φ x' x :=
   real_inner_comm _ _
 
 /-- **A kernel from a lift is never negative.** Weigh the data points by any numbers `c`. The
 kernel summed over all pairs with those weights is the squared length of one vector
 upstairs. -/
 theorem sum_sum_liftKernel_eq (s : Finset ι) (xs : ι → X) (c : ι → ℝ) :
-    ∑ i ∈ s, ∑ j ∈ s, c i * c j * liftKernel φ (xs i) (xs j) = ‖∑ i ∈ s, c i • φ (xs i)‖ ^ 2 := by
+    ∑ i ∈ s, ∑ j ∈ s, c i * c j * GET_LIFT_KERNEL φ (xs i) (xs j) = ‖∑ i ∈ s, c i • φ (xs i)‖ ^ 2 := by
   rw [← real_inner_self_eq_norm_sq, sum_inner]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [inner_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [inner_smul_left, inner_smul_right, liftKernel]
+  rw [inner_smul_left, inner_smul_right, GET_LIFT_KERNEL]
   simp only [conj_trivial]
   ring
 
 theorem sum_sum_liftKernel_nonneg (s : Finset ι) (xs : ι → X) (c : ι → ℝ) :
-    0 ≤ ∑ i ∈ s, ∑ j ∈ s, c i * c j * liftKernel φ (xs i) (xs j) := by
+    0 ≤ ∑ i ∈ s, ∑ j ∈ s, c i * c j * GET_LIFT_KERNEL φ (xs i) (xs j) := by
   rw [sum_sum_liftKernel_eq]
   positivity
 
@@ -145,9 +145,9 @@ end Kernel
 
 /-- **Any function is flat in some lift.** Take the function itself as the lift. So "flat
 upstairs" says something only when the lift is chosen before the labels are seen. -/
-theorem exists_lift_eq {X : Type*} (f : X → ℝ) : ∃ φ : X → ℝ, liftedModel φ 1 = f :=
+theorem exists_lift_eq {X : Type*} (f : X → ℝ) : ∃ φ : X → ℝ, EVALUATE_LIFTED_MODEL φ 1 = f :=
   ⟨f, by
     funext x
-    simp [liftedModel]⟩
+    simp [EVALUATE_LIFTED_MODEL]⟩
 
 end SquigglyLine

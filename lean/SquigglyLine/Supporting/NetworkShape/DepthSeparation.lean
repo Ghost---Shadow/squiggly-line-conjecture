@@ -22,15 +22,15 @@ namespace SquigglyLine
 /-! ### Straight lines -/
 
 /-- `f` is a straight line on the set `s`. -/
-def AffineOn (f : ℝ → ℝ) (s : Set ℝ) : Prop :=
+def IS_AFFINE_ON (f : ℝ → ℝ) (s : Set ℝ) : Prop :=
   ∃ p q : ℝ, ∀ x ∈ s, f x = p * x + q
 
-namespace AffineOn
+namespace IS_AFFINE_ON
 
 variable {f : ℝ → ℝ} {s : Set ℝ}
 
 /-- A multiple of a straight line is a straight line. -/
-theorem const_mul (k : ℝ) (h : AffineOn f s) : AffineOn (fun x => k * f x) s := by
+theorem const_mul (k : ℝ) (h : IS_AFFINE_ON f s) : IS_AFFINE_ON (fun x => k * f x) s := by
   obtain ⟨p, q, h⟩ := h
   refine ⟨k * p, k * q, fun x hx => ?_⟩
   show k * f x = k * p * x + k * q
@@ -38,7 +38,7 @@ theorem const_mul (k : ℝ) (h : AffineOn f s) : AffineOn (fun x => k * f x) s :
   ring
 
 /-- **A straight line cannot go up and come back down.** -/
-theorem not_zigzag {l m r : ℝ} (h : AffineOn f (Set.Icc l r)) (hlm : l < m) (hmr : m < r)
+theorem not_zigzag {l m r : ℝ} (h : IS_AFFINE_ON f (Set.Icc l r)) (hlm : l < m) (hmr : m < r)
     (hl : f l < f m) (hr : f r < f m) : False := by
   obtain ⟨p, q, h⟩ := h
   rw [h l ⟨le_rfl, by linarith⟩, h m ⟨hlm.le, hmr.le⟩] at hl
@@ -51,11 +51,11 @@ theorem not_zigzag {l m r : ℝ} (h : AffineOn f (Set.Icc l r)) (hlm : l < m) (h
   have := mul_pos hp (sub_pos.mpr hmr)
   linarith
 
-end AffineOn
+end IS_AFFINE_ON
 
 /-- A sum of straight lines is a straight line. -/
 theorem affineOn_sum {ι : Type*} (J : Finset ι) (f : ι → ℝ → ℝ) {s : Set ℝ}
-    (h : ∀ j ∈ J, AffineOn (f j) s) : AffineOn (fun x => ∑ j ∈ J, f j x) s := by
+    (h : ∀ j ∈ J, IS_AFFINE_ON (f j) s) : IS_AFFINE_ON (fun x => ∑ j ∈ J, f j x) s := by
   classical
   induction J using Finset.induction_on with
   | empty => exact ⟨0, 0, fun x _ => by simp⟩
@@ -98,7 +98,7 @@ theorem exists_zero_between {w b l r x m : ℝ} (hlx : l ≤ x) (hxr : x ≤ r) 
 inside a stretch, the unit `max (w * x + b) 0` is a straight line on the whole stretch. -/
 theorem affineOn_reluUnit {w b l r : ℝ} (hlr : l < r)
     (h : ∀ t, l < t → t < r → w * t + b ≠ 0) :
-    AffineOn (fun x => max (w * x + b) 0) (Set.Icc l r) := by
+    IS_AFFINE_ON (fun x => max (w * x + b) 0) (Set.Icc l r) := by
   have hlm : l < (l + r) / 2 := by linarith
   have hmr : (l + r) / 2 < r := by linarith
   rcases lt_or_gt_of_ne (h _ hlm hmr) with hneg | hpos
@@ -128,21 +128,21 @@ variable {ι : Type*}
 
 /-- A network with one hidden layer of ReLU units, indexed by `J`: unit `j` has input weight
 `w j`, bias `b j` and output weight `a j`. -/
-noncomputable def shallow (J : Finset ι) (a w b : ι → ℝ) (x : ℝ) : ℝ :=
+noncomputable def EVALUATE_SHALLOW_NETWORK (J : Finset ι) (a w b : ι → ℝ) (x : ℝ) : ℝ :=
   ∑ j ∈ J, a j * max (w j * x + b j) 0
 
 /-- **Every up-and-down holds a kink.** If the network is lower at both ends of a stretch
 than at a point inside it, some unit has its kink strictly inside the stretch. -/
 theorem exists_kink_of_zigzag (J : Finset ι) (a w b : ι → ℝ) {l m r : ℝ} (hlm : l < m)
-    (hmr : m < r) (hl : shallow J a w b l < shallow J a w b m)
-    (hr : shallow J a w b r < shallow J a w b m) :
+    (hmr : m < r) (hl : EVALUATE_SHALLOW_NETWORK J a w b l < EVALUATE_SHALLOW_NETWORK J a w b m)
+    (hr : EVALUATE_SHALLOW_NETWORK J a w b r < EVALUATE_SHALLOW_NETWORK J a w b m) :
     ∃ j ∈ J, w j ≠ 0 ∧ ∃ t, l < t ∧ t < r ∧ w j * t + b j = 0 := by
   by_contra hcon
   push Not at hcon
-  have haff : AffineOn (shallow J a w b) (Set.Icc l r) := by
-    show AffineOn (fun x => ∑ j ∈ J, a j * max (w j * x + b j) 0) (Set.Icc l r)
+  have haff : IS_AFFINE_ON (EVALUATE_SHALLOW_NETWORK J a w b) (Set.Icc l r) := by
+    show IS_AFFINE_ON (fun x => ∑ j ∈ J, a j * max (w j * x + b j) 0) (Set.Icc l r)
     refine affineOn_sum J (fun j x => a j * max (w j * x + b j) 0) (fun j hj => ?_)
-    refine AffineOn.const_mul (f := fun x => max (w j * x + b j) 0) (a j) ?_
+    refine IS_AFFINE_ON.const_mul (f := fun x => max (w j * x + b j) 0) (a j) ?_
     by_cases hw : w j = 0
     · exact ⟨0, max (b j) 0, fun x _ => by simp [hw]⟩
     · exact affineOn_reluUnit (hlm.trans hmr) (hcon j hj hw)
@@ -152,8 +152,8 @@ theorem exists_kink_of_zigzag (J : Finset ι) (a w b : ι → ℝ) {l m r : ℝ}
 increasing run of inputs, it has at least `m` units. -/
 theorem card_ge_of_zigzag (J : Finset ι) (a w b : ι → ℝ) {x : ℕ → ℝ} (hx : StrictMono x)
     {m : ℕ}
-    (hzig : ∀ i < m, shallow J a w b (x (2 * i)) < shallow J a w b (x (2 * i + 1))
-      ∧ shallow J a w b (x (2 * i + 2)) < shallow J a w b (x (2 * i + 1))) :
+    (hzig : ∀ i < m, EVALUATE_SHALLOW_NETWORK J a w b (x (2 * i)) < EVALUATE_SHALLOW_NETWORK J a w b (x (2 * i + 1))
+      ∧ EVALUATE_SHALLOW_NETWORK J a w b (x (2 * i + 2)) < EVALUATE_SHALLOW_NETWORK J a w b (x (2 * i + 1))) :
     m ≤ J.card := by
   have hkink : ∀ i ∈ Finset.range m, ∃ j ∈ J, w j ≠ 0 ∧
       ∃ t, x (2 * i) < t ∧ t < x (2 * i + 2) ∧ w j * t + b j = 0 := by
@@ -185,16 +185,16 @@ hidden layer that stays within one half of them at the `2 ^ (L + 1) + 1` grid po
 least `2 ^ L` units. -/
 theorem depth_separation (J : Finset ι) (a w b : ι → ℝ) (L : ℕ)
     (hclose : ∀ k : ℕ, k ≤ 2 ^ (L + 1) →
-      |shallow J a w b ((k : ℝ) / 2 ^ (L + 1)) - tent^[L + 1] ((k : ℝ) / 2 ^ (L + 1))|
+      |EVALUATE_SHALLOW_NETWORK J a w b ((k : ℝ) / 2 ^ (L + 1)) - APPLY_TENT^[L + 1] ((k : ℝ) / 2 ^ (L + 1))|
         < 1 / 2) :
     2 ^ L ≤ J.card := by
-  have hlow : ∀ k : ℕ, k ≤ 2 ^ (L + 1) → Even k → shallow J a w b ((k : ℝ) / 2 ^ (L + 1)) < 1 / 2 := by
+  have hlow : ∀ k : ℕ, k ≤ 2 ^ (L + 1) → Even k → EVALUATE_SHALLOW_NETWORK J a w b ((k : ℝ) / 2 ^ (L + 1)) < 1 / 2 := by
     intro k hk hev
     have h := hclose k hk
     rw [iterate_tent_dyadic (L + 1) k hk, ite_eq_left hev, sub_zero] at h
     exact (abs_lt.mp h).2
   have hhigh : ∀ k : ℕ, k ≤ 2 ^ (L + 1) → ¬ Even k →
-      1 / 2 < shallow J a w b ((k : ℝ) / 2 ^ (L + 1)) := by
+      1 / 2 < EVALUATE_SHALLOW_NETWORK J a w b ((k : ℝ) / 2 ^ (L + 1)) := by
     intro k hk hodd
     have h := hclose k hk
     rw [iterate_tent_dyadic (L + 1) k hk, ite_eq_right hodd] at h

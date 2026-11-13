@@ -28,15 +28,15 @@ variable {Θ Θ' Y : Type*}
   [NormedAddCommGroup Y] [InnerProductSpace ℝ Y] [CompleteSpace Y]
 
 /-- One step of gradient descent on the squared error `‖y - A θ‖² / 2`. -/
-noncomputable def gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ : Θ) : Θ :=
-  θ + η • adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ)
+noncomputable def TAKE_GRADIENT_STEP (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ : Θ) : Θ :=
+  θ + η • adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ)
 
 /-- **Gradient descent sees only the kernel.** One step sends the error `r` to `r - η K r`. -/
 theorem residual_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ : Θ) :
-    residual (A : Θ →ₗ[ℝ] Y) y (gradientStep A y η θ)
-      = residual (A : Θ →ₗ[ℝ] Y) y θ
-        - η • A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ)) := by
-  simp only [residual, gradientStep, ContinuousLinearMap.coe_coe, map_add, map_smul]
+    GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (TAKE_GRADIENT_STEP A y η θ)
+      = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ
+        - η • A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ)) := by
+  simp only [GET_RESIDUAL, TAKE_GRADIENT_STEP, ContinuousLinearMap.coe_coe, map_add, map_smul]
   abel
 
 /-- The squared length of `A† K⁻¹ r` is `⟪K⁻¹ r, r⟫`: it depends on the kernel only. -/
@@ -49,17 +49,17 @@ theorem norm_adjoint_kernelInverse_sq (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
 start to the nearest fit is the length of `A† K⁻¹ r`. -/
 theorem travel_eq_norm_of_kernelInverse (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) (y : Y) (θ₀ : Θ) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀
-      = ‖adjoint A (Kinv (residual (A : Θ →ₗ[ℝ] Y) y θ₀))‖ := by
-  obtain ⟨r, hr⟩ : ∃ r, r = residual (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
-  rw [← hr, travel]
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀
+      = ‖adjoint A (Kinv (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))‖ := by
+  obtain ⟨r, hr⟩ : ∃ r, r = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
+  rw [← hr, GET_TRAVEL]
   refine IsLeast.csInf_eq ⟨⟨θ₀ + adjoint A (Kinv r), ?_, by simp⟩, ?_⟩
   · simp only [ContinuousLinearMap.coe_coe, map_add, hinv r]
-    simp [hr, residual]
+    simp [hr, GET_RESIDUAL]
   · rintro d ⟨θ, hθ, rfl⟩
     have hmap : A (θ - θ₀) = r := by
       have hθ' : A θ = y := hθ
-      simp [hr, residual, map_sub, hθ']
+      simp [hr, GET_RESIDUAL, map_sub, hθ']
     have hinner : inner ℝ (adjoint A (Kinv r)) (θ - θ₀) = inner ℝ (Kinv r) r := by
       rw [adjoint_inner_left, hmap]
     have hle : ‖adjoint A (Kinv r)‖ ^ 2 ≤ ‖adjoint A (Kinv r)‖ * ‖θ - θ₀‖ := by
@@ -77,9 +77,9 @@ variable {A : Θ →L[ℝ] Y} {B : Θ' →L[ℝ] Y}
 the same error, gradient descent keeps their errors equal at every step. -/
 theorem residual_iterate_gradientStep_eq (hK : ∀ v, A (adjoint A v) = B (adjoint B v))
     (y : Y) (η : ℝ) {θ : Θ} {θ' : Θ'}
-    (h : residual (A : Θ →ₗ[ℝ] Y) y θ = residual (B : Θ' →ₗ[ℝ] Y) y θ') (t : ℕ) :
-    residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ)
-      = residual (B : Θ' →ₗ[ℝ] Y) y ((gradientStep B y η)^[t] θ') := by
+    (h : GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ = GET_RESIDUAL (B : Θ' →ₗ[ℝ] Y) y θ') (t : ℕ) :
+    GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ)
+      = GET_RESIDUAL (B : Θ' →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP B y η)^[t] θ') := by
   induction t with
   | zero => exact h
   | succ n ih =>
@@ -90,8 +90,8 @@ theorem residual_iterate_gradientStep_eq (hK : ∀ v, A (adjoint A v) = B (adjoi
 with the same error, their nearest fits are equally far away in parameter space. -/
 theorem travel_eq_of_kernel_eq (hK : ∀ v, A (adjoint A v) = B (adjoint B v)) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) (y : Y) {θ : Θ} {θ' : Θ'}
-    (h : residual (A : Θ →ₗ[ℝ] Y) y θ = residual (B : Θ' →ₗ[ℝ] Y) y θ') :
-    travel (A : Θ →ₗ[ℝ] Y) y θ = travel (B : Θ' →ₗ[ℝ] Y) y θ' := by
+    (h : GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ = GET_RESIDUAL (B : Θ' →ₗ[ℝ] Y) y θ') :
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ = GET_TRAVEL (B : Θ' →ₗ[ℝ] Y) y θ' := by
   have hinvB : ∀ v, B (adjoint B (Kinv v)) = v := fun v => (hK _).symm.trans (hinv v)
   rw [travel_eq_norm_of_kernelInverse A Kinv hinv, travel_eq_norm_of_kernelInverse B Kinv hinvB,
     ← h]

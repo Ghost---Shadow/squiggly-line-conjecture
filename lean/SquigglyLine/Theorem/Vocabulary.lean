@@ -29,10 +29,6 @@ stay folded when a statement is printed.
 | `SinePhase`                        | `(sineWave A w).Param`               |
 | `PI`                               | `Real.pi`, which Mathlib writes `π`  |
 | `GET_LABEL data_point`             | `data_point.2`                       |
-| `GET_NEAREST_DISTANCE`             | `nearestDist`                        |
-| `GET_VERTICAL_ERROR`               | `verticalDist`                       |
-| `GET_RESIDUAL_LOSS`                | `residualLoss`                       |
-| `MAKE_RANDOM_PHASE_SINE`           | `sineWave`                           |
 | `IS_IN_SINE_BAND A value`          | `value ∈ Set.Icc (-|A|) |A|`         |
 | `ARE_LABELS_ALMOST_SURELY_IN_BAND` | `∀ᵐ p ∂μ, p.2 ∈ Set.Icc (-|A|) |A|`  |
 | `GOES_TO_ZERO_AS_INPUT_GROWS`      | `Tendsto f atTop (𝓝 0)`              |
@@ -70,29 +66,7 @@ noncomputable abbrev PI : ℝ := Real.pi
 Python: `data_point[1]`. -/
 abbrev GET_LABEL (data_point : DataPoint ℝ) : ℝ := data_point.2
 
-/-- The distance from a data point to the nearest point of the curve.
-Python: `min(dist((x, y), (t, curve(t))) for t in all_reals)`. -/
-noncomputable abbrev GET_NEAREST_DISTANCE : Cost ℝ := nearestDist
-
-/-- The vertical error `|y - curve(x)|`.
-Python: `abs(y - curve(x))`. -/
-abbrev GET_VERTICAL_ERROR : Cost ℝ := verticalDist
-
-/-- The loss of one data point: `loss_fn` applied to the residual
-`y - curve(x)`.
-Python: `loss_fn(y - curve(x))`. -/
-abbrev GET_RESIDUAL_LOSS (loss_fn : RealFunction) : Cost ℝ :=
-  residualLoss loss_fn
-
 /-! ## Functions that build an object -/
-
-/-- The sine `amplitude * sin(frequency * x + phase)`, with the phase drawn
-uniformly at random.
-Python: `phase = uniform(0, 2 * PI)`, then
-`lambda x: amplitude * sin(frequency * x + phase)`. -/
-noncomputable abbrev MAKE_RANDOM_PHASE_SINE (amplitude frequency : ℝ) :
-    RandomFunction ℝ :=
-  sineWave amplitude frequency
 
 /-- The phase of a random-phase sine: a point on the circle.
 Python: a float in `[0, 2 * PI)`, where `2 * PI` wraps round to `0`. -/

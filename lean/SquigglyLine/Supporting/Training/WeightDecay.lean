@@ -61,25 +61,25 @@ variable {Θ Y : Type*}
 
 /-- The fit that weight decay with penalty `mu` rests at, when the error at the start lies
 along a direction of strength `lam`. -/
-noncomputable def ridgeFit (A : Θ →L[ℝ] Y) (y : Y) (θ₀ : Θ) (lam mu : ℝ) : Θ :=
-  θ₀ + (lam + mu)⁻¹ • adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀)
+noncomputable def GET_RIDGE_FIT (A : Θ →L[ℝ] Y) (y : Y) (θ₀ : Θ) (lam mu : ℝ) : Θ :=
+  θ₀ + (lam + mu)⁻¹ • adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)
 
 /-- One step of gradient descent with weight decay `mu` towards the start `θ₀`. -/
-noncomputable def decayStep (A : Θ →L[ℝ] Y) (y : Y) (η mu : ℝ) (θ₀ θ : Θ) : Θ :=
-  gradientStep A y η θ - (η * mu) • (θ - θ₀)
+noncomputable def TAKE_DECAY_STEP (A : Θ →L[ℝ] Y) (y : Y) (η mu : ℝ) (θ₀ θ : Θ) : Θ :=
+  TAKE_GRADIENT_STEP A y η θ - (η * mu) • (θ - θ₀)
 
 variable (A : Θ →L[ℝ] Y) (y : Y) (θ₀ : Θ) {lam mu : ℝ}
 
 /-- **What weight decay leaves.** The share `mu / (lam + mu)` of the error. -/
 theorem residual_ridgeFit (hsum : lam + mu ≠ 0)
-    (heig : A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀))
-      = lam • residual (A : Θ →ₗ[ℝ] Y) y θ₀) :
-    residual (A : Θ →ₗ[ℝ] Y) y (ridgeFit A y θ₀ lam mu)
-      = (mu / (lam + mu)) • residual (A : Θ →ₗ[ℝ] Y) y θ₀ := by
-  have hstep : residual (A : Θ →ₗ[ℝ] Y) y (ridgeFit A y θ₀ lam mu)
-      = residual (A : Θ →ₗ[ℝ] Y) y θ₀
-        - (lam + mu)⁻¹ • A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀)) := by
-    simp only [residual, ridgeFit, ContinuousLinearMap.coe_coe, map_add, map_smul]
+    (heig : A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))
+      = lam • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) :
+    GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (GET_RIDGE_FIT A y θ₀ lam mu)
+      = (mu / (lam + mu)) • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ := by
+  have hstep : GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (GET_RIDGE_FIT A y θ₀ lam mu)
+      = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀
+        - (lam + mu)⁻¹ • A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)) := by
+    simp only [GET_RESIDUAL, GET_RIDGE_FIT, ContinuousLinearMap.coe_coe, map_add, map_smul]
     abel
   have hone : (lam + mu)⁻¹ * (lam + mu) = 1 := inv_mul_cancel₀ hsum
   have hcoef : mu / (lam + mu) = 1 - (lam + mu)⁻¹ * lam := by
@@ -90,27 +90,27 @@ theorem residual_ridgeFit (hsum : lam + mu ≠ 0)
 /-- **The resting point.** At the weight-decay fit, the pull of the data and the pull of
 the penalty balance. -/
 theorem ridge_stationary (hsum : lam + mu ≠ 0)
-    (heig : A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀))
-      = lam • residual (A : Θ →ₗ[ℝ] Y) y θ₀) :
-    adjoint A (residual (A : Θ →ₗ[ℝ] Y) y (ridgeFit A y θ₀ lam mu))
-      = mu • (ridgeFit A y θ₀ lam mu - θ₀) := by
-  rw [residual_ridgeFit A y θ₀ hsum heig, map_smul, ridgeFit, add_sub_cancel_left, smul_smul,
+    (heig : A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))
+      = lam • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) :
+    adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (GET_RIDGE_FIT A y θ₀ lam mu))
+      = mu • (GET_RIDGE_FIT A y θ₀ lam mu - θ₀) := by
+  rw [residual_ridgeFit A y θ₀ hsum heig, map_smul, GET_RIDGE_FIT, add_sub_cancel_left, smul_smul,
     div_eq_mul_inv]
 
 /-- **Gradient descent with weight decay rests there.** -/
 theorem decayStep_ridgeFit (η : ℝ) (hsum : lam + mu ≠ 0)
-    (heig : A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀))
-      = lam • residual (A : Θ →ₗ[ℝ] Y) y θ₀) :
-    decayStep A y η mu θ₀ (ridgeFit A y θ₀ lam mu) = ridgeFit A y θ₀ lam mu := by
-  rw [decayStep, gradientStep, ridge_stationary A y θ₀ hsum heig, smul_smul,
+    (heig : A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))
+      = lam • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) :
+    TAKE_DECAY_STEP A y η mu θ₀ (GET_RIDGE_FIT A y θ₀ lam mu) = GET_RIDGE_FIT A y θ₀ lam mu := by
+  rw [TAKE_DECAY_STEP, TAKE_GRADIENT_STEP, ridge_stationary A y θ₀ hsum heig, smul_smul,
     add_sub_cancel_right]
 
 /-- **Weight decay is spare parameters.** The answer at a new input with features `φ` moves
 by the overlap divided by `lam + mu`. -/
 theorem inner_ridgeFit (φ : Θ) (lam mu : ℝ) :
-    inner ℝ φ (ridgeFit A y θ₀ lam mu)
-      = inner ℝ φ θ₀ + inner ℝ (A φ) (residual (A : Θ →ₗ[ℝ] Y) y θ₀) / (lam + mu) := by
-  rw [ridgeFit, inner_add_right, real_inner_smul_right, adjoint_inner_right]
+    inner ℝ φ (GET_RIDGE_FIT A y θ₀ lam mu)
+      = inner ℝ φ θ₀ + inner ℝ (A φ) (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) / (lam + mu) := by
+  rw [GET_RIDGE_FIT, inner_add_right, real_inner_smul_right, adjoint_inner_right]
   ring
 
 end Fit

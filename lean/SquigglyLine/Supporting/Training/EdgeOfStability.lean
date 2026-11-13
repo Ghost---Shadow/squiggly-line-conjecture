@@ -61,15 +61,15 @@ variable {Θ Y : Type*}
 was. -/
 theorem abs_inner_residual_iterate_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ)
     {u : Y} {lam : ℝ} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))|
-      = |1 - η * lam| ^ t * |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
+    |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
+      = |1 - η * lam| ^ t * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
   rw [inner_residual_iterate_gradientStep A y η θ₀ hu t, abs_mul, abs_pow]
 
 /-- **Below the edge the error never grows.** -/
 theorem shrinks_below_edge (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hpos : 0 < η * lam)
     (hlt : η * lam < 2) (θ₀ : Θ) {u : Y} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))|
-      ≤ |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
+    |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
+      ≤ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
   rw [abs_inner_residual_iterate_gradientStep A y η θ₀ hu t]
   have hfactor : |1 - η * lam| ≤ 1 := (abs_one_sub_lt_one_iff.mpr ⟨hpos, hlt⟩).le
   exact mul_le_of_le_one_left (abs_nonneg _) (pow_le_one₀ (abs_nonneg _) hfactor)
@@ -78,8 +78,8 @@ theorem shrinks_below_edge (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hpos : 0
 down. -/
 theorem holds_at_edge (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hedge : η * lam = 2) (θ₀ : Θ)
     {u : Y} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))|
-      = |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
+    |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
+      = |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
   rw [abs_inner_residual_iterate_gradientStep A y η θ₀ hu t, hedge]
   norm_num
 
@@ -87,8 +87,8 @@ theorem holds_at_edge (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hedge : η * 
 `1 + t * (η * lam - 2)` times what it was. -/
 theorem grows_past_edge (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hpast : 2 ≤ η * lam) (θ₀ : Θ)
     {u : Y} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    (1 + t * (η * lam - 2)) * |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)|
-      ≤ |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))| := by
+    (1 + t * (η * lam - 2)) * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)|
+      ≤ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))| := by
   rw [abs_inner_residual_iterate_gradientStep A y η θ₀ hu t]
   exact mul_le_mul_of_nonneg_right (one_add_mul_le_abs_pow hpast t) (abs_nonneg _)
 

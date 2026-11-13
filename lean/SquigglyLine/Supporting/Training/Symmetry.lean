@@ -38,13 +38,13 @@ variable {Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- A loss that does not change when all the weights are multiplied by a positive number. The
 weights that feed a normalisation layer are like this. -/
-def ScaleInvariant (L : Θ → ℝ) : Prop :=
+def IS_SCALE_INVARIANT (L : Θ → ℝ) : Prop :=
   ∀ c : ℝ, 0 < c → ∀ θ, L (c • θ) = L θ
 
 /-- **The gradient is at right angles to the weights.** Here `g` is the gradient of `L` at `θ`,
 in the sense that the loss changes at the rate `⟪g, θ⟫` when the weights move along
 themselves. -/
-theorem inner_gradient_self_eq_zero {L : Θ → ℝ} (hL : ScaleInvariant L) {θ g : Θ}
+theorem inner_gradient_self_eq_zero {L : Θ → ℝ} (hL : IS_SCALE_INVARIANT L) {θ g : Θ}
     (hgrad : HasDerivAt (fun s : ℝ => L (θ + s • θ)) (inner ℝ g θ) 0) : inner ℝ g θ = 0 := by
   have hconst : (fun _ : ℝ => L θ) =ᶠ[𝓝 0] fun s => L (θ + s • θ) := by
     filter_upwards [Ioi_mem_nhds (show (-1 : ℝ) < 0 by norm_num)] with s hs
@@ -100,12 +100,12 @@ variable {ι X : Type*} [Fintype ι]
 
 /-- A network with one hidden layer. Unit `i` reads the input through `w i`, applies the
 activation, and is weighted by `a i` on the way out. -/
-def oneHiddenLayer (act : ℝ → ℝ) (w : ι → X → ℝ) (a : ι → ℝ) (x : X) : ℝ :=
+def EVALUATE_ONE_HIDDEN_LAYER (act : ℝ → ℝ) (w : ι → X → ℝ) (a : ι → ℝ) (x : X) : ℝ :=
   ∑ i, a i * act (w i x)
 
 /-- **Shuffling the hidden units gives the same function.** -/
 theorem oneHiddenLayer_relabel (act : ℝ → ℝ) (w : ι → X → ℝ) (a : ι → ℝ) (π : Equiv.Perm ι) :
-    oneHiddenLayer act (w ∘ π) (a ∘ π) = oneHiddenLayer act w a := by
+    EVALUATE_ONE_HIDDEN_LAYER act (w ∘ π) (a ∘ π) = EVALUATE_ONE_HIDDEN_LAYER act w a := by
   funext x
   exact Equiv.sum_comp π fun i => a i * act (w i x)
 

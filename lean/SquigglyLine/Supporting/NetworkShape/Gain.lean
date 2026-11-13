@@ -71,7 +71,7 @@ variable {S : Type*} [Fintype S]
 
 /-- One sweep of value updates. `r s` is the reward in state `s`, `P s s'` the chance of
 moving from `s` to `s'`, and `γ` the discount. -/
-def bellman (r : S → ℝ) (P : S → S → ℝ) (γ : ℝ) (V : S → ℝ) : S → ℝ :=
+def APPLY_BELLMAN_SWEEP (r : S → ℝ) (P : S → S → ℝ) (γ : ℝ) (V : S → ℝ) : S → ℝ :=
   fun s => r s + γ * ∑ s', P s s' * V s'
 
 variable {P : S → S → ℝ}
@@ -79,12 +79,12 @@ variable {P : S → S → ℝ}
 /-- **A sweep has slope at most the discount.** Two guesses at the values are brought closer
 by the factor `γ`, measured by their largest disagreement. -/
 theorem lipschitzWith_bellman (hP : ∀ s s', 0 ≤ P s s') (hrow : ∀ s, ∑ s', P s s' = 1)
-    (γ : ℝ≥0) (r : S → ℝ) : LipschitzWith γ (bellman r P γ) := by
+    (γ : ℝ≥0) (r : S → ℝ) : LipschitzWith γ (APPLY_BELLMAN_SWEEP r P γ) := by
   refine LipschitzWith.of_dist_le_mul fun V V' => ?_
   refine (dist_pi_le_iff (by positivity)).2 fun s => ?_
-  have hdiff : bellman r P γ V s - bellman r P γ V' s
+  have hdiff : APPLY_BELLMAN_SWEEP r P γ V s - APPLY_BELLMAN_SWEEP r P γ V' s
       = γ * ∑ s', P s s' * (V s' - V' s') := by
-    simp only [bellman, mul_sub, Finset.sum_sub_distrib]
+    simp only [APPLY_BELLMAN_SWEEP, mul_sub, Finset.sum_sub_distrib]
     ring
   rw [Real.dist_eq, hdiff, abs_mul, abs_of_nonneg γ.coe_nonneg]
   refine mul_le_mul_of_nonneg_left ?_ γ.coe_nonneg
@@ -101,7 +101,7 @@ theorem lipschitzWith_bellman (hP : ∀ s s', 0 ≤ P s s') (hrow : ∀ s, ∑ s
 by at most `γ ^ n` times what they differed by at the start. -/
 theorem dist_iterate_bellman_le (hP : ∀ s s', 0 ≤ P s s') (hrow : ∀ s, ∑ s', P s s' = 1)
     (γ : ℝ≥0) (r : S → ℝ) (n : ℕ) (V V' : S → ℝ) :
-    dist ((bellman r P γ)^[n] V) ((bellman r P γ)^[n] V') ≤ (γ : ℝ) ^ n * dist V V' := by
+    dist ((APPLY_BELLMAN_SWEEP r P γ)^[n] V) ((APPLY_BELLMAN_SWEEP r P γ)^[n] V') ≤ (γ : ℝ) ^ n * dist V V' := by
   simpa using ((lipschitzWith_bellman hP hrow γ r).iterate n).dist_le_mul V V'
 
 end Bellman

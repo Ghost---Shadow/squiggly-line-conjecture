@@ -1,7 +1,7 @@
 /-
 Universal approximation, and what it costs.
 
-Cut the interval `[0, 1]` into `n` pieces. A `ramp` is flat, then rises across
+Cut the interval `[0, 1]` into `n` pieces. A `EVALUATE_RAMP` is flat, then rises across
 one piece, then is flat again: two ReLU units. `reluInterp f n k` is the
 network made of the first `k` ramps, each scaled to follow `f` across its
 piece. It has one hidden layer of `2 k` units.
@@ -24,26 +24,26 @@ section Ramp
 
 /-- A ramp across the `k`-th of `n` pieces: flat at zero, rising with slope one, then flat
 at `1 / n`. It is the difference of two ReLU units. -/
-noncomputable def ramp (n k : ℕ) (x : ℝ) : ℝ :=
+noncomputable def EVALUATE_RAMP (n k : ℕ) (x : ℝ) : ℝ :=
   max (x - k / n) 0 - max (x - (k + 1) / n) 0
 
 variable {n k : ℕ} {x : ℝ}
 
 /-- Before its piece, a ramp is zero. -/
-theorem ramp_of_le (hn : (0 : ℝ) < n) (hx : x ≤ k / n) : ramp n k x = 0 := by
+theorem ramp_of_le (hn : (0 : ℝ) < n) (hx : x ≤ k / n) : EVALUATE_RAMP n k x = 0 := by
   have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
-  rw [ramp, add_div, max_eq_right (by linarith), max_eq_right (by linarith), sub_self]
+  rw [EVALUATE_RAMP, add_div, max_eq_right (by linarith), max_eq_right (by linarith), sub_self]
 
 /-- Inside its piece, a ramp rises with slope one. -/
 theorem ramp_of_mem (h1 : (k : ℝ) / n ≤ x) (h2 : x ≤ (k + 1) / n) :
-    ramp n k x = x - k / n := by
-  rw [ramp, max_eq_left (by linarith), max_eq_right (by linarith), sub_zero]
+    EVALUATE_RAMP n k x = x - k / n := by
+  rw [EVALUATE_RAMP, max_eq_left (by linarith), max_eq_right (by linarith), sub_zero]
 
 /-- After its piece, a ramp stays at its full height. -/
-theorem ramp_of_ge (hn : (0 : ℝ) < n) (hx : ((k : ℝ) + 1) / n ≤ x) : ramp n k x = 1 / n := by
+theorem ramp_of_ge (hn : (0 : ℝ) < n) (hx : ((k : ℝ) + 1) / n ≤ x) : EVALUATE_RAMP n k x = 1 / n := by
   have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
   rw [add_div] at hx
-  rw [ramp, add_div, max_eq_left (by linarith), max_eq_left (by linarith)]
+  rw [EVALUATE_RAMP, add_div, max_eq_left (by linarith), max_eq_left (by linarith)]
   ring
 
 end Ramp
@@ -53,8 +53,8 @@ end Ramp
 section Network
 
 /-- The network made of the first `k` ramps, each scaled to follow `f` across its piece. -/
-noncomputable def reluInterp (f : ℝ → ℝ) (n k : ℕ) (x : ℝ) : ℝ :=
-  f 0 + ∑ i ∈ Finset.range k, n * (f (((i : ℝ) + 1) / n) - f ((i : ℝ) / n)) * ramp n i x
+noncomputable def INTERPOLATE_WITH_RELU (f : ℝ → ℝ) (n k : ℕ) (x : ℝ) : ℝ :=
+  f 0 + ∑ i ∈ Finset.range k, n * (f (((i : ℝ) + 1) / n) - f ((i : ℝ) / n)) * EVALUATE_RAMP n i x
 
 variable {f : ℝ → ℝ} {K : ℝ} {n : ℕ}
 
@@ -66,15 +66,15 @@ theorem slope_nonneg (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) : 0 ≤ K := by
 
 /-- Adding one more ramp. -/
 theorem reluInterp_succ (f : ℝ → ℝ) (n k : ℕ) (x : ℝ) :
-    reluInterp f n (k + 1) x
-      = reluInterp f n k x + n * (f (((k : ℝ) + 1) / n) - f ((k : ℝ) / n)) * ramp n k x := by
-  rw [reluInterp, Finset.sum_range_succ, reluInterp, add_assoc]
+    INTERPOLATE_WITH_RELU f n (k + 1) x
+      = INTERPOLATE_WITH_RELU f n k x + n * (f (((k : ℝ) + 1) / n) - f ((k : ℝ) / n)) * EVALUATE_RAMP n k x := by
+  rw [INTERPOLATE_WITH_RELU, Finset.sum_range_succ, INTERPOLATE_WITH_RELU, add_assoc]
 
 /-- **Piece by piece.** After `k` ramps the network is within `2 K / n` of `f` on the first
 `k` pieces, and sits exactly on `f (k / n)` beyond them. -/
 theorem reluInterp_spec (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : ℝ) < n) (k : ℕ) :
-    (∀ x : ℝ, 0 ≤ x → x ≤ k / n → |reluInterp f n k x - f x| ≤ 2 * K / n)
-      ∧ ∀ x, (k : ℝ) / n ≤ x → reluInterp f n k x = f (k / n) := by
+    (∀ x : ℝ, 0 ≤ x → x ≤ k / n → |INTERPOLATE_WITH_RELU f n k x - f x| ≤ 2 * K / n)
+      ∧ ∀ x, (k : ℝ) / n ≤ x → INTERPOLATE_WITH_RELU f n k x = f (k / n) := by
   have hK := slope_nonneg hf
   have h1n : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn
   induction k with
@@ -83,10 +83,10 @@ theorem reluInterp_spec (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : �
     · intro x h0 hx
       have hx0 : x = 0 := le_antisymm (by simpa using hx) h0
       subst hx0
-      rw [show reluInterp f n 0 0 - f 0 = 0 by simp [reluInterp], abs_zero]
+      rw [show INTERPOLATE_WITH_RELU f n 0 0 - f 0 = 0 by simp [INTERPOLATE_WITH_RELU], abs_zero]
       exact div_nonneg (by linarith) hn.le
     · intro x _
-      simp [reluInterp]
+      simp [INTERPOLATE_WITH_RELU]
   | succ k ih =>
     obtain ⟨ih1, ih2⟩ := ih
     constructor
@@ -135,18 +135,18 @@ theorem reluInterp_spec (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : �
 
 /-- **A network of `2 n` units is within `2 K / n` of `f`.** -/
 theorem relu_network_close (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) (hn : (0 : ℝ) < n) {x : ℝ}
-    (h0 : 0 ≤ x) (h1 : x ≤ 1) : |reluInterp f n n x - f x| ≤ 2 * K / n :=
+    (h0 : 0 ≤ x) (h1 : x ≤ 1) : |INTERPOLATE_WITH_RELU f n n x - f x| ≤ 2 * K / n :=
   (reluInterp_spec hf hn n).1 x h0 (by rwa [div_self hn.ne'])
 
 /-- **Universal approximation.** A function on `[0, 1]` with slope at most `K` is within any
 `ε > 0` of a ReLU network with one hidden layer. -/
 theorem universal_approximation (hf : ∀ x y, |f x - f y| ≤ K * |x - y|) {ε : ℝ} (hε : 0 < ε) :
-    ∃ n : ℕ, ∀ x ∈ Set.Icc (0 : ℝ) 1, |reluInterp f n n x - f x| ≤ ε := by
+    ∃ n : ℕ, ∀ x ∈ Set.Icc (0 : ℝ) 1, |INTERPOLATE_WITH_RELU f n n x - f x| ≤ ε := by
   have hK := slope_nonneg hf
   obtain ⟨n, hn⟩ := exists_nat_gt (2 * K / ε)
   have hnpos : (0 : ℝ) < n := lt_of_le_of_lt (div_nonneg (by linarith) hε.le) hn
   refine ⟨n, fun x hx => ?_⟩
-  calc |reluInterp f n n x - f x| ≤ 2 * K / n := relu_network_close hf hnpos hx.1 hx.2
+  calc |INTERPOLATE_WITH_RELU f n n x - f x| ≤ 2 * K / n := relu_network_close hf hnpos hx.1 hx.2
     _ ≤ ε := by
         rw [div_lt_iff₀ hε] at hn
         rw [div_le_iff₀ hnpos]

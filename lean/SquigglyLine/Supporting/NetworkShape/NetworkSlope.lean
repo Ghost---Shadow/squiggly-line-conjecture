@@ -46,11 +46,11 @@ variable {α : Type*} [PseudoEMetricSpace α]
 /-- **A network is no steeper than the product of its layers.** -/
 theorem lipschitzWith_runLayers {layers : List (α → α)} {slopes : List ℝ≥0}
     (hlayers : List.Forall₂ (fun layer K => LipschitzWith K layer) layers slopes) :
-    LipschitzWith slopes.prod (runLayers layers) := by
+    LipschitzWith slopes.prod (RUN_LAYERS layers) := by
   induction hlayers with
-  | nil => simpa [runLayers] using (LipschitzWith.id : LipschitzWith 1 (id : α → α))
+  | nil => simpa [RUN_LAYERS] using (LipschitzWith.id : LipschitzWith 1 (id : α → α))
   | cons hhead _ ih =>
-    rw [runLayers, List.prod_cons, mul_comm]
+    rw [RUN_LAYERS, List.prod_cons, mul_comm]
     exact ih.comp hhead
 
 /-- A ReLU has slope at most one. -/
@@ -71,9 +71,9 @@ theorem verticalDist_network_le {X : Type*} [SeminormedAddCommGroup X] {layers :
     {slopes : List ℝ≥0}
     (hlayers : List.Forall₂ (fun layer K => LipschitzWith K layer) layers slopes)
     {readout : X → ℝ} {Kout : ℝ≥0} (hout : LipschitzWith Kout readout) (p : DataPoint X) :
-    verticalDist (readout ∘ runLayers layers) p
+    GET_VERTICAL_ERROR (readout ∘ RUN_LAYERS layers) p
       ≤ √(1 + ((Kout * slopes.prod : ℝ≥0) : ℝ) ^ 2)
-        * nearestDist (readout ∘ runLayers layers) p :=
+        * GET_NEAREST_DISTANCE (readout ∘ RUN_LAYERS layers) p :=
   verticalDist_le_of_lipschitz (hout.comp (lipschitzWith_runLayers hlayers)) p
 
 end Layers
@@ -118,23 +118,23 @@ theorem le_mul_dist_of_flip {X : Type*} [PseudoMetricSpace X] {f : X → ℝ} {K
 variable {ι : Type*} [Fintype ι]
 
 /-- The score of a linear model with weights `w` at the input `x`. -/
-def linearScore (w x : ι → ℝ) : ℝ :=
+def GET_LINEAR_SCORE (w x : ι → ℝ) : ℝ :=
   ∑ i, w i * x i
 
 /-- **The worst small nudge.** Move every input by `ε` in the direction of the sign of its
 weight. The score moves by `ε` times the sum of the sizes of the weights. -/
 theorem score_add_sign (w x : ι → ℝ) (ε : ℝ) :
-    linearScore w (fun i => x i + ε * SignType.sign (w i))
-      = linearScore w x + ε * ∑ i, |w i| := by
-  simp only [linearScore, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
+    GET_LINEAR_SCORE w (fun i => x i + ε * SignType.sign (w i))
+      = GET_LINEAR_SCORE w x + ε * ∑ i, |w i| := by
+  simp only [GET_LINEAR_SCORE, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   congr 1
   exact Finset.sum_congr rfl fun i _ => by rw [← self_mul_sign (w i)]; ring
 
 /-- No nudge of at most `ε` per input moves the score by more. -/
 theorem abs_score_add_sub_le (w x δ : ι → ℝ) {ε : ℝ} (hδ : ∀ i, |δ i| ≤ ε) :
-    |linearScore w (fun i => x i + δ i) - linearScore w x| ≤ ε * ∑ i, |w i| := by
-  have hdiff : linearScore w (fun i => x i + δ i) - linearScore w x = ∑ i, w i * δ i := by
-    simp only [linearScore, mul_add, Finset.sum_add_distrib, add_sub_cancel_left]
+    |GET_LINEAR_SCORE w (fun i => x i + δ i) - GET_LINEAR_SCORE w x| ≤ ε * ∑ i, |w i| := by
+  have hdiff : GET_LINEAR_SCORE w (fun i => x i + δ i) - GET_LINEAR_SCORE w x = ∑ i, w i * δ i := by
+    simp only [GET_LINEAR_SCORE, mul_add, Finset.sum_add_distrib, add_sub_cancel_left]
   rw [hdiff, Finset.mul_sum]
   refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
   rw [abs_mul, mul_comm]
@@ -150,13 +150,13 @@ variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
 /-- A larger score has a larger share. -/
 theorem softmax_le_softmax_iff (z : ι → ℝ) (i j : ι) :
-    softmax z i ≤ softmax z j ↔ z i ≤ z j := by
-  rw [softmax, softmax, div_le_div_iff_of_pos_right (sum_exp_pos z), Real.exp_le_exp]
+    APPLY_SOFTMAX z i ≤ APPLY_SOFTMAX z j ↔ z i ≤ z j := by
+  rw [APPLY_SOFTMAX, APPLY_SOFTMAX, div_le_div_iff_of_pos_right (sum_exp_pos z), Real.exp_le_exp]
 
 /-- **Temperature changes confidence, never the ranking.** -/
 theorem softmax_temperature_order {T : ℝ} (hT : 0 < T) (z : ι → ℝ) (i j : ι) :
-    softmax (fun k => z k / T) i ≤ softmax (fun k => z k / T) j
-      ↔ softmax z i ≤ softmax z j := by
+    APPLY_SOFTMAX (fun k => z k / T) i ≤ APPLY_SOFTMAX (fun k => z k / T) j
+      ↔ APPLY_SOFTMAX z i ≤ APPLY_SOFTMAX z j := by
   rw [softmax_le_softmax_iff, softmax_le_softmax_iff, div_le_div_iff_of_pos_right hT]
 
 end Temperature

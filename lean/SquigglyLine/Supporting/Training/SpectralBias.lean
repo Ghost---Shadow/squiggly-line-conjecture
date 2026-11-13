@@ -63,8 +63,8 @@ variable {Θ Y : Type*}
 multiplies the error along `u` by `1 - η * lam`. -/
 theorem inner_residual_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ : Θ) {u : Y} {lam : ℝ}
     (hu : A (adjoint A u) = lam • u) :
-    inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y (gradientStep A y η θ))
-      = (1 - η * lam) * inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ) := by
+    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (TAKE_GRADIENT_STEP A y η θ))
+      = (1 - η * lam) * inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ) := by
   rw [residual_gradientStep, inner_sub_right, real_inner_smul_right, ← kernel_inner_comm, hu,
     real_inner_smul_left]
   ring
@@ -73,8 +73,8 @@ theorem inner_residual_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ 
 `(1 - η * lam) ^ t` times what it was at the start. -/
 theorem inner_residual_iterate_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) {u : Y}
     {lam : ℝ} (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))
-      = (1 - η * lam) ^ t * inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀) := by
+    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))
+      = (1 - η * lam) ^ t * inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) := by
   induction t with
   | zero => simp
   | succ n ih =>
@@ -85,8 +85,8 @@ theorem inner_residual_iterate_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : �
 stays where it started, however long training runs. -/
 theorem inner_residual_iterate_of_kernel_eq_zero (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ)
     {u : Y} (hu : A (adjoint A u) = 0) (t : ℕ) :
-    inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))
-      = inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀) := by
+    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))
+      = inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) := by
   have hu' : A (adjoint A u) = (0 : ℝ) • u := by rw [hu, zero_smul]
   rw [inner_residual_iterate_gradientStep A y η θ₀ hu' t]
   simp
@@ -96,10 +96,10 @@ steps the error along `u` is at least `1 - t * (η * lam)` and at most `exp (-(t
 of what it was. The clock of the direction is `1 / (η * lam)` steps. -/
 theorem spectral_bias (A : Θ →L[ℝ] Y) (y : Y) {η lam : ℝ} (hle : η * lam ≤ 1) (θ₀ : Θ) {u : Y}
     (hu : A (adjoint A u) = lam • u) (t : ℕ) :
-    (1 - t * (η * lam)) * |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)|
-        ≤ |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))|
-      ∧ |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[t] θ₀))|
-        ≤ Real.exp (-(t * (η * lam))) * |inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
+    (1 - t * (η * lam)) * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)|
+        ≤ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
+      ∧ |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[t] θ₀))|
+        ≤ Real.exp (-(t * (η * lam))) * |inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)| := by
   have hshare : 0 ≤ (1 - η * lam) ^ t := pow_nonneg (by linarith) t
   rw [inner_residual_iterate_gradientStep A y η θ₀ hu t, abs_mul, abs_of_nonneg hshare]
   exact ⟨mul_le_mul_of_nonneg_right (one_sub_mul_le_pow_one_sub hle t) (abs_nonneg _),

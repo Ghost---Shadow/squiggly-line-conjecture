@@ -23,12 +23,12 @@ variable {X : Type*} [SeminormedAddCommGroup X] [NormedSpace ℝ X]
   {f : X → ℝ} {ρ w : ℝ} {s : Set ℝ}
 
 /-- Squeeze a function sideways by the factor `w`. -/
-def compress (w : ℝ) (f : X → ℝ) : X → ℝ :=
+def COMPRESS (w : ℝ) (f : X → ℝ) : X → ℝ :=
   fun x => f (w • x)
 
 /-- **Closer.** Squeezing by `w` divides the oscillation scale by `w`. -/
-theorem CoversWithin.compress (h : CoversWithin f ρ s) (hw : 0 < w) :
-    CoversWithin (compress w f) (ρ / w) s := by
+theorem COVERS_WITHIN.compress (h : COVERS_WITHIN f ρ s) (hw : 0 < w) :
+    COVERS_WITHIN (COMPRESS w f) (ρ / w) s := by
   intro x y hy
   obtain ⟨z, hz, hfz⟩ := h (w • x) y hy
   refine ⟨w⁻¹ • z, ?_, ?_⟩
@@ -44,7 +44,7 @@ theorem CoversWithin.compress (h : CoversWithin f ρ s) (hw : 0 < w) :
 
 /-- **Steeper.** Squeezing by `w` multiplies the slope by `w`. -/
 theorem lipschitzWith_compress {K : ℝ≥0} (hf : LipschitzWith K f) (w : ℝ≥0) :
-    LipschitzWith (w * K) (compress (w : ℝ) f) := by
+    LipschitzWith (w * K) (COMPRESS (w : ℝ) f) := by
   refine LipschitzWith.of_dist_le_mul fun x y => ?_
   calc dist (f ((w : ℝ) • x)) (f ((w : ℝ) • y))
       ≤ K * dist ((w : ℝ) • x) ((w : ℝ) • y) := hf.dist_le_mul _ _
@@ -60,17 +60,17 @@ variable [MeasurableSpace X]
 def RandomFunction.compress (F : RandomFunction X) (w : ℝ) : RandomFunction X where
   Param := F.Param
   prior := F.prior
-  eval θ := SquigglyLine.compress w (F.eval θ)
+  eval θ := SquigglyLine.COMPRESS w (F.eval θ)
   measurable_eval x := F.measurable_eval (w • x)
 
 /-- The output of the random function has the same distribution at every input. -/
-def HomogeneousMarginals (F : RandomFunction X) : Prop :=
+def HAS_HOMOGENEOUS_MARGINALS (F : RandomFunction X) : Prop :=
   ∀ x x', F.marginal x = F.marginal x'
 
 omit [MeasurableSpace X] in
 /-- **No better.** Squeezing a random function with homogeneous marginals changes none of
 its one-point marginals. -/
-theorem marginal_compress_eq (F : RandomFunction X) (h : HomogeneousMarginals F) (w w' : ℝ) :
+theorem marginal_compress_eq (F : RandomFunction X) (h : HAS_HOMOGENEOUS_MARGINALS F) (w w' : ℝ) :
     (F.compress w).marginal = (F.compress w').marginal := by
   funext x
   exact h (w • x) (w' • x)
@@ -81,23 +81,23 @@ then: the nearest-point distance lies between the vertical error divided by `√
 and `ρ / w`; its expectation tends to zero as `w` grows; no expected regression loss
 changes; and a warp of the input of size at most `ρ / w` fits any target. -/
 theorem squiggly_line_theorem_general (F : RandomFunction X) {K : ℝ≥0}
-    (hcov : ∀ θ, CoversWithin (F.eval θ) ρ s) (hlip : ∀ θ, LipschitzWith K (F.eval θ))
-    (hhom : HomogeneousMarginals F) {ℓ : ℝ → ℝ} (hℓ : Measurable ℓ)
+    (hcov : ∀ θ, COVERS_WITHIN (F.eval θ) ρ s) (hlip : ∀ θ, LipschitzWith K (F.eval θ))
+    (hhom : HAS_HOMOGENEOUS_MARGINALS F) {ℓ : ℝ → ℝ} (hℓ : Measurable ℓ)
     (μ : Measure (DataPoint X)) [IsProbabilityMeasure μ] (hμ : ∀ᵐ p ∂μ, p.2 ∈ s) :
     (∀ {w : ℝ}, 0 < w → ∀ (θ : F.Param) (p : DataPoint X), p.2 ∈ s →
-        verticalDist ((F.compress w).eval θ) p / √(1 + (w * K) ^ 2)
-            ≤ nearestDist ((F.compress w).eval θ) p ∧
-          nearestDist ((F.compress w).eval θ) p ≤ ρ / w) ∧
-      Tendsto (fun w : ℝ => (F.compress w).expected nearestDist μ) atTop (𝓝 0) ∧
-      (∀ w w' : ℝ, (F.compress w).expected (residualLoss ℓ) μ
-        = (F.compress w').expected (residualLoss ℓ) μ) ∧
+        GET_VERTICAL_ERROR ((F.compress w).eval θ) p / √(1 + (w * K) ^ 2)
+            ≤ GET_NEAREST_DISTANCE ((F.compress w).eval θ) p ∧
+          GET_NEAREST_DISTANCE ((F.compress w).eval θ) p ≤ ρ / w) ∧
+      Tendsto (fun w : ℝ => (F.compress w).expected GET_NEAREST_DISTANCE μ) atTop (𝓝 0) ∧
+      (∀ w w' : ℝ, (F.compress w).expected (GET_RESIDUAL_LOSS ℓ) μ
+        = (F.compress w').expected (GET_RESIDUAL_LOSS ℓ) μ) ∧
       ∀ {w : ℝ}, 0 < w → ∀ (θ : F.Param) (target : X → ℝ), (∀ x, target x ∈ s) →
         ∃ warp : X → X, (∀ x, dist x (warp x) ≤ ρ / w) ∧
           ∀ x, (F.compress w).eval θ (warp x) = target x := by
   refine ⟨fun {w} hw θ p hp => ⟨?_, ?_⟩, ?_, ?_, ?_⟩
   · have hK := verticalDist_le_of_lipschitz (lipschitzWith_compress (hlip θ) ⟨w, hw.le⟩) p
-    change verticalDist (compress w (F.eval θ)) p
-      ≤ √(1 + (w * (K : ℝ)) ^ 2) * nearestDist (compress w (F.eval θ)) p at hK
+    change GET_VERTICAL_ERROR (COMPRESS w (F.eval θ)) p
+      ≤ √(1 + (w * (K : ℝ)) ^ 2) * GET_NEAREST_DISTANCE (COMPRESS w (F.eval θ)) p at hK
     rw [div_le_iff₀' (by positivity)]
     exact hK
   · exact nearestDist_le_of_coversWithin ((hcov θ).compress hw) p hp

@@ -32,19 +32,19 @@ omit [CompleteSpace Y] in
 the old errors by `η` times `A B†` applied to the new errors. -/
 theorem residual_gradientStep_other (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z) (y : Y) (z : Z) (η : ℝ)
     (θ : Θ) :
-    residual (A : Θ →ₗ[ℝ] Y) y (gradientStep B z η θ)
-      = residual (A : Θ →ₗ[ℝ] Y) y θ
-        - η • A (adjoint B (residual (B : Θ →ₗ[ℝ] Z) z θ)) := by
-  simp only [residual, gradientStep, ContinuousLinearMap.coe_coe, map_add, map_smul]
+    GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (TAKE_GRADIENT_STEP B z η θ)
+      = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ
+        - η • A (adjoint B (GET_RESIDUAL (B : Θ →ₗ[ℝ] Z) z θ)) := by
+  simp only [GET_RESIDUAL, TAKE_GRADIENT_STEP, ContinuousLinearMap.coe_coe, map_add, map_smul]
   abel
 
 /-- **Forgetting along one direction.** The old error along `u` changes by `η` times the
 new task's view of `u`, matched against the new errors. -/
 theorem inner_forgetting_step (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z) (y : Y) (z : Z) (η : ℝ) (θ : Θ)
     (u : Y) :
-    inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y (gradientStep B z η θ))
-      = inner ℝ u (residual (A : Θ →ₗ[ℝ] Y) y θ)
-        - η * inner ℝ (B (adjoint A u)) (residual (B : Θ →ₗ[ℝ] Z) z θ) := by
+    inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y (TAKE_GRADIENT_STEP B z η θ))
+      = inner ℝ u (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ)
+        - η * inner ℝ (B (adjoint A u)) (GET_RESIDUAL (B : Θ →ₗ[ℝ] Z) z θ) := by
   rw [residual_gradientStep_other, inner_sub_right, real_inner_smul_right,
     ← adjoint_inner_left A, adjoint_inner_right]
 
@@ -53,8 +53,8 @@ omit [CompleteSpace Y] in
 gradient steps on the new task leave the old errors exactly where they were. -/
 theorem residual_iterate_of_cross_kernel_eq_zero (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z)
     (hcross : ∀ v, A (adjoint B v) = 0) (y : Y) (z : Z) (η : ℝ) (θ₀ : Θ) (t : ℕ) :
-    residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep B z η)^[t] θ₀)
-      = residual (A : Θ →ₗ[ℝ] Y) y θ₀ := by
+    GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP B z η)^[t] θ₀)
+      = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ := by
   induction t with
   | zero => rfl
   | succ n ih =>
@@ -64,9 +64,9 @@ theorem residual_iterate_of_cross_kernel_eq_zero (A : Θ →L[ℝ] Y) (B : Θ �
 omit [CompleteSpace Θ] [CompleteSpace Y] in
 /-- Moving the weights changes the old errors by at most `‖A‖` times the distance moved. -/
 theorem forgetting_le_dist (A : Θ →L[ℝ] Y) (y : Y) (θ θ' : Θ) :
-    ‖residual (A : Θ →ₗ[ℝ] Y) y θ' - residual (A : Θ →ₗ[ℝ] Y) y θ‖ ≤ ‖A‖ * ‖θ' - θ‖ := by
-  have hdiff : residual (A : Θ →ₗ[ℝ] Y) y θ' - residual (A : Θ →ₗ[ℝ] Y) y θ = -A (θ' - θ) := by
-    simp only [residual, ContinuousLinearMap.coe_coe, map_sub]
+    ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ' - GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ‖ ≤ ‖A‖ * ‖θ' - θ‖ := by
+  have hdiff : GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ' - GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ = -A (θ' - θ) := by
+    simp only [GET_RESIDUAL, ContinuousLinearMap.coe_coe, map_sub]
     abel
   rw [hdiff, norm_neg]
   exact A.le_opNorm _
@@ -76,11 +76,11 @@ omit [CompleteSpace Y] in
 old errors have changed by at most `‖A‖` times the distance from the start to the nearest
 fit of the new task. -/
 theorem forgetting_le_travel (A : Θ →L[ℝ] Y) (B : Θ →L[ℝ] Z) (y : Y) (z : Z) (η : ℝ) (θ₀ : Θ)
-    (t : ℕ) (hfit : B ((gradientStep B z η)^[t] θ₀) = z) :
-    ‖residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep B z η)^[t] θ₀)
-        - residual (A : Θ →ₗ[ℝ] Y) y θ₀‖
-      ≤ ‖A‖ * travel (B : Θ →ₗ[ℝ] Z) z θ₀ := by
-  have hnear : ‖(gradientStep B z η)^[t] θ₀ - θ₀‖ ≤ travel (B : Θ →ₗ[ℝ] Z) z θ₀ := by
+    (t : ℕ) (hfit : B ((TAKE_GRADIENT_STEP B z η)^[t] θ₀) = z) :
+    ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP B z η)^[t] θ₀)
+        - GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖
+      ≤ ‖A‖ * GET_TRAVEL (B : Θ →ₗ[ℝ] Z) z θ₀ := by
+  have hnear : ‖(TAKE_GRADIENT_STEP B z η)^[t] θ₀ - θ₀‖ ≤ GET_TRAVEL (B : Θ →ₗ[ℝ] Z) z θ₀ := by
     refine le_csInf ⟨_, _, hfit, rfl⟩ ?_
     rintro d ⟨θ', hθ', rfl⟩
     exact gradientDescent_fit_is_nearest B z η θ₀ t hfit hθ'

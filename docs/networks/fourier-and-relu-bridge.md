@@ -18,7 +18,7 @@ differ, and it is the one that matters for training.
 
 ## Bridge 1: a fold is a frequency doubling
 
-Take the two-neuron layer `tent` from `Depth.lean`. It folds the interval
+Take the two-neuron layer `APPLY_TENT` from `Depth.lean`. It folds the interval
 `[0, 1]` in half. Now look at its output through one fixed lens, the function
 `sin²(π/2 · y)`. Then
 

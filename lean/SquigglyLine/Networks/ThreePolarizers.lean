@@ -23,49 +23,49 @@ namespace SquigglyLine
 open Real
 
 /-- An arrow of length `a` at angle `ψ`: light of strength `a` vibrating along `ψ`. -/
-noncomputable def light (a ψ : ℝ) : ℝ × ℝ :=
+noncomputable def MAKE_LIGHT (a ψ : ℝ) : ℝ × ℝ :=
   (a * cos ψ, a * sin ψ)
 
 /-- A polarizer with its axis at angle `φ`: the shadow of the arrow on that direction. -/
-noncomputable def polarizer (φ : ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
+noncomputable def PASS_THROUGH_POLARIZER (φ : ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
   ((v.1 * cos φ + v.2 * sin φ) * cos φ, (v.1 * cos φ + v.2 * sin φ) * sin φ)
 
 /-- **Malus's law.** The shadow has `cos` of the angle between arrow and axis. -/
-theorem malus (a ψ φ : ℝ) : polarizer φ (light a ψ) = light (a * cos (φ - ψ)) φ := by
-  ext <;> simp only [polarizer, light, cos_sub] <;> ring
+theorem malus (a ψ φ : ℝ) : PASS_THROUGH_POLARIZER φ (MAKE_LIGHT a ψ) = MAKE_LIGHT (a * cos (φ - ψ)) φ := by
+  ext <;> simp only [PASS_THROUGH_POLARIZER, MAKE_LIGHT, cos_sub] <;> ring
 
-theorem light_zero (ψ : ℝ) : light 0 ψ = (0, 0) := by
-  simp [light]
+theorem light_zero (ψ : ℝ) : MAKE_LIGHT 0 ψ = (0, 0) := by
+  simp [MAKE_LIGHT]
 
 /-- **Crossed plates block.** -/
-theorem polarizer_crossed (a ψ : ℝ) : polarizer (ψ + π / 2) (light a ψ) = (0, 0) := by
+theorem polarizer_crossed (a ψ : ℝ) : PASS_THROUGH_POLARIZER (ψ + π / 2) (MAKE_LIGHT a ψ) = (0, 0) := by
   rw [malus, add_sub_cancel_left, cos_pi_div_two, mul_zero, light_zero]
 
 /-- A stack of `k` plates, the `j`-th with its axis at `j * θ`. -/
-noncomputable def throughPlates (θ : ℝ) : ℕ → ℝ × ℝ → ℝ × ℝ
+noncomputable def PASS_THROUGH_PLATES (θ : ℝ) : ℕ → ℝ × ℝ → ℝ × ℝ
   | 0, v => v
-  | k + 1, v => polarizer (((k + 1 : ℕ) : ℝ) * θ) (throughPlates θ k v)
+  | k + 1, v => PASS_THROUGH_POLARIZER (((k + 1 : ℕ) : ℝ) * θ) (PASS_THROUGH_PLATES θ k v)
 
 /-- **The photon's path.** After `k` plates the arrow has length `a * cos θ ^ k` and
 angle `k * θ`. -/
 theorem throughPlates_light (a θ : ℝ) (k : ℕ) :
-    throughPlates θ k (light a 0) = light (a * cos θ ^ k) (k * θ) := by
+    PASS_THROUGH_PLATES θ k (MAKE_LIGHT a 0) = MAKE_LIGHT (a * cos θ ^ k) (k * θ) := by
   induction k with
-  | zero => simp [throughPlates]
+  | zero => simp [PASS_THROUGH_PLATES]
   | succ n ih =>
-    rw [throughPlates, ih, malus,
+    rw [PASS_THROUGH_PLATES, ih, malus,
       show ((n + 1 : ℕ) : ℝ) * θ - n * θ = θ by push_cast; ring, pow_succ, mul_assoc]
 
 /-- **Three polarizers.** With a plate at 45° in between, half the length reaches the
 vertical. -/
-theorem three_polarizers : throughPlates (π / 4) 2 (light 1 0) = (0, 1 / 2) := by
-  rw [throughPlates_light, light, one_mul, cos_pi_div_four,
+theorem three_polarizers : PASS_THROUGH_PLATES (π / 4) 2 (MAKE_LIGHT 1 0) = (0, 1 / 2) := by
+  rw [throughPlates_light, MAKE_LIGHT, one_mul, cos_pi_div_four,
     show ((2 : ℕ) : ℝ) * (π / 4) = π / 2 by push_cast; ring, cos_pi_div_two, sin_pi_div_two,
     mul_zero, mul_one, div_pow, sq_sqrt (by norm_num)]
   norm_num
 
 /-- Without the plate in between, nothing reaches the vertical. -/
-theorem two_polarizers : polarizer (π / 2) (light 1 0) = (0, 0) := by
+theorem two_polarizers : PASS_THROUGH_POLARIZER (π / 2) (MAKE_LIGHT 1 0) = (0, 0) := by
   simpa using polarizer_crossed 1 0
 
 /-- A small turn loses little: `cos x ^ N` is at least `1 - N * (x² / 2)`. -/
@@ -80,12 +80,12 @@ theorem one_sub_mul_le_cos_pow {x : ℝ} (hx : x ^ 2 ≤ 2) (N : ℕ) :
 /-- **More plates, closer.** A quarter turn in `N ≥ 2` plates arrives pointing straight up,
 with at least `1 - π² / (8N)` of its length. -/
 theorem quarter_turn_arrives {N : ℕ} (hN : 2 ≤ N) :
-    throughPlates (π / (2 * N)) N (light 1 0) = (0, cos (π / (2 * N)) ^ N) ∧
+    PASS_THROUGH_PLATES (π / (2 * N)) N (MAKE_LIGHT 1 0) = (0, cos (π / (2 * N)) ^ N) ∧
       1 - π ^ 2 / (8 * N) ≤ cos (π / (2 * N)) ^ N := by
   have hN' : (2 : ℝ) ≤ N := by exact_mod_cast hN
   have hNpos : (0 : ℝ) < N := by linarith
   constructor
-  · rw [throughPlates_light, light, one_mul,
+  · rw [throughPlates_light, MAKE_LIGHT, one_mul,
       show (N : ℝ) * (π / (2 * N)) = π / 2 by field_simp, cos_pi_div_two, sin_pi_div_two,
       mul_zero, mul_one]
   · have hx0 : 0 ≤ π / (2 * N) := by positivity

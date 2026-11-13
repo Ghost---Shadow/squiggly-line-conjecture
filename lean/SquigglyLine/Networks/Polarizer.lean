@@ -2,7 +2,7 @@
 ReLU as a polarizer with a wide opening.
 
 In the plane, ReLU sends each point to the nearest point of the positive
-quadrant. A layer that rotates and then applies ReLU (a `fan`) therefore acts
+quadrant. A layer that rotates and then applies ReLU (a `APPLY_FAN`) therefore acts
 on a bird sitting on the edge of the quadrant like a polarizer on light:
 
 * turn by `θ ≤ 90°`  : the bird is pressed back onto the edge and keeps the
@@ -22,16 +22,16 @@ namespace SquigglyLine
 open Real
 
 /-- ReLU on the plane. -/
-def relu2 (p : ℝ × ℝ) : ℝ × ℝ :=
+def APPLY_RELU_TO_PAIR (p : ℝ × ℝ) : ℝ × ℝ :=
   (max p.1 0, max p.2 0)
 
 /-- Rotation of the plane by the angle `θ`. -/
-noncomputable def rotate (θ : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
+noncomputable def ROTATE (θ : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
   (cos θ * p.1 - sin θ * p.2, sin θ * p.1 + cos θ * p.2)
 
 /-- One layer of the wind tunnel: rotate, then ReLU. -/
-noncomputable def fan (θ : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
-  relu2 (rotate θ p)
+noncomputable def APPLY_FAN (θ : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
+  APPLY_RELU_TO_PAIR (ROTATE θ p)
 
 theorem abs_sub_relu_le (x : ℝ) {u : ℝ} (hu : 0 ≤ u) : |x - max x 0| ≤ |x - u| := by
   rcases le_total 0 x with hx | hx
@@ -41,7 +41,7 @@ theorem abs_sub_relu_le (x : ℝ) {u : ℝ} (hu : 0 ≤ u) : |x - max x 0| ≤ |
 
 /-- **ReLU is a projection.** It sends a point to the nearest point of the positive quadrant. -/
 theorem relu2_nearest (p u : ℝ × ℝ) (hu₁ : 0 ≤ u.1) (hu₂ : 0 ≤ u.2) :
-    (p.1 - (relu2 p).1) ^ 2 + (p.2 - (relu2 p).2) ^ 2 ≤ (p.1 - u.1) ^ 2 + (p.2 - u.2) ^ 2 :=
+    (p.1 - (APPLY_RELU_TO_PAIR p).1) ^ 2 + (p.2 - (APPLY_RELU_TO_PAIR p).2) ^ 2 ≤ (p.1 - u.1) ^ 2 + (p.2 - u.2) ^ 2 :=
   add_le_add (sq_le_sq.mpr (abs_sub_relu_le p.1 hu₁)) (sq_le_sq.mpr (abs_sub_relu_le p.2 hu₂))
 
 variable {r θ : ℝ}
@@ -49,7 +49,7 @@ variable {r θ : ℝ}
 /-- **Malus's law.** A bird on the edge, turned out of the quadrant by `θ ≤ 90°`, is pressed
 back onto the edge and keeps the fraction `cos θ` of its length. -/
 theorem fan_of_le_pi_div_two (hr : 0 ≤ r) (h0 : 0 ≤ θ) (hθ : θ ≤ π / 2) :
-    fan (-θ) (r, 0) = (r * cos θ, 0) := by
+    APPLY_FAN (-θ) (r, 0) = (r * cos θ, 0) := by
   have hc : 0 ≤ cos θ := cos_nonneg_of_mem_Icc ⟨by linarith [pi_pos], hθ⟩
   have hs : 0 ≤ sin θ := sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [pi_pos])
   ext
@@ -61,7 +61,7 @@ theorem fan_of_le_pi_div_two (hr : 0 ≤ r) (h0 : 0 ≤ θ) (hθ : θ ≤ π / 2
 
 /-- **Crossed polarizers.** A bird turned by between 90° and 180° in one step is blocked. -/
 theorem fan_of_pi_div_two_le (hr : 0 ≤ r) (hθ : π / 2 ≤ θ) (hπ : θ ≤ π) :
-    fan (-θ) (r, 0) = (0, 0) := by
+    APPLY_FAN (-θ) (r, 0) = (0, 0) := by
   have hc : cos θ ≤ 0 := cos_nonpos_of_pi_div_two_le_of_le hθ (by linarith [pi_pos])
   have hs : 0 ≤ sin θ := sin_nonneg_of_nonneg_of_le_pi (by linarith [pi_pos]) hπ
   ext
@@ -73,7 +73,7 @@ theorem fan_of_pi_div_two_le (hr : 0 ≤ r) (hθ : π / 2 ≤ θ) (hπ : θ ≤ 
 
 /-- **Many small turns.** `N` layers, each turning by `θ ≤ 90°`, keep `cos θ ^ N`. -/
 theorem iterate_fan (hr : 0 ≤ r) (h0 : 0 ≤ θ) (hθ : θ ≤ π / 2) (N : ℕ) :
-    (fan (-θ))^[N] (r, 0) = (r * cos θ ^ N, 0) := by
+    (APPLY_FAN (-θ))^[N] (r, 0) = (r * cos θ ^ N, 0) := by
   have hc : 0 ≤ cos θ := cos_nonneg_of_mem_Icc ⟨by linarith [pi_pos], hθ⟩
   induction N with
   | zero => simp

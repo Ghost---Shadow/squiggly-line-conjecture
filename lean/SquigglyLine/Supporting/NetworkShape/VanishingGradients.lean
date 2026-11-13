@@ -50,41 +50,41 @@ section Plates
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {e : E}
 
 /-- **A plate never lengthens the light.** -/
-theorem norm_plate_le (he : ‖e‖ = 1) (v : E) : ‖plate e v‖ ≤ ‖v‖ := by
+theorem norm_plate_le (he : ‖e‖ = 1) (v : E) : ‖PASS_THROUGH_PLATE e v‖ ≤ ‖v‖ := by
   rw [norm_plate he]
   calc |inner ℝ e v| ≤ ‖e‖ * ‖v‖ := abs_real_inner_le_norm _ _
     _ = ‖v‖ := by rw [he, one_mul]
 
 /-- **A plate acts the same way forwards and backwards.** -/
-theorem inner_plate_comm (e v w : E) : inner ℝ (plate e v) w = inner ℝ v (plate e w) := by
-  rw [plate, plate, real_inner_smul_left, real_inner_smul_right, real_inner_comm e v]
+theorem inner_plate_comm (e v w : E) : inner ℝ (PASS_THROUGH_PLATE e v) w = inner ℝ v (PASS_THROUGH_PLATE e w) := by
+  rw [PASS_THROUGH_PLATE, PASS_THROUGH_PLATE, real_inner_smul_left, real_inner_smul_right, real_inner_comm e v]
   ring
 
 /-- **The gradient comes back through the same plates.** Reading the output of a stack of
 plates along `w` is the same as reading the input along `w` sent through the plates in the
 opposite order. -/
 theorem inner_runPlates (axes : List E) (v w : E) :
-    inner ℝ (runLayers (axes.map plate) v) w
-      = inner ℝ v (runLayers (axes.reverse.map plate) w) := by
+    inner ℝ (RUN_LAYERS (axes.map PASS_THROUGH_PLATE) v) w
+      = inner ℝ v (RUN_LAYERS (axes.reverse.map PASS_THROUGH_PLATE) w) := by
   induction axes generalizing v with
   | nil => rfl
   | cons e rest ih =>
-    have hback : runLayers ((e :: rest).reverse.map plate) w
-        = plate e (runLayers (rest.reverse.map plate) w) := by
-      simp [runLayers, runLayers_append]
-    have hfwd : runLayers ((e :: rest).map plate) v = runLayers (rest.map plate) (plate e v) := by
-      simp [runLayers]
+    have hback : RUN_LAYERS ((e :: rest).reverse.map PASS_THROUGH_PLATE) w
+        = PASS_THROUGH_PLATE e (RUN_LAYERS (rest.reverse.map PASS_THROUGH_PLATE) w) := by
+      simp [RUN_LAYERS, runLayers_append]
+    have hfwd : RUN_LAYERS ((e :: rest).map PASS_THROUGH_PLATE) v = RUN_LAYERS (rest.map PASS_THROUGH_PLATE) (PASS_THROUGH_PLATE e v) := by
+      simp [RUN_LAYERS]
     rw [hback, hfwd, ih, inner_plate_comm]
 
 /-- **Plates with a bypass blow up.** After `k` of them on one axis the light is at least
 `2 ^ k` times as long as its first overlap with the axis. -/
 theorem le_norm_iterate_skipPlate (he : ‖e‖ = 1) (v : E) (k : ℕ) :
-    2 ^ k * |inner ℝ e v| ≤ ‖(skipPlate e)^[k] v‖ := by
-  calc 2 ^ k * |inner ℝ e v| = |inner ℝ e ((skipPlate e)^[k] v)| := by
+    2 ^ k * |inner ℝ e v| ≤ ‖(PASS_THROUGH_SKIP_PLATE e)^[k] v‖ := by
+  calc 2 ^ k * |inner ℝ e v| = |inner ℝ e ((PASS_THROUGH_SKIP_PLATE e)^[k] v)| := by
         rw [inner_iterate_skipPlate he, abs_mul,
           abs_of_nonneg (pow_nonneg (zero_le_two (α := ℝ)) k)]
-    _ ≤ ‖e‖ * ‖(skipPlate e)^[k] v‖ := abs_real_inner_le_norm _ _
-    _ = ‖(skipPlate e)^[k] v‖ := by rw [he, one_mul]
+    _ ≤ ‖e‖ * ‖(PASS_THROUGH_SKIP_PLATE e)^[k] v‖ := abs_real_inner_le_norm _ _
+    _ = ‖(PASS_THROUGH_SKIP_PLATE e)^[k] v‖ := by rw [he, one_mul]
 
 end Plates
 

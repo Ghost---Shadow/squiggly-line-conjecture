@@ -38,15 +38,15 @@ feature vector is within `‖φ‖` times the travel of the output at the start.
 theorem exists_fit_near_start (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) (y : Y) (θ₀ : Θ) :
     ∃ θ, A θ = y ∧
-      ∀ φ : Θ, |inner ℝ φ θ - inner ℝ φ θ₀| ≤ ‖φ‖ * travel (A : Θ →ₗ[ℝ] Y) y θ₀ := by
-  refine ⟨θ₀ + adjoint A (Kinv (residual (A : Θ →ₗ[ℝ] Y) y θ₀)), ?_, fun φ => ?_⟩
+      ∀ φ : Θ, |inner ℝ φ θ - inner ℝ φ θ₀| ≤ ‖φ‖ * GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ := by
+  refine ⟨θ₀ + adjoint A (Kinv (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)), ?_, fun φ => ?_⟩
   · rw [map_add, hinv]
-    simp [residual]
+    simp [GET_RESIDUAL]
   · rw [travel_eq_norm_of_kernelInverse A Kinv hinv]
-    calc |inner ℝ φ (θ₀ + adjoint A (Kinv (residual (A : Θ →ₗ[ℝ] Y) y θ₀))) - inner ℝ φ θ₀|
-        ≤ ‖φ‖ * ‖θ₀ + adjoint A (Kinv (residual (A : Θ →ₗ[ℝ] Y) y θ₀)) - θ₀‖ :=
+    calc |inner ℝ φ (θ₀ + adjoint A (Kinv (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))) - inner ℝ φ θ₀|
+        ≤ ‖φ‖ * ‖θ₀ + adjoint A (Kinv (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀)) - θ₀‖ :=
           abs_inner_sub_le _ _ _
-      _ = ‖φ‖ * ‖adjoint A (Kinv (residual (A : Θ →ₗ[ℝ] Y) y θ₀))‖ := by
+      _ = ‖φ‖ * ‖adjoint A (Kinv (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))‖ := by
           rw [add_sub_cancel_left]
 
 /-- **The travel is large only where the kernel is weak.** If the kernel is at least `c` in
@@ -54,8 +54,8 @@ every direction, the travel is at most the size of the residual divided by `√c
 theorem travel_le_of_le_kernel (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) {c : ℝ} (hc : 0 < c)
     (hK : ∀ v, c * ‖v‖ ^ 2 ≤ inner ℝ (A (adjoint A v)) v) (y : Y) (θ₀ : Θ) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀ ≤ ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √c := by
-  obtain ⟨r, hr⟩ : ∃ r, r = residual (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ ≤ ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √c := by
+  obtain ⟨r, hr⟩ : ∃ r, r = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
   rw [travel_eq_norm_of_kernelInverse A Kinv hinv, ← hr]
   have hsq_eq := norm_adjoint_kernelInverse_sq A Kinv hinv r
   have hinvr := hinv r
@@ -113,10 +113,10 @@ kernel stretches by `lam > 0`, the travel is exactly the size of the residual di
 `√lam`. -/
 theorem travel_eq_of_eigen (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) {lam : ℝ} (hlam : 0 < lam) (y : Y) (θ₀ : Θ)
-    (heig : A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀))
-      = lam • residual (A : Θ →ₗ[ℝ] Y) y θ₀) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √lam := by
-  obtain ⟨r, hr⟩ : ∃ r, r = residual (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
+    (heig : A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))
+      = lam • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) :
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ = ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ / √lam := by
+  obtain ⟨r, hr⟩ : ∃ r, r = GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀ := ⟨_, rfl⟩
   rw [travel_eq_norm_of_kernelInverse A Kinv hinv, ← hr]
   rw [← hr] at heig
   have key : lam * inner ℝ (Kinv r) r = ‖r‖ ^ 2 := by
@@ -136,9 +136,9 @@ by `ε`. As `ε` goes to zero this grows without bound. -/
 theorem le_travel_of_eigen_le (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
     (hinv : ∀ v, A (adjoint A (Kinv v)) = v) {lam ε : ℝ} (hlam : 0 < lam) (hε : 0 < ε)
     (hle : lam ≤ ε ^ 2) (y : Y) (θ₀ : Θ)
-    (heig : A (adjoint A (residual (A : Θ →ₗ[ℝ] Y) y θ₀))
-      = lam • residual (A : Θ →ₗ[ℝ] Y) y θ₀) :
-    ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ / ε ≤ travel (A : Θ →ₗ[ℝ] Y) y θ₀ := by
+    (heig : A (adjoint A (GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀))
+      = lam • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀) :
+    ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ / ε ≤ GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ := by
   rw [travel_eq_of_eigen A Kinv hinv hlam y θ₀ heig]
   refine div_le_div_of_nonneg_left (norm_nonneg _) (Real.sqrt_pos.mpr hlam) ?_
   calc √lam ≤ √(ε ^ 2) := Real.sqrt_le_sqrt hle
@@ -148,7 +148,7 @@ theorem le_travel_of_eigen_le (A : Θ →L[ℝ] Y) (Kinv : Y → Y)
 
 /-- With one training point and feature vector `a`, the kernel is the squared length of
 `a`. Adding features can only make it larger. -/
-theorem tightFeatures_innerSL (a : Θ) : TightFeatures (innerSL ℝ a) (‖a‖ ^ 2) := by
+theorem tightFeatures_innerSL (a : Θ) : HAS_TIGHT_FEATURES (innerSL ℝ a) (‖a‖ ^ 2) := by
   intro t
   rw [adjoint_innerSL_apply]
   simp [mul_comm]
@@ -156,9 +156,9 @@ theorem tightFeatures_innerSL (a : Θ) : TightFeatures (innerSL ℝ a) (‖a‖ 
 /-- **One training point.** The distance to the nearest fit is the error divided by the
 length of the feature vector. A short feature vector means a distant fit. -/
 theorem travel_one_point {a : Θ} (ha : a ≠ 0) (y : ℝ) (θ₀ : Θ) :
-    travel (innerSL ℝ a : Θ →ₗ[ℝ] ℝ) y θ₀ = |y - inner ℝ a θ₀| / ‖a‖ := by
+    GET_TRAVEL (innerSL ℝ a : Θ →ₗ[ℝ] ℝ) y θ₀ = |y - inner ℝ a θ₀| / ‖a‖ := by
   rw [(tightFeatures_innerSL a).travel_eq (pow_pos (norm_pos_iff.mpr ha) 2) y θ₀,
     Real.sqrt_sq (norm_nonneg a)]
-  simp [residual, Real.norm_eq_abs]
+  simp [GET_RESIDUAL, Real.norm_eq_abs]
 
 end SquigglyLine

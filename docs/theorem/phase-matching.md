@@ -28,7 +28,7 @@ see either of them.
 
 If the curve covers the labels within `ρ`, then for any single data point
 there is a shift of the input, no larger than `ρ`, after which the curve
-passes through the point (**proved**: this is what `CoversWithin` says).
+passes through the point (**proved**: this is what `COVERS_WITHIN` says).
 
 For a sine of frequency `w` the shift is at most `π / w` (**proved**:
 `sin_coversWithin`). In terms of the phase, the change needed is at most `π`,

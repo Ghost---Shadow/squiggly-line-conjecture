@@ -17,14 +17,14 @@ variable {X : Type*} {F G : RandomFunction X} {ℓ : ℝ → ℝ}
 /-- The expected loss on one data point is an integral against the one-point marginal. -/
 theorem integral_residualLoss_eq_integral_marginal (F : RandomFunction X) (hℓ : Measurable ℓ)
     (p : DataPoint X) :
-    ∫ θ, residualLoss ℓ (F.eval θ) p ∂F.prior = ∫ t, ℓ (p.2 - t) ∂F.marginal p.1 :=
+    ∫ θ, GET_RESIDUAL_LOSS ℓ (F.eval θ) p ∂F.prior = ∫ t, ℓ (p.2 - t) ∂F.marginal p.1 :=
   (integral_map (F.measurable_eval p.1).aemeasurable
     (hℓ.comp (measurable_const.sub measurable_id)).aestronglyMeasurable).symm
 
 /-- **Marginal lemma.** Equal one-point marginals give equal expected loss, on any data. -/
 theorem expected_residualLoss_congr [MeasurableSpace X] (hℓ : Measurable ℓ)
     (h : F.marginal = G.marginal) (μ : Measure (DataPoint X)) :
-    F.expected (residualLoss ℓ) μ = G.expected (residualLoss ℓ) μ := by
+    F.expected (GET_RESIDUAL_LOSS ℓ) μ = G.expected (GET_RESIDUAL_LOSS ℓ) μ := by
   simp only [RandomFunction.expected, integral_residualLoss_eq_integral_marginal _ hℓ, h]
 
 end SquigglyLine

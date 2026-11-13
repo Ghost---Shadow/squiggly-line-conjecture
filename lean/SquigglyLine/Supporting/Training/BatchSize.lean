@@ -29,29 +29,29 @@ variable {Θ Y₁ Y₂ : Type*}
 the second equals one step on both batches at once, minus `η ^ 2` times a term that passes
 through the kernel between the batches. -/
 theorem gradientStep_two_batches (η : ℝ) (θ : Θ) :
-    gradientStep A₂ y₂ η (gradientStep A₁ y₁ η θ)
-      = θ + η • (adjoint A₁ (residual (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
-            + adjoint A₂ (residual (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ))
-        - η ^ 2 • adjoint A₂ (A₂ (adjoint A₁ (residual (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ))) := by
-  rw [gradientStep, residual_gradientStep_other, map_sub, map_smul, gradientStep]
+    TAKE_GRADIENT_STEP A₂ y₂ η (TAKE_GRADIENT_STEP A₁ y₁ η θ)
+      = θ + η • (adjoint A₁ (GET_RESIDUAL (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
+            + adjoint A₂ (GET_RESIDUAL (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ))
+        - η ^ 2 • adjoint A₂ (A₂ (adjoint A₁ (GET_RESIDUAL (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ))) := by
+  rw [TAKE_GRADIENT_STEP, residual_gradientStep_other, map_sub, map_smul, TAKE_GRADIENT_STEP]
   module
 
 /-- **When the batches share nothing, the two are equal.** -/
 theorem two_batches_of_cross_kernel_eq_zero (hcross : ∀ v, A₂ (adjoint A₁ v) = 0) (η : ℝ)
     (θ : Θ) :
-    gradientStep A₂ y₂ η (gradientStep A₁ y₁ η θ)
-      = θ + η • (adjoint A₁ (residual (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
-            + adjoint A₂ (residual (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ)) := by
+    TAKE_GRADIENT_STEP A₂ y₂ η (TAKE_GRADIENT_STEP A₁ y₁ η θ)
+      = θ + η • (adjoint A₁ (GET_RESIDUAL (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
+            + adjoint A₂ (GET_RESIDUAL (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ)) := by
   rw [gradientStep_two_batches, hcross, map_zero, smul_zero, sub_zero]
 
 /-- **The linear scaling rule.** With the push averaged over a batch of size `B`, two steps
 at learning rate `η` are one step on the batch of size `2 B` at learning rate `2 η`, minus
 the correction, which is of order `η ^ 2`. -/
 theorem linear_scaling_rule (η B : ℝ) (θ : Θ) :
-    gradientStep A₂ y₂ (η / B) (gradientStep A₁ y₁ (η / B) θ)
-      = θ + (2 * η / (2 * B)) • (adjoint A₁ (residual (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
-            + adjoint A₂ (residual (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ))
-        - (η / B) ^ 2 • adjoint A₂ (A₂ (adjoint A₁ (residual (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ))) := by
+    TAKE_GRADIENT_STEP A₂ y₂ (η / B) (TAKE_GRADIENT_STEP A₁ y₁ (η / B) θ)
+      = θ + (2 * η / (2 * B)) • (adjoint A₁ (GET_RESIDUAL (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ)
+            + adjoint A₂ (GET_RESIDUAL (A₂ : Θ →ₗ[ℝ] Y₂) y₂ θ))
+        - (η / B) ^ 2 • adjoint A₂ (A₂ (adjoint A₁ (GET_RESIDUAL (A₁ : Θ →ₗ[ℝ] Y₁) y₁ θ))) := by
   rw [gradientStep_two_batches, mul_div_mul_left η B two_ne_zero]
 
 end SquigglyLine

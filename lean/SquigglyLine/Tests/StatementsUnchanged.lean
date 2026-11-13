@@ -27,18 +27,18 @@ open MeasureTheory Filter Topology Real
 example (A : ℝ) {ℓ : ℝ → ℝ} (hℓ : Measurable ℓ)
     {μ : Measure (DataPoint ℝ)} [IsProbabilityMeasure μ]
     (hμ : ∀ᵐ p ∂μ, p.2 ∈ Set.Icc (-|A|) |A|) :
-    (∀ {w : ℝ}, 0 < w → ∀ (φ : (sineWave A w).Param) (p : DataPoint ℝ),
+    (∀ {w : ℝ}, 0 < w → ∀ (φ : (MAKE_RANDOM_PHASE_SINE A w).Param) (p : DataPoint ℝ),
         p.2 ∈ Set.Icc (-|A|) |A| →
-          verticalDist ((sineWave A w).eval φ) p / √(1 + (A * w) ^ 2)
-              ≤ nearestDist ((sineWave A w).eval φ) p ∧
-            nearestDist ((sineWave A w).eval φ) p ≤ π / w) ∧
-      Tendsto (fun w : ℝ => (sineWave A w).expected nearestDist μ) atTop (𝓝 0) ∧
-      (∀ w w' : ℝ, (sineWave A w).expected (residualLoss ℓ) μ
-        = (sineWave A w').expected (residualLoss ℓ) μ) ∧
-      ∀ {w : ℝ}, 0 < w → ∀ (φ : (sineWave A w).Param) (target : ℝ → ℝ),
+          GET_VERTICAL_ERROR ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p / √(1 + (A * w) ^ 2)
+              ≤ GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ∧
+            GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ≤ π / w) ∧
+      Tendsto (fun w : ℝ => (MAKE_RANDOM_PHASE_SINE A w).expected GET_NEAREST_DISTANCE μ) atTop (𝓝 0) ∧
+      (∀ w w' : ℝ, (MAKE_RANDOM_PHASE_SINE A w).expected (GET_RESIDUAL_LOSS ℓ) μ
+        = (MAKE_RANDOM_PHASE_SINE A w').expected (GET_RESIDUAL_LOSS ℓ) μ) ∧
+      ∀ {w : ℝ}, 0 < w → ∀ (φ : (MAKE_RANDOM_PHASE_SINE A w).Param) (target : ℝ → ℝ),
         (∀ x, target x ∈ Set.Icc (-|A|) |A|) →
           ∃ warp : ℝ → ℝ, (∀ x, dist x (warp x) ≤ π / w) ∧
-            ∀ x, (sineWave A w).eval φ (warp x) = target x :=
+            ∀ x, (MAKE_RANDOM_PHASE_SINE A w).eval φ (warp x) = target x :=
   squiggly_line_theorem A hℓ hμ
 
 end SquigglyLine.Tests

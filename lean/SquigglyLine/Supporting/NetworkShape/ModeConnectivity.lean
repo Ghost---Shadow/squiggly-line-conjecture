@@ -31,29 +31,29 @@ variable {Θ Y : Type*}
 /-- On the straight line between two settings of the weights, the error is the matching
 blend of the two errors. -/
 theorem residual_along_between (t : ℝ) :
-    residual A y (along θ₀ θ₁ t) = (1 - t) • residual A y θ₀ + t • residual A y θ₁ := by
-  simp only [residual, along, map_add, map_smul, map_sub]
+    GET_RESIDUAL A y (MOVE_ALONG θ₀ θ₁ t) = (1 - t) • GET_RESIDUAL A y θ₀ + t • GET_RESIDUAL A y θ₁ := by
+  simp only [GET_RESIDUAL, MOVE_ALONG, map_add, map_smul, map_sub]
   module
 
 /-- **The line between two fits is all fits.** -/
-theorem fit_along (hfit₀ : A θ₀ = y) (hfit₁ : A θ₁ = y) (t : ℝ) : A (along θ₀ θ₁ t) = y := by
-  simp only [along, map_add, map_smul, map_sub, hfit₀, hfit₁, sub_self, smul_zero, add_zero]
+theorem fit_along (hfit₀ : A θ₀ = y) (hfit₁ : A θ₁ = y) (t : ℝ) : A (MOVE_ALONG θ₀ θ₁ t) = y := by
+  simp only [MOVE_ALONG, map_add, map_smul, map_sub, hfit₀, hfit₁, sub_self, smul_zero, add_zero]
 
 /-- **There is never a hill.** Anywhere on the line, the error is no larger than at the
 worse of the two ends. -/
 theorem no_barrier {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) :
-    ‖residual A y (along θ₀ θ₁ t)‖ ≤ max ‖residual A y θ₀‖ ‖residual A y θ₁‖ := by
+    ‖GET_RESIDUAL A y (MOVE_ALONG θ₀ θ₁ t)‖ ≤ max ‖GET_RESIDUAL A y θ₀‖ ‖GET_RESIDUAL A y θ₁‖ := by
   rw [residual_along_between]
-  calc ‖(1 - t) • residual A y θ₀ + t • residual A y θ₁‖
-      ≤ ‖(1 - t) • residual A y θ₀‖ + ‖t • residual A y θ₁‖ := norm_add_le _ _
-    _ = (1 - t) * ‖residual A y θ₀‖ + t * ‖residual A y θ₁‖ := by
+  calc ‖(1 - t) • GET_RESIDUAL A y θ₀ + t • GET_RESIDUAL A y θ₁‖
+      ≤ ‖(1 - t) • GET_RESIDUAL A y θ₀‖ + ‖t • GET_RESIDUAL A y θ₁‖ := norm_add_le _ _
+    _ = (1 - t) * ‖GET_RESIDUAL A y θ₀‖ + t * ‖GET_RESIDUAL A y θ₁‖ := by
         rw [norm_smul, norm_smul, Real.norm_of_nonneg (sub_nonneg.mpr h1),
           Real.norm_of_nonneg h0]
-    _ ≤ (1 - t) * max ‖residual A y θ₀‖ ‖residual A y θ₁‖
-          + t * max ‖residual A y θ₀‖ ‖residual A y θ₁‖ :=
+    _ ≤ (1 - t) * max ‖GET_RESIDUAL A y θ₀‖ ‖GET_RESIDUAL A y θ₁‖
+          + t * max ‖GET_RESIDUAL A y θ₀‖ ‖GET_RESIDUAL A y θ₁‖ :=
         add_le_add (mul_le_mul_of_nonneg_left (le_max_left _ _) (sub_nonneg.mpr h1))
           (mul_le_mul_of_nonneg_left (le_max_right _ _) h0)
-    _ = max ‖residual A y θ₀‖ ‖residual A y θ₁‖ := by ring
+    _ = max ‖GET_RESIDUAL A y θ₀‖ ‖GET_RESIDUAL A y θ₁‖ := by ring
 
 end Linear
 

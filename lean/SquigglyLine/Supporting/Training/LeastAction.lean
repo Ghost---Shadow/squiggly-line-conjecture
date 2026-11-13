@@ -49,19 +49,19 @@ theorem norm_sub_le_of_fit_along_features (A : Θ →L[ℝ] Y) {y : Y} {θ₀ θ
 /-- **Gradient descent never wastes movement.** After any number of steps the parameters
 differ from the start by a move along the features. -/
 theorem exists_iterate_gradientStep (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) (t : ℕ) :
-    ∃ v : Y, (gradientStep A y η)^[t] θ₀ = θ₀ + adjoint A v := by
+    ∃ v : Y, (TAKE_GRADIENT_STEP A y η)^[t] θ₀ = θ₀ + adjoint A v := by
   induction t with
   | zero => exact ⟨0, by simp⟩
   | succ n ih =>
     obtain ⟨v, hv⟩ := ih
-    refine ⟨v + η • residual (A : Θ →ₗ[ℝ] Y) y ((gradientStep A y η)^[n] θ₀), ?_⟩
-    rw [Function.iterate_succ_apply', gradientStep, map_add, map_smul, ← add_assoc, ← hv]
+    refine ⟨v + η • GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y ((TAKE_GRADIENT_STEP A y η)^[n] θ₀), ?_⟩
+    rw [Function.iterate_succ_apply', TAKE_GRADIENT_STEP, map_add, map_smul, ← add_assoc, ← hv]
 
 /-- **Training takes the least travel.** If gradient descent arrives at a fit, no other fit
 is nearer to the start. -/
 theorem gradientDescent_fit_is_nearest (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) (t : ℕ)
-    (hfit : A ((gradientStep A y η)^[t] θ₀) = y) {θ' : Θ} (hfit' : A θ' = y) :
-    ‖(gradientStep A y η)^[t] θ₀ - θ₀‖ ≤ ‖θ' - θ₀‖ := by
+    (hfit : A ((TAKE_GRADIENT_STEP A y η)^[t] θ₀) = y) {θ' : Θ} (hfit' : A θ' = y) :
+    ‖(TAKE_GRADIENT_STEP A y η)^[t] θ₀ - θ₀‖ ≤ ‖θ' - θ₀‖ := by
   obtain ⟨v, hv⟩ := exists_iterate_gradientStep A y η θ₀ t
   exact norm_sub_le_of_fit_along_features A hv hfit hfit'
 

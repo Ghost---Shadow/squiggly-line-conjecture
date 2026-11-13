@@ -9,14 +9,14 @@ The margin is a nearest-point distance:
 * `abs_inner_le_infDist_flatBoundary` : a point whose score against a unit
   direction is `s` is at least `|s|` from the flat boundary.
 
-The perceptron (`perceptronWeights`), which adds each example it gets wrong:
+The perceptron (`GET_PERCEPTRON_WEIGHTS`), which adds each example it gets wrong:
 * `mul_margin_le_inner` : each mistake moves the weights at least `γ` along
   the true direction.
 * `norm_sq_perceptronWeights_le` : each mistake adds at most `R²` to the
   squared size of the weights.
 * `perceptron_mistake_bound` : so there are at most `(R / γ)²` mistakes.
 
-XOR (`SeparatesXor`):
+XOR (`SEPARATES_XOR`):
 * `not_separatesXor_flat` : no flat boundary splits it.
 * `separatesXor_lift` : one lifted feature, the product, does.
 * `separatesXor_fold` : so does one fold.
@@ -45,11 +45,11 @@ section Margin
 variable {Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- The flat boundary through the origin at right angles to `u`. -/
-def flatBoundary (u : Θ) : Set Θ :=
+def GET_FLAT_BOUNDARY (u : Θ) : Set Θ :=
   {v | inner ℝ u v = 0}
 
 theorem abs_inner_le_dist_of_mem_flatBoundary {u : Θ} (hu : ‖u‖ ≤ 1) (x : Θ) {v : Θ}
-    (hv : v ∈ flatBoundary u) : |inner ℝ u x| ≤ dist x v := by
+    (hv : v ∈ GET_FLAT_BOUNDARY u) : |inner ℝ u x| ≤ dist x v := by
   have hshift : inner ℝ u x = inner ℝ u (x - v) := by
     rw [inner_sub_right, show inner ℝ u v = 0 from hv, sub_zero]
   rw [hshift, dist_eq_norm]
@@ -58,8 +58,8 @@ theorem abs_inner_le_dist_of_mem_flatBoundary {u : Θ} (hu : ‖u‖ ≤ 1) (x :
 /-- **The margin is a distance to the boundary.** A point whose score against a direction of
 length at most one is `s` lies at least `|s|` from the flat boundary. -/
 theorem abs_inner_le_infDist_flatBoundary {u : Θ} (hu : ‖u‖ ≤ 1) (x : Θ) :
-    |inner ℝ u x| ≤ Metric.infDist x (flatBoundary u) :=
-  (Metric.le_infDist ⟨0, by simp [flatBoundary]⟩).2 fun _ hv =>
+    |inner ℝ u x| ≤ Metric.infDist x (GET_FLAT_BOUNDARY u) :=
+  (Metric.le_infDist ⟨0, by simp [GET_FLAT_BOUNDARY]⟩).2 fun _ hv =>
     abs_inner_le_dist_of_mem_flatBoundary hu x hv
 
 end Margin
@@ -72,22 +72,22 @@ variable {Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- The perceptron's weights after `k` mistakes. `z i` is the `i`-th example it got wrong,
 multiplied by its label `±1`. The rule is: on a mistake, add that to the weights. -/
-def perceptronWeights (z : ℕ → Θ) (k : ℕ) : Θ :=
+def GET_PERCEPTRON_WEIGHTS (z : ℕ → Θ) (k : ℕ) : Θ :=
   ∑ i ∈ Finset.range k, z i
 
 omit [InnerProductSpace ℝ Θ] in
 theorem perceptronWeights_succ (z : ℕ → Θ) (k : ℕ) :
-    perceptronWeights z (k + 1) = perceptronWeights z k + z k :=
+    GET_PERCEPTRON_WEIGHTS z (k + 1) = GET_PERCEPTRON_WEIGHTS z k + z k :=
   Finset.sum_range_succ _ _
 
 variable {z : ℕ → Θ} {u : Θ} {γ R : ℝ} {n : ℕ}
 
 /-- Each mistake moves the weights at least `γ` along the true direction `u`. -/
 theorem mul_margin_le_inner (hmargin : ∀ k < n, γ ≤ inner ℝ u (z k)) :
-    ∀ k ≤ n, k * γ ≤ inner ℝ u (perceptronWeights z k) := by
+    ∀ k ≤ n, k * γ ≤ inner ℝ u (GET_PERCEPTRON_WEIGHTS z k) := by
   intro k
   induction k with
-  | zero => intro _; simp [perceptronWeights]
+  | zero => intro _; simp [GET_PERCEPTRON_WEIGHTS]
   | succ k ih =>
     intro hk
     have hprev := ih (Nat.le_of_succ_le hk)
@@ -99,12 +99,12 @@ theorem mul_margin_le_inner (hmargin : ∀ k < n, γ ≤ inner ℝ u (z k)) :
 /-- Each mistake adds at most `R²` to the squared size of the weights, because the example was
 on the wrong side. -/
 theorem norm_sq_perceptronWeights_le
-    (hmistake : ∀ k < n, inner ℝ (perceptronWeights z k) (z k) ≤ 0)
+    (hmistake : ∀ k < n, inner ℝ (GET_PERCEPTRON_WEIGHTS z k) (z k) ≤ 0)
     (hradius : ∀ k < n, ‖z k‖ ≤ R) :
-    ∀ k ≤ n, ‖perceptronWeights z k‖ ^ 2 ≤ k * R ^ 2 := by
+    ∀ k ≤ n, ‖GET_PERCEPTRON_WEIGHTS z k‖ ^ 2 ≤ k * R ^ 2 := by
   intro k
   induction k with
-  | zero => intro _; simp [perceptronWeights]
+  | zero => intro _; simp [GET_PERCEPTRON_WEIGHTS]
   | succ k ih =>
     intro hk
     have hprev := ih (Nat.le_of_succ_le hk)
@@ -119,7 +119,7 @@ origin, and some direction `u` of length at most one scores every one of them at
 its correct side. -/
 theorem perceptron_mistake_bound (hu : ‖u‖ ≤ 1) (hγ : 0 < γ)
     (hmargin : ∀ k < n, γ ≤ inner ℝ u (z k))
-    (hmistake : ∀ k < n, inner ℝ (perceptronWeights z k) (z k) ≤ 0)
+    (hmistake : ∀ k < n, inner ℝ (GET_PERCEPTRON_WEIGHTS z k) (z k) ≤ 0)
     (hradius : ∀ k < n, ‖z k‖ ≤ R) : (n : ℝ) ≤ (R / γ) ^ 2 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · rw [Nat.cast_zero]
@@ -127,7 +127,7 @@ theorem perceptron_mistake_bound (hu : ‖u‖ ≤ 1) (hγ : 0 < γ)
   have hpos : (0 : ℝ) < n := by exact_mod_cast hn
   have hlow := mul_margin_le_inner hmargin n le_rfl
   have hhigh := norm_sq_perceptronWeights_le hmistake hradius n le_rfl
-  have hlength : inner ℝ u (perceptronWeights z n) ≤ ‖perceptronWeights z n‖ :=
+  have hlength : inner ℝ u (GET_PERCEPTRON_WEIGHTS z n) ≤ ‖GET_PERCEPTRON_WEIGHTS z n‖ :=
     (real_inner_le_norm _ _).trans (mul_le_of_le_one_left (norm_nonneg _) hu)
   have hsquare : (n * γ) ^ 2 ≤ n * R ^ 2 :=
     (pow_le_pow_left₀ (by positivity) (hlow.trans hlength) 2).trans hhigh
@@ -144,11 +144,11 @@ section Xor
 
 /-- A score splits XOR when it is negative at `(0, 0)` and `(1, 1)` and positive at `(0, 1)`
 and `(1, 0)`. -/
-def SeparatesXor (score : ℝ → ℝ → ℝ) : Prop :=
+def SEPARATES_XOR (score : ℝ → ℝ → ℝ) : Prop :=
   score 0 0 < 0 ∧ score 1 1 < 0 ∧ 0 < score 0 1 ∧ 0 < score 1 0
 
 /-- **No flat boundary splits XOR.** -/
-theorem not_separatesXor_flat (a b c : ℝ) : ¬SeparatesXor fun x y => a * x + b * y + c := by
+theorem not_separatesXor_flat (a b c : ℝ) : ¬SEPARATES_XOR fun x y => a * x + b * y + c := by
   intro h
   obtain ⟨h00, h11, h01, h10⟩ := h
   norm_num at h00 h11 h01 h10
@@ -156,17 +156,17 @@ theorem not_separatesXor_flat (a b c : ℝ) : ¬SeparatesXor fun x y => a * x + 
 
 /-- **One lifted feature is enough.** With the product `x * y` as a third feature, the
 boundary is flat. -/
-theorem separatesXor_lift : SeparatesXor fun x y => x + y - 2 * (x * y) - 1 / 2 := by
+theorem separatesXor_lift : SEPARATES_XOR fun x y => x + y - 2 * (x * y) - 1 / 2 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num
 
 /-- **One fold is enough.** Fold the plane along the line `x = y`. -/
-theorem separatesXor_fold : SeparatesXor fun x y => |x - y| - 1 / 2 := by
+theorem separatesXor_fold : SEPARATES_XOR fun x y => |x - y| - 1 / 2 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num
 
 /-- **Two classes with a softmax are still flat.** With one flat score per class, the answer
 changes where the two scores are equal, and that is again a flat boundary. -/
 theorem not_separatesXor_twoScores (a₀ b₀ c₀ a₁ b₁ c₁ : ℝ) :
-    ¬SeparatesXor fun x y => (a₁ * x + b₁ * y + c₁) - (a₀ * x + b₀ * y + c₀) := by
+    ¬SEPARATES_XOR fun x y => (a₁ * x + b₁ * y + c₁) - (a₀ * x + b₀ * y + c₀) := by
   intro h
   obtain ⟨h00, h11, h01, h10⟩ := h
   norm_num at h00 h11 h01 h10
@@ -188,23 +188,23 @@ section Anchors
 variable {Θ : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- A flat score for the anchor point `c`, read at the input `x`. -/
-def anchorScore (c x : Θ) : ℝ :=
+def GET_ANCHOR_SCORE (c x : Θ) : ℝ :=
   2 * inner ℝ c x - ‖c‖ ^ 2
 
-theorem anchorScore_eq (c x : Θ) : anchorScore c x = ‖x‖ ^ 2 - ‖x - c‖ ^ 2 := by
-  rw [anchorScore, norm_sub_sq_real, real_inner_comm x c]
+theorem anchorScore_eq (c x : Θ) : GET_ANCHOR_SCORE c x = ‖x‖ ^ 2 - ‖x - c‖ ^ 2 := by
+  rw [GET_ANCHOR_SCORE, norm_sub_sq_real, real_inner_comm x c]
   ring
 
 /-- **A flat layer with one score per class names the nearest anchor.** The anchor with the
 highest score is the one nearest to the input. -/
 theorem anchorScore_le_iff (c c' x : Θ) :
-    anchorScore c' x ≤ anchorScore c x ↔ ‖x - c‖ ≤ ‖x - c'‖ := by
+    GET_ANCHOR_SCORE c' x ≤ GET_ANCHOR_SCORE c x ↔ ‖x - c‖ ≤ ‖x - c'‖ := by
   rw [anchorScore_eq, anchorScore_eq, sub_le_sub_iff_left,
     sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
 
 /-- So it tells any set of distinct points apart: at an anchor, its own score is the highest.
 This names the point. It does not compute anything about it. -/
-theorem anchorScore_lt_self {c c' : Θ} (h : c' ≠ c) : anchorScore c' c < anchorScore c c := by
+theorem anchorScore_lt_self {c c' : Θ} (h : c' ≠ c) : GET_ANCHOR_SCORE c' c < GET_ANCHOR_SCORE c c := by
   have hapart : 0 < ‖c - c'‖ := norm_pos_iff.mpr (sub_ne_zero.mpr h.symm)
   rw [anchorScore_eq, anchorScore_eq, sub_self, norm_zero, zero_pow two_ne_zero, sub_zero]
   linarith [pow_pos hapart 2]
@@ -218,23 +218,23 @@ section NoFreeLunch
 variable {X : Type*} [Fintype X] [DecidableEq X]
 
 /-- Change a labelling at the one input `x`. -/
-def flipAt (x : X) (labels : X → Bool) : X → Bool :=
+def FLIP_LABEL_AT (x : X) (labels : X → Bool) : X → Bool :=
   Function.update labels x !labels x
 
 omit [Fintype X] in
-theorem flipAt_apply_self (x : X) (labels : X → Bool) : flipAt x labels x = !labels x := by
-  simp [flipAt]
+theorem flipAt_apply_self (x : X) (labels : X → Bool) : FLIP_LABEL_AT x labels x = !labels x := by
+  simp [FLIP_LABEL_AT]
 
 omit [Fintype X] in
-theorem flipAt_flipAt (x : X) (labels : X → Bool) : flipAt x (flipAt x labels) = labels := by
-  simp [flipAt]
+theorem flipAt_flipAt (x : X) (labels : X → Bool) : FLIP_LABEL_AT x (FLIP_LABEL_AT x labels) = labels := by
+  simp [FLIP_LABEL_AT]
 
 /-- **No free lunch.** Fix an unseen input `x` and any guess for its label. Of all the ways to
 label the inputs, exactly as many agree with the guess at `x` as disagree. -/
 theorem card_agree_eq_card_disagree (x : X) (guess : Bool) :
     (Finset.univ.filter fun labels : X → Bool => labels x = guess).card
       = (Finset.univ.filter fun labels : X → Bool => labels x ≠ guess).card := by
-  refine Finset.card_nbij' (flipAt x) (flipAt x) ?_ ?_ ?_ ?_
+  refine Finset.card_nbij' (FLIP_LABEL_AT x) (FLIP_LABEL_AT x) ?_ ?_ ?_ ?_
   · intro labels hlabels
     have hagree : labels x = guess := by simpa using hlabels
     simp [flipAt_apply_self, hagree]

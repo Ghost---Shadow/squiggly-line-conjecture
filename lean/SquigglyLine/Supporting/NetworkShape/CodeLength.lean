@@ -39,7 +39,7 @@ theorem card_le_two_pow_of_code {α : Type*} (S : Finset α) {b : ℕ} (code : �
     _ = 2 ^ b := by rw [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
 
 /-- **A fold merges an input with its mirror image.** -/
-theorem tent_one_sub {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : tent (1 - x) = tent x := by
+theorem tent_one_sub {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : APPLY_TENT (1 - x) = APPLY_TENT x := by
   rcases le_total x (1 / 2) with h | h
   · rw [tent_of_le_half h0 h, tent_of_half_le (by linarith)]
     ring
@@ -49,7 +49,7 @@ theorem tent_one_sub {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : tent (1 - x) = te
 /-- **And with nothing else.** Two inputs with the same output are equal or are mirror
 images. -/
 theorem eq_or_eq_one_sub_of_tent_eq {x x' : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1)
-    (hx' : x' ∈ Set.Icc (0 : ℝ) 1) (h : tent x' = tent x) : x' = x ∨ x' = 1 - x := by
+    (hx' : x' ∈ Set.Icc (0 : ℝ) 1) (h : APPLY_TENT x' = APPLY_TENT x) : x' = x ∨ x' = 1 - x := by
   rcases le_total x (1 / 2) with hl | hr <;> rcases le_total x' (1 / 2) with hl' | hr'
   · rw [tent_of_le_half hx'.1 hl', tent_of_le_half hx.1 hl] at h
     exact Or.inl (by linarith)
@@ -63,7 +63,7 @@ theorem eq_or_eq_one_sub_of_tent_eq {x x' : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1
 /-- **`L` folds throw away at most `L` bits.** At most `2 ^ L` inputs are sent to the same
 output. -/
 theorem card_le_two_pow_of_iterate_tent_eq (L : ℕ) (S : Finset ℝ)
-    (hS : ∀ x ∈ S, x ∈ Set.Icc (0 : ℝ) 1) (c : ℝ) (hconst : ∀ x ∈ S, tent^[L] x = c) :
+    (hS : ∀ x ∈ S, x ∈ Set.Icc (0 : ℝ) 1) (c : ℝ) (hconst : ∀ x ∈ S, APPLY_TENT^[L] x = c) :
     S.card ≤ 2 ^ L := by
   classical
   induction L generalizing S c with
@@ -74,17 +74,17 @@ theorem card_le_two_pow_of_iterate_tent_eq (L : ℕ) (S : Finset ℝ)
     have h2 : b = c := by simpa using hconst b hb
     rw [h1, h2]
   | succ L ih =>
-    have himage : (S.image tent).card ≤ 2 ^ L := by
-      refine ih (S.image tent) (fun y hy => ?_) c (fun y hy => ?_)
+    have himage : (S.image APPLY_TENT).card ≤ 2 ^ L := by
+      refine ih (S.image APPLY_TENT) (fun y hy => ?_) c (fun y hy => ?_)
       · obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hy
         exact tent_mem_Icc (hS x hx).1 (hS x hx).2
       · obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hy
         rw [← Function.iterate_succ_apply]
         exact hconst x hx
-    have hfiber : ∀ a ∈ S.image tent, (S.filter fun x => tent x = a).card ≤ 2 := by
+    have hfiber : ∀ a ∈ S.image APPLY_TENT, (S.filter fun x => APPLY_TENT x = a).card ≤ 2 := by
       intro a ha
       obtain ⟨x₀, hx₀, rfl⟩ := Finset.mem_image.mp ha
-      have hsub : (S.filter fun x => tent x = tent x₀) ⊆ {x₀, 1 - x₀} := by
+      have hsub : (S.filter fun x => APPLY_TENT x = APPLY_TENT x₀) ⊆ {x₀, 1 - x₀} := by
         intro x hx
         obtain ⟨hxS, hxa⟩ := Finset.mem_filter.mp hx
         rcases eq_or_eq_one_sub_of_tent_eq (hS x₀ hx₀) (hS x hxS) hxa with h | h
@@ -93,7 +93,7 @@ theorem card_le_two_pow_of_iterate_tent_eq (L : ℕ) (S : Finset ℝ)
         · rw [h]
           exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
       exact (Finset.card_le_card hsub).trans Finset.card_le_two
-    calc S.card ≤ 2 * (S.image tent).card := Finset.card_le_mul_card_image S 2 hfiber
+    calc S.card ≤ 2 * (S.image APPLY_TENT).card := Finset.card_le_mul_card_image S 2 hfiber
       _ ≤ 2 * 2 ^ L := Nat.mul_le_mul_left 2 himage
       _ = 2 ^ (L + 1) := by rw [pow_succ, mul_comm]
 
@@ -144,7 +144,7 @@ section Description
 
 /-- The cost of describing weights `θ` to someone who has the starting weights `θ₀`, at
 precision `σ`: the squared distance over `2 σ²`. -/
-noncomputable def descriptionLength {Θ : Type*} [NormedAddCommGroup Θ] (σ : ℝ) (θ₀ θ : Θ) : ℝ :=
+noncomputable def GET_DESCRIPTION_LENGTH {Θ : Type*} [NormedAddCommGroup Θ] (σ : ℝ) (θ₀ θ : Θ) : ℝ :=
   ‖θ - θ₀‖ ^ 2 / (2 * σ ^ 2)
 
 open ContinuousLinearMap
@@ -155,8 +155,8 @@ variable {Θ Y : Type*}
 
 /-- **Gradient descent finds the fit that is cheapest to describe.** -/
 theorem descriptionLength_gradientDescent_le (A : Θ →L[ℝ] Y) (y : Y) (η : ℝ) (θ₀ : Θ) (t : ℕ)
-    (hfit : A ((gradientStep A y η)^[t] θ₀) = y) {θ' : Θ} (hfit' : A θ' = y) (σ : ℝ) :
-    descriptionLength σ θ₀ ((gradientStep A y η)^[t] θ₀) ≤ descriptionLength σ θ₀ θ' :=
+    (hfit : A ((TAKE_GRADIENT_STEP A y η)^[t] θ₀) = y) {θ' : Θ} (hfit' : A θ' = y) (σ : ℝ) :
+    GET_DESCRIPTION_LENGTH σ θ₀ ((TAKE_GRADIENT_STEP A y η)^[t] θ₀) ≤ GET_DESCRIPTION_LENGTH σ θ₀ θ' :=
   div_le_div_of_nonneg_right
     (pow_le_pow_left₀ (norm_nonneg _) (gradientDescent_fit_is_nearest A y η θ₀ t hfit hfit') 2)
     (by positivity)
@@ -164,10 +164,10 @@ theorem descriptionLength_gradientDescent_le (A : Θ →L[ℝ] Y) (y : Y) (η : 
 /-- **A bigger model's fit is cheaper to describe.** With orthogonal features of strength
 `c`, the description length of the nearest fit is the squared error at the start over
 `2 σ² c`. -/
-theorem travel_sq_div_eq_of_tight {A : Θ →L[ℝ] Y} {c : ℝ} (h : TightFeatures A c) (hc : 0 < c)
+theorem travel_sq_div_eq_of_tight {A : Θ →L[ℝ] Y} {c : ℝ} (h : HAS_TIGHT_FEATURES A c) (hc : 0 < c)
     (y : Y) (θ₀ : Θ) (σ : ℝ) :
-    travel (A : Θ →ₗ[ℝ] Y) y θ₀ ^ 2 / (2 * σ ^ 2)
-      = ‖residual (A : Θ →ₗ[ℝ] Y) y θ₀‖ ^ 2 / (2 * σ ^ 2 * c) := by
+    GET_TRAVEL (A : Θ →ₗ[ℝ] Y) y θ₀ ^ 2 / (2 * σ ^ 2)
+      = ‖GET_RESIDUAL (A : Θ →ₗ[ℝ] Y) y θ₀‖ ^ 2 / (2 * σ ^ 2 * c) := by
   rw [h.travel_eq hc, div_pow, Real.sq_sqrt hc.le, div_div, mul_comm c]
 
 end Description

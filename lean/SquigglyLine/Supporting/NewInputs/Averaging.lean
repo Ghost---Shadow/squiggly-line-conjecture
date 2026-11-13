@@ -4,7 +4,7 @@ Averages: ensembles, weight averaging, and the ideal denoiser.
 An average is never squigglier than what it averages, and never worse on
 squared error than its members are on average.
 
-Ensembles (`blend`):
+Ensembles (`BLEND`):
 * `sq_blend_sub` : the squared error of the average is the average squared
   error minus the spread of the members round the average.
 * `sq_blend_sub_le` : so the average is at least as good as the members are
@@ -17,7 +17,7 @@ Weight averaging:
 * `sq_liftedModel_soup_sub_le` : so the averaged weights are at least as good
   as the members are on average.
 
-The ideal denoiser (`idealDenoiser`):
+The ideal denoiser (`DENOISE_IDEALLY`):
 * `sum_mul_norm_sub_sq` : the weighted squared distance to any point is the
   weighted squared distance to the weighted mean plus the squared distance
   from the mean to the point.
@@ -42,7 +42,7 @@ section Ensemble
 variable {ι : Type*} (s : Finset ι) (w f : ι → ℝ)
 
 /-- The average of the predictions `f` with shares `w`. -/
-def blend : ℝ :=
+def BLEND : ℝ :=
   ∑ i ∈ s, w i * f i
 
 theorem sum_mul_sq_sub (c : ℝ) :
@@ -53,16 +53,16 @@ theorem sum_mul_sq_sub (c : ℝ) :
 
 /-- **The error of the average is the average error minus the spread.** -/
 theorem sq_blend_sub (hw : ∑ i ∈ s, w i = 1) (y : ℝ) :
-    (blend s w f - y) ^ 2
-      = ∑ i ∈ s, w i * (f i - y) ^ 2 - ∑ i ∈ s, w i * (f i - blend s w f) ^ 2 := by
+    (BLEND s w f - y) ^ 2
+      = ∑ i ∈ s, w i * (f i - y) ^ 2 - ∑ i ∈ s, w i * (f i - BLEND s w f) ^ 2 := by
   rw [sum_mul_sq_sub, sum_mul_sq_sub, hw]
-  simp only [blend]
+  simp only [BLEND]
   ring
 
 /-- **An ensemble is at least as good as its members are on average.** -/
 theorem sq_blend_sub_le (hnonneg : ∀ i ∈ s, 0 ≤ w i) (hw : ∑ i ∈ s, w i = 1) (y : ℝ) :
-    (blend s w f - y) ^ 2 ≤ ∑ i ∈ s, w i * (f i - y) ^ 2 := by
-  have hspread : 0 ≤ ∑ i ∈ s, w i * (f i - blend s w f) ^ 2 :=
+    (BLEND s w f - y) ^ 2 ≤ ∑ i ∈ s, w i * (f i - y) ^ 2 := by
+  have hspread : 0 ≤ ∑ i ∈ s, w i * (f i - BLEND s w f) ^ 2 :=
     Finset.sum_nonneg fun i hi => mul_nonneg (hnonneg i hi) (sq_nonneg _)
   rw [sq_blend_sub s w f hw]
   linarith
@@ -92,17 +92,17 @@ variable {X Θ ι : Type*} [NormedAddCommGroup Θ] [InnerProductSpace ℝ Θ]
 
 /-- **Averaging weights is averaging lines**, for a model linear in its weights. -/
 theorem liftedModel_sum_smul (φ : X → Θ) (s : Finset ι) (w : ι → ℝ) (θ : ι → Θ) (x : X) :
-    liftedModel φ (∑ i ∈ s, w i • θ i) x = ∑ i ∈ s, w i * liftedModel φ (θ i) x := by
-  simp only [liftedModel, sum_inner, inner_smul_left]
+    EVALUATE_LIFTED_MODEL φ (∑ i ∈ s, w i • θ i) x = ∑ i ∈ s, w i * EVALUATE_LIFTED_MODEL φ (θ i) x := by
+  simp only [EVALUATE_LIFTED_MODEL, sum_inner, inner_smul_left]
   rfl
 
 /-- **Averaged weights are at least as good as the members are on average.** -/
 theorem sq_liftedModel_soup_sub_le (φ : X → Θ) (s : Finset ι) {w : ι → ℝ} (θ : ι → Θ)
     (hnonneg : ∀ i ∈ s, 0 ≤ w i) (hw : ∑ i ∈ s, w i = 1) (x : X) (y : ℝ) :
-    (liftedModel φ (∑ i ∈ s, w i • θ i) x - y) ^ 2
-      ≤ ∑ i ∈ s, w i * (liftedModel φ (θ i) x - y) ^ 2 := by
+    (EVALUATE_LIFTED_MODEL φ (∑ i ∈ s, w i • θ i) x - y) ^ 2
+      ≤ ∑ i ∈ s, w i * (EVALUATE_LIFTED_MODEL φ (θ i) x - y) ^ 2 := by
   rw [liftedModel_sum_smul]
-  exact sq_blend_sub_le s w (fun i => liftedModel φ (θ i) x) hnonneg hw y
+  exact sq_blend_sub_le s w (fun i => EVALUATE_LIFTED_MODEL φ (θ i) x) hnonneg hw y
 
 end Soup
 
@@ -113,11 +113,11 @@ section Denoiser
 variable {ι V : Type*} [Fintype ι] [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
 /-- The mean of the points `x` with shares `p`. -/
-def weightedMean (p : ι → ℝ) (x : ι → V) : V :=
+def GET_WEIGHTED_MEAN (p : ι → ℝ) (x : ι → V) : V :=
   ∑ i, p i • x i
 
 theorem sum_smul_sub_weightedMean {p : ι → ℝ} (hp : ∑ i, p i = 1) (x : ι → V) :
-    ∑ i, p i • (x i - weightedMean p x) = 0 := by
+    ∑ i, p i • (x i - GET_WEIGHTED_MEAN p x) = 0 := by
   simp only [smul_sub, Finset.sum_sub_distrib, ← Finset.sum_smul, hp, one_smul]
   exact sub_self _
 
@@ -125,14 +125,14 @@ theorem sum_smul_sub_weightedMean {p : ι → ℝ} (hp : ∑ i, p i = 1) (x : ι
 to the mean, plus the squared distance from the mean to `c`. -/
 theorem sum_mul_norm_sub_sq {p : ι → ℝ} (hp : ∑ i, p i = 1) (x : ι → V) (c : V) :
     ∑ i, p i * ‖x i - c‖ ^ 2
-      = ∑ i, p i * ‖x i - weightedMean p x‖ ^ 2 + ‖weightedMean p x - c‖ ^ 2 := by
-  have hcross : ∑ i, p i * inner ℝ (x i - weightedMean p x) (weightedMean p x - c) = 0 := by
+      = ∑ i, p i * ‖x i - GET_WEIGHTED_MEAN p x‖ ^ 2 + ‖GET_WEIGHTED_MEAN p x - c‖ ^ 2 := by
+  have hcross : ∑ i, p i * inner ℝ (x i - GET_WEIGHTED_MEAN p x) (GET_WEIGHTED_MEAN p x - c) = 0 := by
     simp only [← real_inner_smul_left, ← sum_inner, sum_smul_sub_weightedMean hp, inner_zero_left]
   have hterm (i : ι) : p i * ‖x i - c‖ ^ 2
-      = p i * ‖x i - weightedMean p x‖ ^ 2
-        + 2 * (p i * inner ℝ (x i - weightedMean p x) (weightedMean p x - c))
-        + p i * ‖weightedMean p x - c‖ ^ 2 := by
-    rw [show x i - c = x i - weightedMean p x + (weightedMean p x - c) by abel,
+      = p i * ‖x i - GET_WEIGHTED_MEAN p x‖ ^ 2
+        + 2 * (p i * inner ℝ (x i - GET_WEIGHTED_MEAN p x) (GET_WEIGHTED_MEAN p x - c))
+        + p i * ‖GET_WEIGHTED_MEAN p x - c‖ ^ 2 := by
+    rw [show x i - c = x i - GET_WEIGHTED_MEAN p x + (GET_WEIGHTED_MEAN p x - c) by abel,
       norm_add_sq_real]
     ring
   rw [Finset.sum_congr rfl fun i _ => hterm i, Finset.sum_add_distrib, Finset.sum_add_distrib,
@@ -141,7 +141,7 @@ theorem sum_mul_norm_sub_sq {p : ι → ℝ} (hp : ∑ i, p i = 1) (x : ι → V
 
 /-- **The weighted mean is the best single guess.** -/
 theorem weightedMean_isBest {p : ι → ℝ} (hp : ∑ i, p i = 1) (x : ι → V) (c : V) :
-    ∑ i, p i * ‖x i - weightedMean p x‖ ^ 2 ≤ ∑ i, p i * ‖x i - c‖ ^ 2 := by
+    ∑ i, p i * ‖x i - GET_WEIGHTED_MEAN p x‖ ^ 2 ≤ ∑ i, p i * ‖x i - c‖ ^ 2 := by
   rw [sum_mul_norm_sub_sq hp x c]
   exact le_add_of_nonneg_right (sq_nonneg _)
 
@@ -150,26 +150,26 @@ variable [Nonempty ι]
 /-- The ideal denoiser for the training examples `x` at noise level `σ`. Given a noisy input
 `y`, each example gets a share that falls with its squared distance from `y`, and the output
 is the examples averaged with those shares. -/
-noncomputable def idealDenoiser (σ : ℝ) (x : ι → V) (y : V) : V :=
-  attend (fun i => -‖y - x i‖ ^ 2 / (2 * σ ^ 2)) x
+noncomputable def DENOISE_IDEALLY (σ : ℝ) (x : ι → V) (y : V) : V :=
+  ATTEND (fun i => -‖y - x i‖ ^ 2 / (2 * σ ^ 2)) x
 
 omit [Nonempty ι] in
 /-- The ideal denoiser is the mean of the examples with softmax shares. -/
 theorem idealDenoiser_eq_weightedMean (σ : ℝ) (x : ι → V) (y : V) :
-    idealDenoiser σ x y = weightedMean (softmax fun i => -‖y - x i‖ ^ 2 / (2 * σ ^ 2)) x :=
+    DENOISE_IDEALLY σ x y = GET_WEIGHTED_MEAN (APPLY_SOFTMAX fun i => -‖y - x i‖ ^ 2 / (2 * σ ^ 2)) x :=
   rfl
 
 /-- **No other guess is better.** Among all outputs `c`, the ideal denoiser has the least
 squared distance to the examples, weighted by how likely each is to be the clean one. -/
 theorem idealDenoiser_isBest (σ : ℝ) (x : ι → V) (y c : V) :
-    ∑ i, softmax (fun j => -‖y - x j‖ ^ 2 / (2 * σ ^ 2)) i * ‖x i - idealDenoiser σ x y‖ ^ 2
-      ≤ ∑ i, softmax (fun j => -‖y - x j‖ ^ 2 / (2 * σ ^ 2)) i * ‖x i - c‖ ^ 2 :=
+    ∑ i, APPLY_SOFTMAX (fun j => -‖y - x j‖ ^ 2 / (2 * σ ^ 2)) i * ‖x i - DENOISE_IDEALLY σ x y‖ ^ 2
+      ≤ ∑ i, APPLY_SOFTMAX (fun j => -‖y - x j‖ ^ 2 / (2 * σ ^ 2)) i * ‖x i - c‖ ^ 2 :=
   weightedMean_isBest (sum_softmax _) x c
 
 /-- **The ideal denoiser only averages its training set.** Its output never leaves the region
 the training examples span. -/
 theorem idealDenoiser_mem_convexHull (σ : ℝ) (x : ι → V) (y : V) :
-    idealDenoiser σ x y ∈ convexHull ℝ (Set.range x) :=
+    DENOISE_IDEALLY σ x y ∈ convexHull ℝ (Set.range x) :=
   attend_mem_convexHull _ x
 
 end Denoiser

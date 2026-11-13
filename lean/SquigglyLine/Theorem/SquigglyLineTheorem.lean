@@ -145,9 +145,9 @@ theorem squiggly_line_theorem
     let claim_1_distance_is_squeezed : Prop :=
       HOLDS_FOR_EVERY_SINE amplitude fun frequency phase =>
         ∀ data_point : DataPoint ℝ,
-          let curve            := DRAW_SINE_CURVE amplitude frequency phase
-          let vertical_error   := GET_VERTICAL_ERROR curve data_point    -- orange line in the graph: what training sees
-          let nearest_distance := GET_NEAREST_DISTANCE curve data_point  -- blue line in the graph: what the eye sees
+          let GET_GRAPH            := DRAW_SINE_CURVE amplitude frequency phase
+          let vertical_error   := GET_VERTICAL_ERROR GET_GRAPH data_point    -- orange line in the graph: what training sees
+          let nearest_distance := GET_NEAREST_DISTANCE GET_GRAPH data_point  -- blue line in the graph: what the eye sees
           let slope_bound      := √(1 + (amplitude * frequency) ^ 2)     -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
           let lower_bound      := vertical_error / slope_bound           -- a curve no steeper than that cannot pass any closer
           let upper_bound      := PI / frequency                         -- half a wave: within it the sine passes every height
@@ -178,7 +178,7 @@ theorem squiggly_line_theorem
     let claim_4_warp_fits_any_target : Prop :=
       HOLDS_FOR_EVERY_SINE amplitude fun frequency phase =>
         ∀ target : RealFunction,
-          let curve     := DRAW_SINE_CURVE amplitude frequency phase
+          let GET_GRAPH     := DRAW_SINE_CURVE amplitude frequency phase
           let max_shift := PI / frequency  -- the same half wave as in claim 1
           let target_stays_in_band :=
             ∀ input, IS_IN_SINE_BAND amplitude (target input)
@@ -186,7 +186,7 @@ theorem squiggly_line_theorem
             let moves_each_input_a_little :=
               ∀ input, dist input (warp input) ≤ max_shift
             let hits_the_target :=
-              ∀ input, curve (warp input) = target input
+              ∀ input, GET_GRAPH (warp input) = target input
             moves_each_input_a_little ∧ hits_the_target
 
     -- The theorem: all four claims hold.

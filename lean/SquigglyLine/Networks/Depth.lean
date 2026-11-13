@@ -1,7 +1,7 @@
 /-
 Depth multiplies the turns.
 
-`tent` is one layer with two neurons. It folds the interval `[0, 1]` in half:
+`APPLY_TENT` is one layer with two neurons. It folds the interval `[0, 1]` in half:
 up from 0 to 1, then down from 1 to 0.
 
 Stack `L` of these layers. On the grid of `2 ^ L + 1` evenly spaced inputs the
@@ -19,21 +19,21 @@ import Mathlib.Tactic.IntervalCases
 namespace SquigglyLine
 
 /-- One layer with two neurons: the tent `2 relu(x) - 4 relu(x - 1/2)`. -/
-noncomputable def tent (x : ℝ) : ℝ :=
+noncomputable def APPLY_TENT (x : ℝ) : ℝ :=
   2 * max x 0 - 4 * max (x - 1 / 2) 0
 
-theorem tent_of_le_half {x : ℝ} (h0 : 0 ≤ x) (h : x ≤ 1 / 2) : tent x = 2 * x := by
-  rw [tent, max_eq_left h0, max_eq_right (by linarith)]
+theorem tent_of_le_half {x : ℝ} (h0 : 0 ≤ x) (h : x ≤ 1 / 2) : APPLY_TENT x = 2 * x := by
+  rw [APPLY_TENT, max_eq_left h0, max_eq_right (by linarith)]
   ring
 
-theorem tent_of_half_le {x : ℝ} (h : 1 / 2 ≤ x) : tent x = 2 - 2 * x := by
-  rw [tent, max_eq_left (by linarith), max_eq_left (by linarith)]
+theorem tent_of_half_le {x : ℝ} (h : 1 / 2 ≤ x) : APPLY_TENT x = 2 - 2 * x := by
+  rw [APPLY_TENT, max_eq_left (by linarith), max_eq_left (by linarith)]
   ring
 
 /-- **Depth doubles the turns.** `L` tent layers send the `k`-th of `2 ^ L + 1` evenly spaced
 inputs to 0 when `k` is even and to 1 when `k` is odd. -/
 theorem iterate_tent_dyadic (L k : ℕ) (hk : k ≤ 2 ^ L) :
-    tent^[L] ((k : ℝ) / 2 ^ L) = if Even k then 0 else 1 := by
+    APPLY_TENT^[L] ((k : ℝ) / 2 ^ L) = if Even k then 0 else 1 := by
   induction L generalizing k with
   | zero =>
     simp only [pow_zero] at hk
@@ -46,7 +46,7 @@ theorem iterate_tent_dyadic (L k : ℕ) (hk : k ≤ 2 ^ L) :
       have hhalf : (k : ℝ) / 2 ^ (L + 1) ≤ 1 / 2 := by
         rw [pow_succ, div_le_iff₀ (by positivity)]
         linarith
-      have hx : tent ((k : ℝ) / 2 ^ (L + 1)) = (k : ℝ) / 2 ^ L := by
+      have hx : APPLY_TENT ((k : ℝ) / 2 ^ (L + 1)) = (k : ℝ) / 2 ^ L := by
         rw [tent_of_le_half (by positivity) hhalf, pow_succ]
         field_simp
       rw [hx, ih k hle]
@@ -57,7 +57,7 @@ theorem iterate_tent_dyadic (L k : ℕ) (hk : k ≤ 2 ^ L) :
       have hhalf : 1 / 2 ≤ (k : ℝ) / 2 ^ (L + 1) := by
         rw [pow_succ, le_div_iff₀ (by positivity)]
         linarith
-      have hx : tent ((k : ℝ) / 2 ^ (L + 1)) = ((2 ^ (L + 1) - k : ℕ) : ℝ) / 2 ^ L := by
+      have hx : APPLY_TENT ((k : ℝ) / 2 ^ (L + 1)) = ((2 ^ (L + 1) - k : ℕ) : ℝ) / 2 ^ L := by
         rw [tent_of_half_le hhalf, Nat.cast_sub hk]
         push_cast
         rw [pow_succ]

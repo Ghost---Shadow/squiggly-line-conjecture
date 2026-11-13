@@ -101,16 +101,16 @@ style. Lean checks that the two say the same thing.
 
 ```lean
 -- Traditional
-verticalDist ((sineWave A w).eval φ) p / √(1 + (A * w) ^ 2)
-    ≤ nearestDist ((sineWave A w).eval φ) p ∧
-  nearestDist ((sineWave A w).eval φ) p ≤ π / w
+GET_VERTICAL_ERROR ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p / √(1 + (A * w) ^ 2)
+    ≤ GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ∧
+  GET_NEAREST_DISTANCE ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p ≤ π / w
 ```
 
 ```lean
 -- Here
-let curve            := DRAW_SINE_CURVE amplitude frequency phase
-let vertical_error   := GET_VERTICAL_ERROR curve data_point    -- orange line in the graph: what training sees
-let nearest_distance := GET_NEAREST_DISTANCE curve data_point  -- blue line in the graph: what the eye sees
+let GET_GRAPH            := DRAW_SINE_CURVE amplitude frequency phase
+let vertical_error   := GET_VERTICAL_ERROR GET_GRAPH data_point    -- orange line in the graph: what training sees
+let nearest_distance := GET_NEAREST_DISTANCE GET_GRAPH data_point  -- blue line in the graph: what the eye sees
 let slope_bound      := √(1 + (amplitude * frequency) ^ 2)     -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
 let lower_bound      := vertical_error / slope_bound           -- a curve no steeper than that cannot pass any closer
 let upper_bound      := PI / frequency                         -- half a wave: within it the sine passes every height
@@ -476,7 +476,7 @@ grade". [The style philosophy](#the-style-philosophy-readable-pythonic-enterpris
 out near the top. In every file it means:
 
 - every file opens with a summary in plain words that lists its theorems;
-- names say what a thing is (`travel`, `residual`, `nearestDist`,
+- names say what a thing is (`GET_TRAVEL`, `GET_RESIDUAL`, `GET_NEAREST_DISTANCE`,
   `perceptron_mistake_bound`), and every main theorem has a one-line
   statement in plain words above it;
 - a definition is written once and reused, so later files build on earlier

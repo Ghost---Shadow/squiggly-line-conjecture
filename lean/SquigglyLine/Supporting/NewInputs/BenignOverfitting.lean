@@ -2,7 +2,7 @@
 Benign overfitting: fitting the noise without paying for it.
 
 What is left to fit splits into a signal `s` and a noise `ε`, along kernel
-directions of strengths `μs` and `μe`. `splitFit` is the fit gradient descent
+directions of strengths `μs` and `μe`. `GET_SPLIT_FIT` is the fit gradient descent
 heads for.
 
 * `splitFit_fits`, `splitFit_is_nearest` : it fits signal and noise exactly,
@@ -61,31 +61,31 @@ variable {Ξ Y : Type*}
 
 /-- The fit that gradient descent heads for when the residual is a signal `s` plus a noise
 `ε`, along kernel directions of strengths `μs` and `μe`. -/
-noncomputable def splitFit (C : Ξ →L[ℝ] Y) (ξ₀ : Ξ) (s ε : Y) (μs μe : ℝ) : Ξ :=
+noncomputable def GET_SPLIT_FIT (C : Ξ →L[ℝ] Y) (ξ₀ : Ξ) (s ε : Y) (μs μe : ℝ) : Ξ :=
   ξ₀ + adjoint C (μs⁻¹ • s + μe⁻¹ • ε)
 
 /-- **It fits the signal and the noise exactly.** -/
 theorem splitFit_fits (C : Ξ →L[ℝ] Y) (y : Y) (ξ₀ : Ξ) {s ε : Y} {μs μe : ℝ} (hμs : μs ≠ 0)
     (hμe : μe ≠ 0) (hs : C (adjoint C s) = μs • s) (he : C (adjoint C ε) = μe • ε)
-    (hsplit : residual (C : Ξ →ₗ[ℝ] Y) y ξ₀ = s + ε) :
-    C (splitFit C ξ₀ s ε μs μe) = y := by
-  simp only [splitFit, map_add, map_smul, hs, he, smul_smul, inv_mul_cancel₀ hμs,
+    (hsplit : GET_RESIDUAL (C : Ξ →ₗ[ℝ] Y) y ξ₀ = s + ε) :
+    C (GET_SPLIT_FIT C ξ₀ s ε μs μe) = y := by
+  simp only [GET_SPLIT_FIT, map_add, map_smul, hs, he, smul_smul, inv_mul_cancel₀ hμs,
     inv_mul_cancel₀ hμe, one_smul]
   rw [← hsplit]
-  simp [residual]
+  simp [GET_RESIDUAL]
 
 /-- **No fit is nearer.** -/
 theorem splitFit_is_nearest (C : Ξ →L[ℝ] Y) {y : Y} (ξ₀ : Ξ) (s ε : Y) (μs μe : ℝ)
-    (hfit : C (splitFit C ξ₀ s ε μs μe) = y) {ξ' : Ξ} (hfit' : C ξ' = y) :
-    ‖splitFit C ξ₀ s ε μs μe - ξ₀‖ ≤ ‖ξ' - ξ₀‖ :=
+    (hfit : C (GET_SPLIT_FIT C ξ₀ s ε μs μe) = y) {ξ' : Ξ} (hfit' : C ξ' = y) :
+    ‖GET_SPLIT_FIT C ξ₀ s ε μs μe - ξ₀‖ ≤ ‖ξ' - ξ₀‖ :=
   norm_sub_le_of_fit_along_features C rfl hfit hfit'
 
 /-- **What the fit does to a new input.** The answer at `ψ` moves by the signal's overlap
 with the test row divided by `μs`, plus the noise's overlap divided by `μe`. -/
 theorem inner_splitFit (C : Ξ →L[ℝ] Y) (ξ₀ ψ : Ξ) (s ε : Y) (μs μe : ℝ) :
-    inner ℝ ψ (splitFit C ξ₀ s ε μs μe)
+    inner ℝ ψ (GET_SPLIT_FIT C ξ₀ s ε μs μe)
       = inner ℝ ψ ξ₀ + inner ℝ (C ψ) s / μs + inner ℝ (C ψ) ε / μe := by
-  rw [splitFit, inner_add_right, adjoint_inner_right, inner_add_right, real_inner_smul_right,
+  rw [GET_SPLIT_FIT, inner_add_right, adjoint_inner_right, inner_add_right, real_inner_smul_right,
     real_inner_smul_right]
   ring
 
@@ -114,12 +114,12 @@ of the real features and the noise along one of strength `lamE`. Then the neares
 the whole model fits signal and noise exactly; it moves the answer at a new input by the
 two terms below; and the noise term is at most `‖C ψ‖ * ‖ε‖ / c'`, however weak `lamE`
 is. -/
-theorem benign_overfitting (hsum : KernelSum C A B) {c' : ℝ} (hc' : 0 < c')
-    (hB : TightFeatures B c') {s ε : Y} {lamS lamE : ℝ} (hlamS : 0 < lamS) (hlamE : 0 ≤ lamE)
+theorem benign_overfitting (hsum : IS_KERNEL_SUM C A B) {c' : ℝ} (hc' : 0 < c')
+    (hB : HAS_TIGHT_FEATURES B c') {s ε : Y} {lamS lamE : ℝ} (hlamS : 0 < lamS) (hlamE : 0 ≤ lamE)
     (hs : A (adjoint A s) = lamS • s) (he : A (adjoint A ε) = lamE • ε) (y : Y) (ξ₀ : Ξ)
-    (hsplit : residual (C : Ξ →ₗ[ℝ] Y) y ξ₀ = s + ε) (ψ : Ξ) :
-    C (splitFit C ξ₀ s ε (lamS + c') (lamE + c')) = y
-      ∧ inner ℝ ψ (splitFit C ξ₀ s ε (lamS + c') (lamE + c'))
+    (hsplit : GET_RESIDUAL (C : Ξ →ₗ[ℝ] Y) y ξ₀ = s + ε) (ψ : Ξ) :
+    C (GET_SPLIT_FIT C ξ₀ s ε (lamS + c') (lamE + c')) = y
+      ∧ inner ℝ ψ (GET_SPLIT_FIT C ξ₀ s ε (lamS + c') (lamE + c'))
           = inner ℝ ψ ξ₀ + inner ℝ (C ψ) s / (lamS + c') + inner ℝ (C ψ) ε / (lamE + c')
       ∧ |inner ℝ (C ψ) ε / (lamE + c')| ≤ ‖C ψ‖ * ‖ε‖ / c' :=
   ⟨splitFit_fits C y ξ₀ (ne_of_gt (by linarith)) (ne_of_gt (by linarith))
