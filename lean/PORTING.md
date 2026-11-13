@@ -101,8 +101,5 @@ its log has anything the author must look at.
 
 ## Waiting to be ported
 
-These files are in typical Mathlib style. Each says so in its opening
-comment. Remove a file from this list when it is ported.
-
-- `SquigglyLine/Supporting/NewInputs/Counting.lean`
-- `SquigglyLine/Supporting/NetworkShape/Temperature.lean`
+Nothing, as of 14 Nov 2026. A file in typical Mathlib style says so in its
+opening comment and is listed here until it is ported.
