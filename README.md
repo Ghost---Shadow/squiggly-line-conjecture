@@ -109,11 +109,11 @@ verticalDist ((sineWave A w).eval φ) p / √(1 + (A * w) ^ 2)
 ```lean
 -- Here
 let curve            := DRAW_SINE_CURVE amplitude frequency phase
-let vertical_error   := GET_VERTICAL_ERROR curve data_point
-let nearest_distance := GET_NEAREST_DISTANCE curve data_point
-let slope_bound      := √(1 + (amplitude * frequency) ^ 2)
-let lower_bound      := vertical_error / slope_bound
-let upper_bound      := PI / frequency
+let vertical_error   := GET_VERTICAL_ERROR curve data_point    -- orange line in the graph: what training sees
+let nearest_distance := GET_NEAREST_DISTANCE curve data_point  -- blue line in the graph: what the eye sees
+let slope_bound      := √(1 + (amplitude * frequency) ^ 2)     -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
+let lower_bound      := vertical_error / slope_bound           -- a curve no steeper than that cannot pass any closer
+let upper_bound      := PI / frequency                         -- half a wave: within it the sine passes every height
 let is_above_lower_bound := lower_bound ≤ nearest_distance
 let is_below_upper_bound := nearest_distance ≤ upper_bound
 is_above_lower_bound ∧ is_below_upper_bound
@@ -131,9 +131,12 @@ The rules:
   [`Vocabulary.lean`](lean/SquigglyLine/Theorem/Vocabulary.lean).
 - **Helpers live outside the theorem.** A quantity the statement needs more
   than once is a function defined above it and called where it is used.
-- **One idea per line.** Each quantity gets a `let` with a comment above it.
-  Each claim gets a name. Both sides of every "and" get a name, and the last
-  line only combines names.
+- **One idea per line.** Each quantity gets a `let`. Each claim gets a name.
+  Both sides of every "and" get a name, and the last line only combines
+  names.
+- **Comments say why.** A comment at the end of a line explains a number
+  or a formula that would otherwise look like magic. A line that explains
+  itself gets none. Code stays within 80 columns; a comment may run past.
 - **Python beside the Lean.** Each statement comes with the same thing
   written as plain Python.
 - **Tested.** Each restyled statement is checked against its original text

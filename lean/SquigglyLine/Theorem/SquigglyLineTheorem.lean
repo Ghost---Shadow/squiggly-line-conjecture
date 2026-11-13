@@ -26,7 +26,9 @@ The file is written as a short script. Read it top to bottom:
 
 * three helper functions come first, each with its Python reading;
 * the theorem's header says what is given (an amplitude, a loss, the data);
-* each `let` names one piece, with a comment above it;
+* each `let` names one piece;
+* a comment at the end of a line says why that line is what it is. Lines
+  that explain themselves have none;
 * each `claim_N_...` is one of the four claims above;
 * the last line says that all four claims hold.
 
@@ -131,10 +133,10 @@ theorem squiggly_line_theorem
     (amplitude : ℝ)
     -- Given: a loss on the residual, such as `r ^ 2` or `|r|`.
     {loss_fn : RealFunction}
-    (loss_is_measurable : Measurable loss_fn)
+    (loss_is_measurable : Measurable loss_fn)  -- so its average exists; every loss in common use passes
     -- Given: the data, as a distribution over `(x, y)` pairs.
     {data_distribution : DataDistribution}
-    [IsProbabilityMeasure data_distribution]
+    [IsProbabilityMeasure data_distribution]   -- the probabilities add up to 1
     -- Given: the labels lie in the band the sine sweeps.
     (labels_in_band :
       ARE_LABELS_ALMOST_SURELY_IN_BAND amplitude data_distribution) :
@@ -144,13 +146,13 @@ theorem squiggly_line_theorem
       HOLDS_FOR_EVERY_SINE amplitude fun frequency phase =>
         ∀ data_point : DataPoint ℝ,
           let curve            := DRAW_SINE_CURVE amplitude frequency phase
-          let vertical_error   := GET_VERTICAL_ERROR curve data_point
-          let nearest_distance := GET_NEAREST_DISTANCE curve data_point
-          let slope_bound      := √(1 + (amplitude * frequency) ^ 2)
-          let lower_bound      := vertical_error / slope_bound
-          let upper_bound      := PI / frequency
+          let vertical_error   := GET_VERTICAL_ERROR curve data_point    -- orange line in the graph: what training sees
+          let nearest_distance := GET_NEAREST_DISTANCE curve data_point  -- blue line in the graph: what the eye sees
+          let slope_bound      := √(1 + (amplitude * frequency) ^ 2)     -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
+          let lower_bound      := vertical_error / slope_bound           -- a curve no steeper than that cannot pass any closer
+          let upper_bound      := PI / frequency                         -- half a wave: within it the sine passes every height
           let label_is_in_band :=
-            IS_IN_SINE_BAND amplitude (GET_LABEL data_point)
+            IS_IN_SINE_BAND amplitude (GET_LABEL data_point)             -- a sine never leaves its band
           let is_above_lower_bound := lower_bound ≤ nearest_distance
           let is_below_upper_bound := nearest_distance ≤ upper_bound
           label_is_in_band →
@@ -158,7 +160,7 @@ theorem squiggly_line_theorem
 
     -- Claim 2: the average distance goes to zero.
     let claim_2_distance_vanishes : Prop :=
-      GOES_TO_ZERO_AS_INPUT_GROWS fun frequency =>
+      GOES_TO_ZERO_AS_INPUT_GROWS fun frequency =>  -- it is at most PI / frequency, by claim 1
         GET_AVERAGE_DISTANCE amplitude data_distribution frequency
 
     -- Claim 3: the average loss is the same at every frequency.
@@ -170,17 +172,17 @@ theorem squiggly_line_theorem
         let loss_there :=
           GET_AVERAGE_LOSS amplitude loss_fn data_distribution
             other_frequency
-        loss_here = loss_there
+        loss_here = loss_there  -- a new frequency only shifts the phase, and a random phase stays random
 
     -- Claim 4: a small shift of the input fits any target in the band.
     let claim_4_warp_fits_any_target : Prop :=
       HOLDS_FOR_EVERY_SINE amplitude fun frequency phase =>
         ∀ target : RealFunction,
           let curve     := DRAW_SINE_CURVE amplitude frequency phase
-          let max_shift := PI / frequency
+          let max_shift := PI / frequency  -- the same half wave as in claim 1
           let target_stays_in_band :=
             ∀ input, IS_IN_SINE_BAND amplitude (target input)
-          target_stays_in_band → ∃ warp : Warp,
+          target_stays_in_band → ∃ warp : Warp,  -- each input goes to a nearby one where the sine is at the target's height
             let moves_each_input_a_little :=
               ∀ input, dist input (warp input) ≤ max_shift
             let hits_the_target :=
