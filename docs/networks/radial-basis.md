@@ -70,7 +70,9 @@ which is one.
 That is the case once the bumps are narrow against the gaps in the data. If
 every two inputs are at least `gap` apart, each of the other bumps is worth
 at most `exp(-(gap / width)² / 2)` (**proved**: `bump_le_of_gap`), and that
-goes to zero as the width shrinks.
+goes to zero as the width shrinks. With `n` data points the bumps are narrow
+enough once `(n - 1) * exp(-(gap / width)² / 2)` is below one (**proved**:
+`exists_heights_of_gap`).
 
 So a radial basis network memorises by narrowing, and the section above
 says what that costs: slope `1 / width`.
@@ -95,7 +97,5 @@ cannot reach. Nothing else is traded.
   overlap of two lifts into a space of infinitely many dimensions
   (**recalled**). Here only a network with finitely many centres is written
   as a lift.
-- **How wide is narrow enough**, as one statement in the gap and the number
-  of points. The two pieces are proved; they are not joined. **argued**
 - **What training does.** Which heights gradient descent finds is the kernel
   story of [`Kernel.lean`](../../lean/SquigglyLine/Networks/Kernel.lean), not repeated here.

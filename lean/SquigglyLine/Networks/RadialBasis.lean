@@ -13,7 +13,7 @@ Theorems: `bump_pos`, `bump_le_one`, `bump_zero`, `bump_neg`, `bump_shift`,
 `bump_eq_compress`, `lipschitzWith_unitBump`, `lipschitzWith_bump`,
 `lipschitzWith_bumpNetwork`, `verticalDist_bumpNetwork_le`,
 `bumpNetwork_eq_liftedModel`, `bump_le_of_gap`,
-`exists_heights_of_small_overlap`.
+`exists_heights_of_small_overlap`, `exists_heights_of_gap`.
 -/
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.MeanValue
@@ -173,5 +173,22 @@ theorem exists_heights_of_small_overlap [DecidableEq ι] (σ : ℝ) (x y : ι �
       Matrix.one_mulVec]
   have hi := congrFun hmul i
   simpa [EVALUATE_BUMP_NETWORK, Matrix.mulVec, dotProduct, G, mul_comm] using hi
+
+/-- **How narrow is narrow enough.** If every two inputs are at least `δ` apart and the bumps
+are narrow enough that `n - 1` of them at that distance are together worth less than one, the
+network with a bump on every input fits any labels exactly. -/
+theorem exists_heights_of_gap [DecidableEq ι] {σ δ : ℝ} (hδ : 0 ≤ δ) (x y : ι → ℝ)
+    (hgap : ∀ i j, i ≠ j → δ ≤ |x i - x j|)
+    (hnarrow : ((Fintype.card ι - 1 : ℕ) : ℝ) * exp (-(δ / σ) ^ 2 / 2) < 1) :
+    ∃ a : ι → ℝ, ∀ i, EVALUATE_BUMP_NETWORK σ x a (x i) = y i := by
+  refine exists_heights_of_small_overlap σ x y fun i => ?_
+  calc ∑ j ∈ Finset.univ.erase i, GET_BUMP σ (x i - x j)
+      ≤ ∑ _j ∈ Finset.univ.erase i, exp (-(δ / σ) ^ 2 / 2) :=
+        Finset.sum_le_sum fun j hj =>
+          bump_le_of_gap hδ (hgap i j (Finset.ne_of_mem_erase hj).symm)
+    _ = ((Fintype.card ι - 1 : ℕ) : ℝ) * exp (-(δ / σ) ^ 2 / 2) := by
+        rw [Finset.sum_const, Finset.card_erase_of_mem (Finset.mem_univ i), Finset.card_univ,
+          nsmul_eq_mul]
+    _ < 1 := hnarrow
 
 end SquigglyLine
