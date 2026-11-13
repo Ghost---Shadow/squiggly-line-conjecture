@@ -145,7 +145,7 @@ takes the short ones.
 - **Several directions at once.** The statements follow one direction of the
   labels. Because everything is linear the directions add up, but that sum is
   not written out here.
-- **Adaptive methods.** Weight decay inside Adam behaves differently
-  (**recalled**), and is not covered.
+- **Adaptive methods.** Weight decay inside Adam behaves differently. That
+  is proved, for Adam with no memory, in `step-rules.md` under AdamW.
 - **Deep networks.** The kernel is fixed, as everywhere in these notes.
   **open**

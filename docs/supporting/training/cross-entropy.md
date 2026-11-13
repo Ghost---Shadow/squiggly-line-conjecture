@@ -112,7 +112,7 @@ Williams 1992).
 
 So a policy-gradient step is a cross-entropy step toward the action taken,
 weighted by the reward. For a model linear in its weights the same kernel
-carries it. The baseline is in `docs/supporting/new-inputs/averaging.md`.
+carries it. The baseline is in `docs/supporting/new-inputs/mixing.md`.
 
 Not shown: more than one step, where the reward depends on later actions.
 

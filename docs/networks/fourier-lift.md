@@ -1,6 +1,6 @@
 # The Fourier lift: Fourier features, position signals and convolution
 
-**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean), [`Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean), [`Convolution.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean).
+**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -79,68 +79,6 @@ A convolution layer builds this in by using the same weights at every place
 (**recalled**: LeCun et al. 1989). In the terms used here it is a choice of
 lift whose kernel sees only gaps.
 
-## Four position embeddings
-
-Notes from 14 Nov 2026. Proofs in
-[`lean/SquigglyLine/Networks/Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean).
-
-- **Sinusoidal, all frequencies together.** Give each position one cosine
-  and one sine for every frequency. The overlap of the signals of two
-  positions is a sum of cosines of the gap between them (**proved**:
-  `positionOverlap_eq_sum_cos`). So it depends only on the gap (**proved**:
-  `positionOverlap_shift`), and no two positions overlap more than a
-  position does with itself (**proved**: `positionOverlap_le_card`,
-  `positionOverlap_self`). This is the lift of the section above, with many
-  frequencies at once.
-- **Rotary.** Do not add a signal. Turn the query and the key, each by an
-  angle set by its position. The dot product of the two is that of the query
-  turned by the difference of the angles, with the key left alone
-  (**proved**: `planeDot_rotate_rotate`). So the score depends on the two
-  positions only through their gap (**proved**: `planeDot_rotate_shift`),
-  and no vector changes length (**proved**: `planeDot_rotate_self`). The
-  proof is for one pair of coordinates; a real model turns every pair, each
-  at its own frequency.
-- **Relative position bias.** Add to each score a number looked up by the
-  gap. Shifting the whole sequence changes no gap, so it changes no bias
-  (**proved**: `relativeBias_shift`).
-- **Learned table.** Give each position a free vector. Changing the vector
-  of one position changes nothing at any other (**proved**:
-  `update_table_of_ne`). The table is a lookup, a lift that can fit
-  anything, and it says nothing about a position it has not seen.
-
-The first three build in the fact that only the gap matters. The table has
-to learn it from data, and cannot use it past the longest sequence it was
-trained on (**argued**).
-
-## Convolution layers, stride and upsampling
-
-Notes from 14 Nov 2026. Proofs in
-[`lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean). The signal
-here has one dimension.
-
-- **Slope.** If two signals differ by at most `d` at every position, their
-  outputs under one convolution layer differ by at most `d` times the
-  summed sizes of the kernel weights (**proved**:
-  `abs_convolution_sub_le`). The length of the signal does not enter. So
-  the slope a convolution layer can add is set by its few kernel weights.
-- **Locality.** An output depends only on the inputs under the kernel
-  (**proved**: `convolution_congr`). After `L` layers with a kernel of
-  width `n`, it depends only on the inputs within `L * n` of it
-  (**proved**: `iterate_convolution_congr`). Squiggles are made locally,
-  and the same kernel makes them at every position.
-- **Stride.** Reading a signal at every second position is squeezing it
-  sideways by two, in the exact sense of the general theorem (**proved**:
-  `stride_eq_compress`). So each stride doubles the slope of what the later
-  layers see (**proved**: `lipschitzWith_stride`), and with it the
-  frequency.
-- **Upsampling.** Stretching by two is squeezing by one half (**proved**:
-  `upsample_eq_compress`). A stride of two after it gives the signal back
-  (**proved**: `stride_upsample`). This is the way down and back up in a
-  U-shaped network.
-
-Not shown: images, where the kernel has two dimensions, and pooling as the
-way to downsample.
-
 ## How this meets the squiggly line
 
 This is the model of the first experiments and of section 5 of the README.
@@ -150,12 +88,14 @@ of weight.
 
 ## What is not shown
 
-- **Many frequencies at once.** The lift here has one. With several, the
-  stretch is at most the root of the sum of the squared frequencies
-  (**argued**).
+- **The stretch with many frequencies.** The lift here has one. With
+  several, the stretch is at most the root of the sum of the squared
+  frequencies (**argued**). The kernel with several frequencies is proved,
+  in `position-embeddings.md`.
 - **That the bound is reached.** The stretch equals `|w|` in the limit of
   near inputs. Only "at most" is proved.
 - **Why sharp pictures need the lift** is argued from the bound. No
   statement about training time is proved.
-- **A convolution layer itself** is not modelled, only the property it is
-  built to have.
+- **A convolution layer itself** is not modelled in this note, only the
+  property it is built to have. The layer is in
+  `docs/supporting/network-shape/convolution.md`.

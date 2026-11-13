@@ -116,10 +116,12 @@ lines, which follows by repeating the step for two.
 
 ## What is not shown
 
-- **ReLU layers.** A ReLU layer with random weights halves the signal's
-  squared size on average, and the usual starting weights are scaled up to
-  cancel that (**recalled**). Here the layers are plates.
+- **ReLU layers.** Here the layers are plates. That a ReLU layer halves the
+  squared size of a signal that is as often negative as positive, and that
+  the usual starting weights are scaled up to cancel it, is proved in
+  `gain.md`.
 - **The gradient for ReLU.** The backward pass of a ReLU network also
   switches off where the forward pass was zero. Not modelled.
-- **Recurrent networks.** The same count applies to steps in time, but it is
-  not written out.
+- **Recurrent networks.** The same count applies to steps in time. It is
+  written out for the memory cell of an LSTM in `skip-and-norm.md`, and not
+  for a plain recurrent network.

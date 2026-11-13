@@ -160,5 +160,7 @@ whose examples lie along weak directions of the kernel needs more layers.
   is proved for number-valued tokens and attention alone. A skip connection
   or a feed-forward layer can put the differences back, and that is not
   modelled.
-- **Everything else in a transformer.** Several heads, position signals, the
-  feed-forward layers and normalisation are not modelled.
+- **A whole transformer.** Several heads and the feed-forward layers are not
+  modelled together with attention. The parts are in other notes: position
+  signals in `docs/networks/position-embeddings.md`, normalisation in
+  `docs/supporting/training/symmetry.md`, and skips in `skip-and-norm.md`.

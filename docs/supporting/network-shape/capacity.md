@@ -123,4 +123,4 @@ point and has only `2L` neurons to set.
 - **Random labels are the worst case.** Capacity for labels with structure is
   a different and harder question. **open**
 - **Associative memories.** The capacity of a Hopfield network is not
-  addressed.
+  addressed. What its update does is in `attention.md`.

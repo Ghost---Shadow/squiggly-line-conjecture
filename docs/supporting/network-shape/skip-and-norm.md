@@ -110,7 +110,8 @@ time, which is how an LSTM avoids the fading of `vanishing-gradients.md`.
 ## What is not shown
 
 - **Which normalisation.** Rescaling one example's activations to a standard
-  length is closest to layer normalisation. Batch normalisation rescales each
+  length is closest to layer normalisation and to RMSNorm, which is in
+  `docs/supporting/training/symmetry.md`. Batch normalisation rescales each
   feature across a batch. That is a different operation, and it is not
   modelled here. **open**
 - **ReLU.** A plate keeps the shadow on a line. A ReLU layer keeps the nearest
