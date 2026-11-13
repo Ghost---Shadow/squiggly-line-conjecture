@@ -83,6 +83,7 @@ In `SquigglyLine/Supporting/Training/`.
 | `Symmetry`        | rescaling: gradient ⟂ weights, they only grow; `a² − b²` is kept    |
 | `StepRules`       | Adam's step is a sign; clipping caps travel; subspaces; rounding    |
 | `AdamW`           | decay inside Adam is rescaled away; outside it shrinks by `1 − η μ` |
+| `Optimisers`      | schedules multiply; condition number; momentum's edge; SGD on average |
 
 ### What a fit does to new inputs
 
@@ -172,6 +173,7 @@ import SquigglyLine.Supporting.Training.Perceptron
 import SquigglyLine.Supporting.Training.Symmetry
 import SquigglyLine.Supporting.Training.StepRules
 import SquigglyLine.Supporting.Training.AdamW
+import SquigglyLine.Supporting.Training.Optimisers
 import SquigglyLine.Supporting.NetworkShape.RmsNorm
 import SquigglyLine.Supporting.NetworkShape.Residual
 import SquigglyLine.Supporting.NetworkShape.Activations

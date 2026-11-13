@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 34 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 29 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -62,10 +62,6 @@ The papers and years are recalled from memory and have not been checked.
 |---|---|---|
 | Lasso, the penalty on summed sizes (Tibshirani 1996) | Weight decay shrinks a weak direction. This penalty sets it to exactly zero: a direction weaker than the penalty is not travelled at all. | **next** |
 | Stochastic depth (Huang et al. 2016) | Dropping a branch at random is, on average, the branch at part strength. The same floor as dropout, on whole layers. | **next** |
-| Momentum (Polyak 1964; Sutskever et al. 2013) | With momentum `β` a direction is stable up to strength `2 (1 + β) / η`, not `2 / η`. Momentum moves the edge of stability. | **next** |
-| Learning-rate schedules and warmup (Goyal et al. 2017; Loshchilov and Hutter 2017) | With a step size that changes, what is left of the error in a direction is the product of the factors `1 − η_t λ`. Warmup keeps the first factors of the sharp directions below one in size. | **next** |
-| Stochastic gradient descent (Robbins and Monro 1951) | A step on a random example is the full step on average. | **next** |
-| Federated averaging (McMahan et al. 2017) | Averaging the weights after one local step each is one step on all the data. | **next** |
 | Variational autoencoders (Kingma and Welling 2014) | The penalty on the code is half its squared travel from the origin plus a term in its width. It is zero only for a code that ignores the input. | **next** |
 | Random features are nearly at right angles, on average | Two random directions in `d` dimensions have expected squared overlap `1 / d`. This is the on-average form of the fact that makes travel fall with size. | **next** |
 
@@ -73,7 +69,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| The condition number sets the speed of gradient descent | The best single step size is `2 / (strongest + weakest)`. With it the slowest direction shrinks by `(κ − 1) / (κ + 1)` a step, where `κ` is strongest over weakest. | **next** |
 | Sinusoidal positions, all frequencies together (Vaswani et al. 2017) | With many frequencies the overlap of two positions is a sum of cosines of the gap between them. It still depends only on the gap, and it is largest at gap zero. | **next** |
 | Rotary positions (Su et al. 2021) | Turn the query and the key by angles set by their positions. The score then depends on the two positions only through the gap, and no vector changes length. | **next** |
 | Relative position bias (Shaw et al. 2018; Raffel et al. 2020) | Add to each score a number that depends only on the gap. Shifting the whole sequence then changes no attention weight. | **next** |

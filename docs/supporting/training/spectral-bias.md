@@ -1,6 +1,6 @@
 # Spectral bias: strong directions first
 
-**Proofs:** [`DoubleDescent.lean`](../../../lean/SquigglyLine/Networks/DoubleDescent.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
+**Proofs:** [`DoubleDescent.lean`](../../../lean/SquigglyLine/Networks/DoubleDescent.lean), [`Optimisers.lean`](../../../lean/SquigglyLine/Supporting/Training/Optimisers.lean), [`SpectralBias.lean`](../../../lean/SquigglyLine/Supporting/Training/SpectralBias.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -86,6 +86,49 @@ strength of a frequency is the square of the size its coefficient is allowed.
 If high frequencies are given small sizes, the smooth part is learned first and
 the squiggles last. So the order in which squiggles appear during training is
 set by the same sizes that set how squiggly the model is at the start.
+
+## The same factor, under four changes to the step
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/Training/Optimisers.lean`](../../../lean/SquigglyLine/Supporting/Training/Optimisers.lean).
+
+Everything above comes from one number: a step of size `η` multiplies the
+error in a direction of strength `λ` by `1 - η λ`. Four common changes to
+the step can be read off the same number.
+
+**A schedule.** If the step size changes from step to step, what is left of
+the error is the product of the factors `1 - η_t λ` (**proved**:
+`runSchedule_eq`). While every `η_t λ` is between zero and two the error
+never grows (**proved**: `abs_runSchedule_le`). A step that is too large for
+a direction makes its error grow (**proved**: `one_lt_abs_one_sub`). Warmup
+starts with small steps so that the sharpest directions are not hit with a
+factor above one before they have settled (**argued**).
+
+**The condition number.** Say the strengths lie between `m` and `M`. The
+step `2 / (m + M)` shrinks every direction by at least `(M - m) / (M + m)` a
+step (**proved**: `abs_one_sub_best_step_le`), and the weakest direction by
+exactly that (**proved**: `one_sub_best_step_at_weakest`). With `κ = M / m`
+the factor is `(κ - 1) / (κ + 1)`. So the more uneven the strengths, the
+slower the best plain step is.
+
+**Momentum.** With momentum `β` a step also adds `β` times the last move.
+At `η λ = 2 (1 + β)` an error that flips sign every step is carried forward
+at full size, for ever (**proved**: `momentumStep_alternating`,
+`iterate_momentumStep_alternating`). With `β = 0` this is the edge
+`η λ = 2` of `edge-of-stability.md`. So momentum moves the edge of
+stability from `2 / η` to `2 (1 + β) / η`.
+
+**Steps on part of the data.** Let each of several clients take one step
+from the same weights, each on its own gradient. The average of where they
+land, weighted by their shares of the data, is one step on the gradient of
+all the data (**proved**: `sum_smul_step_eq_step`). With one example per
+client and equal shares this says a step on a random example is the full
+step on average (**proved**: `mean_step_eq_step`). It is stochastic gradient
+descent in the mean, and federated averaging after one local step.
+
+Not shown: that directions below momentum's edge are stable, the noise of a
+random example around its mean, and federated averaging after more than one
+local step, where the average is no longer a single step.
 
 ## What is not shown
 
