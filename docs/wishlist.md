@@ -25,8 +25,9 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 37 are marked as of 14 Nov 2026, from a second pass over the list
-  made once the first one was finished. AdamW and RMSNorm go first.
+  order. 44 are marked as of 14 Nov 2026, from a second pass over the list
+  made once the first one was finished. AdamW and RMSNorm go first. The
+  list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
 
@@ -40,6 +41,7 @@ The papers and years are recalled from memory and have not been checked.
 | Slope of a network (Szegedy et al. 2014; Bartlett et al. 2017; Miyato et al. 2018) | A network is no steeper than the product of the slopes of its layers. So its nearness to the data has to be paid for in that product. | **proved**: [`NetworkSlope.lean`](../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
 | Backpropagation (Rumelhart, Hinton and Williams 1986) | The gradient comes back through the same layers in reverse, so it is bounded by the same product. | **proved**: [`NetworkSlope.lean`](../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean), [`VanishingGradients.lean`](../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) |
 | Vanishing gradients and the LSTM (Hochreiter and Schmidhuber 1997) | A slope below one per layer dies out with depth, above one blows up. | **proved**: [`VanishingGradients.lean`](../lean/SquigglyLine/Supporting/NetworkShape/VanishingGradients.lean) |
+| Sigmoid and tanh saturate (Glorot and Bengio 2010; Nair and Hinton 2010) | A sigmoid's slope is never above one quarter. `L` sigmoid layers shrink the gradient by `4^L` unless the weights make up for it. A fold's slope is one where it is open. | **next** |
 | Adversarial examples (Szegedy et al. 2014; Goodfellow et al. 2015) | To flip a classifier of slope `K` you must move the input at least `score / K`. For a linear model, nudging every input by `ε` moves the score by `ε` times the sum of the sizes of the weights. | **proved**: [`NetworkSlope.lean`](../lean/SquigglyLine/Supporting/NetworkShape/NetworkSlope.lean) |
 | Adversarial training (Madry et al. 2018) | For a linear model, training against the worst nudge of size `ε` is training with a penalty of `ε` times the summed sizes of the weights. The defence is a charge on slope. | **next** |
 | Training with noise on the input (Bishop 1995) | For a linear model, noise of variance `σ²` on the input adds `σ²` times the squared slope to the expected loss. Noise is a charge on slope. | **next** |
@@ -60,6 +62,7 @@ The papers and years are recalled from memory and have not been checked.
 | Convolution, slope (LeCun et al. 1989) | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the size of the image. | **next** |
 | Convolution, locality (LeCun et al. 1989) | After `L` layers of kernel radius `r`, an output depends only on inputs within `L × r` of it. Squiggles are made locally and shared across positions. | **next** |
 | Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | **next** |
+| Upsampling (Ronneberger et al. 2015) | The mirror of stride: stretching by two halves the frequency. | **next** |
 | LSTM and GRU gates (Hochreiter and Schmidhuber 1997; Cho et al. 2014) | Along the memory cell the slope per step is the forget gate, which is at most one. With the gate open it is exactly one: a skip through time. | **next** |
 | Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | **next** |
 | Max pooling | The highest of several lines is no steeper than the steepest of them. | **next** |
@@ -124,6 +127,7 @@ The papers and years are recalled from memory and have not been checked.
 | Neural tangent kernel (Jacot et al. 2018) | For training, a model is its kernel. | **proved** for a fixed kernel: [`Kernel.lean`](../lean/SquigglyLine/Networks/Kernel.lean) |
 | Spectral bias (Rahaman et al. 2019) | Gentle directions of the kernel are learned first. | **proved**: [`SpectralBias.lean`](../lean/SquigglyLine/Supporting/Training/SpectralBias.lean) |
 | Edge of stability (Cohen et al. 2021) | A direction is stable up to strength `2 / η`. | **proved**: [`EdgeOfStability.lean`](../lean/SquigglyLine/Supporting/Training/EdgeOfStability.lean) |
+| The condition number sets the speed of gradient descent | The best single step size is `2 / (strongest + weakest)`. With it the slowest direction shrinks by `(κ − 1) / (κ + 1)` a step, where `κ` is strongest over weakest. | **next** |
 | Fourier features and NeRF (Tancik et al. 2020; Mildenhall et al. 2020) | A Fourier lift of frequency `w` stretches distances by exactly up to `w`. That stretch is where the fine detail comes from. | **proved**: [`FourierLift.lean`](../lean/SquigglyLine/Networks/FourierLift.lean) |
 | Position signals (Vaswani et al. 2017; Su et al. 2021) | The same lift applied to position. Moving along the sequence is a fixed turn, so the kernel of two positions depends only on how far apart they are. | **proved**: [`FourierLift.lean`](../lean/SquigglyLine/Networks/FourierLift.lean) |
 | Sinusoidal positions, all frequencies together (Vaswani et al. 2017) | With many frequencies the overlap of two positions is a sum of cosines of the gap between them. It still depends only on the gap, and it is largest at gap zero. | **next** |
@@ -161,6 +165,11 @@ The papers and years are recalled from memory and have not been checked.
 | Attention (Vaswani et al. 2017) | A weighted average. It cannot spread the tokens, so it cannot add squiggle. | **proved**: [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
 | Memory networks and neural Turing machines (Graves et al. 2014; Weston et al. 2015) | Reading memory by content is an attention head over the memory slots, so what is read is an average of what is stored. | **proved**: [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
 | Attention loses rank with depth (Dong et al. 2021) | With scores at most `B` in size, each layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)`. | **proved** for number-valued tokens: [`AttentionRate.lean`](../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
+| Graph networks blur their nodes with depth (Kipf and Welling 2017; Li et al. 2018) | A message-passing layer is an average over neighbours, so the spread of the nodes shrinks at a geometric rate. | **next** |
+| The diffusion noising schedule (Ho et al. 2020) | Each noising step blends the signal with fresh noise so the total variance stays fixed while the signal's share shrinks geometrically. | **next** |
+| Where a transformer makes its squiggle | Attention only averages, so it adds no turn. Every turn comes from the folds of the feed-forward block. | Argued from [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) and [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) |
+| Squared error fits the mean, absolute error the median | The loss chooses which average the line goes through. | Mean **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean). Median **next** |
+| The actor-critic baseline (Sutton and Barto 1998) | Subtracting a baseline from the reward leaves the average push unchanged. | **next** |
 | Ensembles (Krogh and Vedelsby 1995; Lakshminarayanan et al. 2017) | The average of several lines is no steeper than the steepest, and its squared error is the average error minus the spread of the lines. | **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 | Model soups and weight averaging (Izmailov et al. 2018; Wortsman et al. 2022) | For a model linear in its weights, averaging weights is averaging lines. | **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 | Diffusion models (Ho et al. 2020; Song et al. 2021) | The best denoiser is an attention head over the training set: a weighted average of the clean examples. So it never leaves the region the examples span. | **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
@@ -196,6 +205,7 @@ The rest are long.
 | A big enough random network already contains a small one that fits (the strong lottery ticket). | Malach et al. 2020; here pruning for a fixed kernel | Counting arguments with chance in them. |
 | Depth beats width for networks of any depth. | Telgarsky 2016; here one hidden layer against a deep one | The general bound on how many straight pieces a network draws. |
 | Approximation with a rate in many dimensions. | Barron 1993; here one dimension | Fourier analysis in many dimensions. |
+| A linear autoencoder learns the principal directions of the data. | Baldi and Hornik 1989; Eckart and Young 1936 | The best low-rank approximation of a matrix, which needs more of the theory of singular values than the library has. |
 | Neural collapse comes out of training. | Proved for a simplified model in the literature; here only that the simplex is the limit | The training path, even for the simplified model. |
 | Dropout and weight decay under cross-entropy. | Wager, Wang and Liang 2013, to second order | The error is no longer linear in the outputs. |
 | The error on new data is close to the error on the training data, for a model picked from a finite set. | Valiant 1984; the classical counting bound | A tail bound for a sum of independent terms, used once for every model in the set. The library has the pieces; not attempted. |
