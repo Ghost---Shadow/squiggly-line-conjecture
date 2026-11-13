@@ -1,6 +1,6 @@
 # The Fourier lift: Fourier features, position signals and convolution
 
-**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean), [`Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean).
+**Proofs:** [`FourierLift.lean`](../../lean/SquigglyLine/Networks/FourierLift.lean), [`Positions.lean`](../../lean/SquigglyLine/Networks/Positions.lean), [`Convolution.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean).
 
 Notes from 12 Nov 2026. Written before the proofs, then updated once they were
 done. Each statement is marked **proved** (in
@@ -111,6 +111,35 @@ Notes from 14 Nov 2026. Proofs in
 The first three build in the fact that only the gap matters. The table has
 to learn it from data, and cannot use it past the longest sequence it was
 trained on (**argued**).
+
+## Convolution layers, stride and upsampling
+
+Notes from 14 Nov 2026. Proofs in
+[`lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean`](../../lean/SquigglyLine/Supporting/NetworkShape/Convolution.lean). The signal
+here has one dimension.
+
+- **Slope.** If two signals differ by at most `d` at every position, their
+  outputs under one convolution layer differ by at most `d` times the
+  summed sizes of the kernel weights (**proved**:
+  `abs_convolution_sub_le`). The length of the signal does not enter. So
+  the slope a convolution layer can add is set by its few kernel weights.
+- **Locality.** An output depends only on the inputs under the kernel
+  (**proved**: `convolution_congr`). After `L` layers with a kernel of
+  width `n`, it depends only on the inputs within `L * n` of it
+  (**proved**: `iterate_convolution_congr`). Squiggles are made locally,
+  and the same kernel makes them at every position.
+- **Stride.** Reading a signal at every second position is squeezing it
+  sideways by two, in the exact sense of the general theorem (**proved**:
+  `stride_eq_compress`). So each stride doubles the slope of what the later
+  layers see (**proved**: `lipschitzWith_stride`), and with it the
+  frequency.
+- **Upsampling.** Stretching by two is squeezing by one half (**proved**:
+  `upsample_eq_compress`). A stride of two after it gives the signal back
+  (**proved**: `stride_upsample`). This is the way down and back up in a
+  U-shaped network.
+
+Not shown: images, where the kernel has two dimensions, and pooling as the
+way to downsample.
 
 ## How this meets the squiggly line
 

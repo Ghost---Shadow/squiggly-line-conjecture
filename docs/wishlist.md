@@ -1,6 +1,6 @@
 # Wishlist
 
-**Proofs:** [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean), [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`Lift.lean`](../lean/SquigglyLine/Networks/Lift.lean), [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Perceptron.lean`](../lean/SquigglyLine/Supporting/Training/Perceptron.lean), [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean).
+**Proofs:** [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`Lift.lean`](../lean/SquigglyLine/Networks/Lift.lean), [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean), [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean), [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean), [`Perceptron.lean`](../lean/SquigglyLine/Supporting/Training/Perceptron.lean), [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean).
 
 Written 12 Nov 2026. The aim is to say all of deep learning in the terms of
 the squiggly line, with every step machine-checked. This file lists
@@ -26,7 +26,7 @@ What is proved is not listed here. It is in the
 has a status.
 
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 11 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 7 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first. The
   list is frozen for this round.
 - **out of reach**: needs mathematics or library support that is missing.
@@ -38,10 +38,6 @@ The papers and years are recalled from memory and have not been checked.
 
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
-| Convolution, slope (LeCun et al. 1989) | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the size of the image. | **next** |
-| Convolution, locality (LeCun et al. 1989) | After `L` layers of kernel radius `r`, an output depends only on inputs within `L × r` of it. Squiggles are made locally and shared across positions. | **next** |
-| Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | **next** |
-| Upsampling (Ronneberger et al. 2015) | The mirror of stride: stretching by two halves the frequency. | **next** |
 | Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | **next** |
 
 ## Nearness
