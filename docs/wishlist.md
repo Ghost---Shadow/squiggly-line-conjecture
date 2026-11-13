@@ -25,8 +25,8 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 28 are marked as of 14 Nov 2026, from a second pass over the list
-  made once the first one was finished.
+  order. 31 are marked as of 14 Nov 2026, from a second pass over the list
+  made once the first one was finished. AdamW and RMSNorm go first.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
 
@@ -90,7 +90,9 @@ The papers and years are recalled from memory and have not been checked.
 | Mode connectivity (Garipov et al. 2018; Draxler et al. 2018) | No hill on the straight path between two fits. | **proved** for linear models: [`ModeConnectivity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/ModeConnectivity.lean) |
 | Flat minima (Keskar et al. 2017; Dinh et al. 2017) | Rescaling changes flatness and travel and leaves the line alone. | **proved**: [`Reparam.lean`](../lean/SquigglyLine/Supporting/Training/Reparam.lean) |
 | Normalisation (Ioffe and Szegedy 2015; Ba et al. 2016) | Weights that feed a normalisation can be rescaled freely, so the gradient is at right angles to them and each step makes them longer. Their size stops setting the slope. | **proved**: [`Symmetry.lean`](../lean/SquigglyLine/Supporting/Training/Symmetry.lean), [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean) |
+| RMSNorm and pre-norm (Zhang and Sennrich 2019; Xiong et al. 2020) | Dividing by the root mean square alone already makes the weights before it free to rescale, so the gradient is at right angles to them. Normalising inside the branch leaves the skip path untouched. | **next** |
 | Adam (Kingma and Ba 2015) | Adam travels the same distance per step along a strong direction and a weak one. It removes the "strong first" clock of spectral bias, so squiggles are fitted sooner. | **proved** with no memory: [`StepRules.lean`](../lean/SquigglyLine/Supporting/Training/StepRules.lean) |
+| AdamW (Loshchilov and Hutter 2019) | Weight decay applied outside Adam's rescaling shrinks every weight at the same rate. Applied inside it, the shrink is rescaled away with the gradient. So only the outside form is a floor on travel. | **next** |
 | Gradient clipping (Pascanu et al. 2013) | A cap on travel per step. | **proved**: [`StepRules.lean`](../lean/SquigglyLine/Supporting/Training/StepRules.lean) |
 | Low-rank adaptation, intrinsic dimension (Li et al. 2018; Hu et al. 2021) | Training only some directions never shortens the travel. | **proved**: [`StepRules.lean`](../lean/SquigglyLine/Supporting/Training/StepRules.lean) |
 | Quantisation (Courbariaux et al. 2015 and after) | Moving the weights by a rounding error moves each output by at most that error times the stretch of the lift. | **proved**: [`StepRules.lean`](../lean/SquigglyLine/Supporting/Training/StepRules.lean) |
@@ -127,6 +129,7 @@ The papers and years are recalled from memory and have not been checked.
 | Catastrophic forgetting (Kirkpatrick et al. 2017) | A new task moves an old one through the kernel between them. | **proved**: [`Forgetting.lean`](../lean/SquigglyLine/Supporting/NewInputs/Forgetting.lean) |
 | Benign overfitting (Bartlett et al. 2020) | Junk directions of the kernel swallow the noise. | **proved** for one junk direction: [`BenignOverfitting.lean`](../lean/SquigglyLine/Supporting/NewInputs/BenignOverfitting.lean) |
 | Rethinking generalisation (Zhang et al. 2017) | A lift into `m` dimensions fits any labels on `m` points. | **proved**: [`Capacity.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Capacity.lean) |
+| Softmax bottleneck (Yang et al. 2018) | With `d` hidden numbers the table of scores over contexts and words has rank at most `d`. A lift that small cannot give every next-word distribution. | **next** |
 | In-context learning (von Oswald et al. 2023) | One attention head scoring by the kernel is one step of travel on the prompt. | **proved**: [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
 | Random Fourier features (Rahimi and Recht 2007) | Average the Fourier-lift kernel over frequencies drawn from a bell curve and the result is the Gaussian bump. The Fourier lift and the radial basis kernel are one thing. | **next** |
 | Policy gradient (Williams 1992) | The push on the scores is the action taken minus the prediction, times the reward. That is the cross-entropy push, so the same kernel carries it. | **next** |
