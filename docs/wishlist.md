@@ -25,7 +25,7 @@ Each row has a status.
 
 - **proved**: a statement of it, for a simplified model, is in `lean/`.
 - **next**: looks within reach of the tools already here. Worked through in
-  order. 31 are marked as of 14 Nov 2026, from a second pass over the list
+  order. 37 are marked as of 14 Nov 2026, from a second pass over the list
   made once the first one was finished. AdamW and RMSNorm go first.
 - **out of reach**: needs mathematics or library support that is missing.
   The last two sections say what is in the way.
@@ -55,6 +55,12 @@ The papers and years are recalled from memory and have not been checked.
 | Mixup (Zhang et al. 2018) | A model that fits every blend of two examples is straight between them. Its slope there is the gap in labels over the distance, the least any line through both can have. | **next** |
 | Knowledge distillation (Hinton et al. 2015) | A teacher's soft label gives the student a finite best score, the teacher's own. A hard label gives none. So a student is never asked for more slope than its teacher has. | **next** |
 | Residual networks keep points apart (He et al. 2016) | Input plus a branch of slope `K < 1` keeps any two points at least `1 − K` of their distance apart. A skip cannot merge what a fold would. | **next** |
+| Residual networks and turns (He et al. 2016) | With one input, input plus a branch of slope below one is always rising. So a residual layer adds a turn only where its branch is steeper than one. Squiggle has to be bought in the branch. | **next** |
+| Residual networks at depth (He et al. 2016) | `L` layers with branches of slope `c / L` have total slope at most `e^c`, however deep. A plain stack of slope `K` has `K^L`. | **next** |
+| Convolution, slope (LeCun et al. 1989) | A convolution layer is no steeper than the summed sizes of its kernel weights, whatever the size of the image. | **next** |
+| Convolution, locality (LeCun et al. 1989) | After `L` layers of kernel radius `r`, an output depends only on inputs within `L × r` of it. Squiggles are made locally and shared across positions. | **next** |
+| Stride and downsampling | Reading every second input is squeezing by two, in the sense of [`Compression.lean`](../lean/SquigglyLine/Theorem/Compression.lean). Each stride doubles the frequency of what the later layers see. | **next** |
+| LSTM and GRU gates (Hochreiter and Schmidhuber 1997; Cho et al. 2014) | Along the memory cell the slope per step is the forget gate, which is at most one. With the gate open it is exactly one: a skip through time. | **next** |
 | Mixture of experts and gating (Jacobs et al. 1991) | A gate that blends experts adds slope only through how far apart the experts are. Where the experts agree, a gate adds none. | **next** |
 | Max pooling | The highest of several lines is no steeper than the steepest of them. | **next** |
 | Leaky ReLU (Maas et al. 2013) | A leaky fold keeps a slope of at least the leak, so it never merges two inputs and never dies. | **next** |
@@ -139,6 +145,7 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | ReLU and depth (Nair and Hinton 2010; Telgarsky 2016) | `L` folds make `2^L` pieces and pass within `1 / 2^L` of every point. | **proved**: [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean), [`TentCloser.lean`](../lean/SquigglyLine/Networks/TentCloser.lean), [`DepthSeparation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/DepthSeparation.lean) |
+| Recurrent networks (Elman 1990) | A recurrent network run for `T` steps is `T` layers with the same weights. The tent layer repeated `T` times already turns `2^T − 1` times, so time buys squiggle exactly as depth does. | **proved**: [`Depth.lean`](../lean/SquigglyLine/Networks/Depth.lean) uses one layer repeated |
 | Universal approximation (Cybenko 1989) | Units needed go as slope over error. | **proved** in one dimension: [`UniversalApproximation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean) |
 | Initialisation (Glorot and Bengio 2010; He et al. 2015) | A fold keeps half the squared size of a signal that is as often negative as positive. That is the factor two in He initialisation. | **proved**: [`Gain.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Gain.lean) |
 | Residual networks (He et al. 2016) | A skip is a bypass: nothing is fully blocked. | **proved** for plates: [`SkipAndNorm.lean`](../lean/SquigglyLine/Supporting/NetworkShape/SkipAndNorm.lean) |
@@ -152,6 +159,7 @@ The papers and years are recalled from memory and have not been checked.
 | Paper or idea | In squiggly terms | Status |
 |---|---|---|
 | Attention (Vaswani et al. 2017) | A weighted average. It cannot spread the tokens, so it cannot add squiggle. | **proved**: [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
+| Memory networks and neural Turing machines (Graves et al. 2014; Weston et al. 2015) | Reading memory by content is an attention head over the memory slots, so what is read is an average of what is stored. | **proved**: [`Attention.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Attention.lean) |
 | Attention loses rank with depth (Dong et al. 2021) | With scores at most `B` in size, each layer of attention alone shrinks the spread of the tokens by `1 − exp(−2B)`. | **proved** for number-valued tokens: [`AttentionRate.lean`](../lean/SquigglyLine/Supporting/NetworkShape/AttentionRate.lean) |
 | Ensembles (Krogh and Vedelsby 1995; Lakshminarayanan et al. 2017) | The average of several lines is no steeper than the steepest, and its squared error is the average error minus the spread of the lines. | **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
 | Model soups and weight averaging (Izmailov et al. 2018; Wortsman et al. 2022) | For a model linear in its weights, averaging weights is averaging lines. | **proved**: [`Averaging.lean`](../lean/SquigglyLine/Supporting/NewInputs/Averaging.lean) |
