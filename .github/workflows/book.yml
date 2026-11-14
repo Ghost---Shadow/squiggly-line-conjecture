@@ -1,0 +1,42 @@
+name: Book
+
+# Builds the book in book/ as a PDF. Every change to the book gets a PDF as a
+# build artifact. Every pushed tag that starts with "v" also gets a release
+# with the PDF attached.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - "book/**"
+      - "graphs/**"
+      - ".github/workflows/book.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pandoc, XeLaTeX and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pandoc texlive-xetex texlive-latex-recommended \
+            texlive-latex-extra texlive-fonts-recommended lmodern fonts-dejavu
+      - name: Build the PDF
+        run: bash book/pdf/build.sh "${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'draft' }}"
+      - name: Keep the PDF as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: the-squiggly-line-theorem-book
+          path: book/build/the-squiggly-line-theorem-book.pdf
+      - name: Attach the PDF to a release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: book/build/the-squiggly-line-theorem-book.pdf
+          generate_release_notes: true

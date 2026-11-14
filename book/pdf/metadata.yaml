@@ -1,0 +1,16 @@
+title: "The Squiggly Line Theorem"
+subtitle: "A Guided Tour of the Proofs"
+author: "Souradeep Nanda"
+documentclass: report
+papersize: a4
+fontsize: 11pt
+geometry: margin=1in
+mainfont: "DejaVu Serif"
+sansfont: "DejaVu Sans"
+monofont: "DejaVu Sans Mono"
+monofontoptions: "Scale=0.85"
+colorlinks: true
+linkcolor: "black"
+urlcolor: "blue"
+header-includes:
+  - \usepackage{fvextra}

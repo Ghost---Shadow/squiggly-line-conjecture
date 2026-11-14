@@ -10,6 +10,12 @@ This repository holds an idea about why large neural networks learn
 fast, the experiments that tested it, and a machine-checked proof of what
 turned out to be true.
 
+**New to the proofs? Start with the book.**
+[A Guided Tour of the Proofs](book/README.md) goes through them chapter by
+chapter, in the order of the ideas, for a reader who knows Python and
+school mathematics and no Lean. A PDF is attached to every
+[release](https://github.com/Ghost---Shadow/squiggly-line-theorem/releases/latest).
+
 **What it connects to.** The tools behind the theorem also give short,
 machine-checked statements about well-known puzzles of deep learning:
 [double descent](docs/networks/double-descent.md),
@@ -57,6 +63,7 @@ Each is proved for a simplified model, most often a fixed kernel (the
 lazy-training, or neural tangent kernel, regime), and none is needed for the
 theorem. They are collected under [supporting material](#8-supporting-material).
 
+- Book: [`book/`](book/README.md), a guided tour of the proofs
 - Proofs: [`lean/`](lean), rebuilt on every push [![Lean proofs](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml/badge.svg)](https://github.com/Ghost---Shadow/squiggly-line-theorem/actions/workflows/lean.yml)
 - Paper (draft of 11 Nov 2026): [`paper/main.pdf`](paper/main.pdf)
 - Write-up: [ad-absurdum.me/blog/squiggly-line-conjecture](https://ad-absurdum.me/blog/squiggly-line-conjecture)
@@ -116,9 +123,9 @@ GET_VERTICAL_ERROR ((MAKE_RANDOM_PHASE_SINE A w).eval φ) p / √(1 + (A * w) ^ 
 
 ```lean
 -- Here
-let GET_GRAPH            := DRAW_SINE_CURVE amplitude frequency phase
-let vertical_error   := GET_VERTICAL_ERROR GET_GRAPH data_point    -- orange line in the graph: what training sees
-let nearest_distance := GET_NEAREST_DISTANCE GET_GRAPH data_point  -- blue line in the graph: what the eye sees
+let curve            := DRAW_SINE_CURVE amplitude frequency phase
+let vertical_error   := GET_VERTICAL_ERROR curve data_point    -- orange line in the graph: what training sees
+let nearest_distance := GET_NEAREST_DISTANCE curve data_point  -- blue line in the graph: what the eye sees
 let slope_bound      := √(1 + (amplitude * frequency) ^ 2)     -- Pythagoras: 1 across, amplitude * frequency up (steepest slope)
 let lower_bound      := vertical_error / slope_bound           -- a curve no steeper than that cannot pass any closer
 let upper_bound      := PI / frequency                         -- half a wave: within it the sine passes every height
@@ -643,6 +650,7 @@ python readme_figures.py         # redraws the figures on this page, ~2 min
 
 | Path | Contents |
 |---|---|
+| `book/` | the book: a guided tour of the proofs, chapter by chapter, with the scripts that build its PDF |
 | `lean/SquigglyLine/Theorem/` | the proof of the theorem |
 | `lean/SquigglyLine/Tests/` | checks that each restyled statement says what its original said |
 | `lean/STYLE.md` | how every statement is written |
