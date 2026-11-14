@@ -33,6 +33,8 @@ things follow, and each is one line of reasoning.
 The sine is the special case of `sin` squeezed by its frequency, with
 `reach = PI`.
 
+![One model, a sum of four sines, squeezed by 1, 2 and 4. The reach shrinks from 2.81 to 1.41 to 0.70 and the steepest slope grows from 2.1 to 4.3 to 8.5.](figures/07-squeeze.png)
+
 ## The statement
 
 The squeeze is one line:
@@ -111,6 +113,18 @@ The theorem says what squeezing does. It does not say how squiggly a
 network with **random** weights is to begin with, which is the `reach` of
 such a network as it grows. That is the open half of claim 2 of chapter
 1. See chapter 47.
+
+![Bars for the model and the same model squeezed by 8, relative to the model. The reach falls to 0.13, the steepest slope rises to 8, and the average loss at the start stays at 1.](figures/07-before-and-after-squeeze.png)
+
+## Run it yourself
+
+[`ch07_squeeze.ipynb`](../experiments/part1/ch07_squeeze.ipynb) squeezes a model
+that is not a single sine: a sum of four sines with random phases. For
+squeeze factors 1, 2, 4 and 8 the measured reach is 2.81, 1.41, 0.70 and
+0.35, and the steepest slope is 2.1, 4.3, 8.5 and 17. Each is the factor
+times the first. The average loss at the start stays at 0.406 at every
+factor, to within 0.0003. This is one model of one kind. The proof is
+`squiggly_line_theorem_general`.
 
 ## Check yourself
 

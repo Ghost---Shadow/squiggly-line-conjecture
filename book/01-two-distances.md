@@ -38,6 +38,8 @@ this book is about what happens to each of them.
 vertical error is 1. But the line is steep, and it passes much closer than
 that off to the side: the nearest distance is `1 / √10`, about 0.32.
 
+![The line y = 3x and the point (0, 1). A solid orange line of length 1 goes straight down to the line. A dashed blue line of length 0.32 goes to the nearest point, at a right angle.](figures/01-two-distances-line.png)
+
 The whole theorem lives in the gap between these two numbers.
 
 ## The words the proofs use
@@ -64,11 +66,44 @@ The names in capitals are functions and constants. Functions are verbs:
 |---|---|---|
 | 1 | **Geometry.** A squigglier curve has a smaller nearest distance. | True. Chapters 4, 6 and 7. |
 | 2 | **Parameters.** More parameters give a squigglier curve. | Mixed. True for depth, chapter 8. Open for random weights, chapter 47. |
-| 3 | **Learning.** A smaller nearest distance means a smaller loss at the start. | False. Chapter 5. |
+| 3 | **Learning.** A smaller nearest distance means a smaller loss at the start. | False for any loss that reads one input at a time, on average over the random start. Chapter 5. |
 
 So the picture is right and the conclusion is wrong. The nearness is real,
 but the loss cannot see it. What the nearness does buy is a short distance
 to move, and chapter 9 measures that distance.
+
+## What the nearness does buy: the warp
+
+The loss cannot see the nearness, but a small move can use it. Say you
+want the model to output a target at every input. Instead of changing the
+model, change where you read it. The **warp** sends each input to a nearby
+input at which the model already outputs what the target wants there. A
+model that passes near every label in position, even when it is far in
+height, can be read this way.
+
+**An example.** The model is `sin(x)` and the target is the constant `0.5`.
+At input `0` the model says `0`, which is wrong by `0.5`. Move the input to
+`0.5236` (that is `π / 6`) and the model says exactly `0.5`. At input `2`
+the model says `0.909`. Move the input to `2.618` (that is `5π / 6`) and it
+says `0.5`, a move of `0.618`. Every input has such a place within `π`, one
+full wave, so no input moves further than `π`. For `sin(8x)` the waves are
+eight times narrower and no move is longer than `π / 8`, about `0.39`.
+
+So a warp is a way to move each input by at most `reach` so that the model,
+read at the moved input, equals the target. Chapter 4 states it in Lean and
+proves that one exists. A warp is not a new model, and the book does not
+claim that training finds it.
+
+## Run it yourself
+
+[`ch01_two_distances.ipynb`](../experiments/part1/ch01_two_distances.ipynb)
+checks this chapter in PyTorch. It measures the example (nearest distance 0.31623,
+and `1 / √10` is 0.31623), the flat-line answer, and, on 1200 random points
+and sine models, that the nearest distance was never larger than the
+vertical error. The measurement does not use the point straight above or
+below the data point as a sample, so it could have failed. This is a
+check by measurement, not a proof. Chapter 3 proves it. To run all of
+Part I: `jupyter nbconvert --to notebook --execute --inplace experiments/part1/ch*.ipynb`.
 
 ## Check yourself
 

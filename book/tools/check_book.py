@@ -92,6 +92,7 @@ def check(chapter):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")  # a Windows console may not be UTF-8
     wanted = {number.zfill(2) for number in sys.argv[1:]}
     chapters = [
         chapter for chapter in sorted(BOOK.glob("*.md"))

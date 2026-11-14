@@ -1,0 +1,25 @@
+<svg viewBox="0 0 680 450" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Vertical error versus nearest distance</title>
+<desc>A data point above a model curve, the vertical segment to the curve, the perpendicular segment to the steepest allowed line, and the slope_limit cone the curve stays inside.</desc>
+<rect width="680" height="450" fill="#FFFFFF"/>
+<polygon points="340,250 100,106 100,394" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<polygon points="340,250 580,106 580,394" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<path d="M100 250 C150 215 190 285 240 258 S300 245 340 250 S430 285 480 235 S530 185 580 215" fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+<line x1="340" y1="120" x2="340" y2="244" stroke="#D85A30" stroke-width="2"/>
+<line x1="340" y1="120" x2="397" y2="216" stroke="#1D9E75" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M405.6 210.9 L400.5 202.3 L391.9 207.4" fill="none" stroke="#1D9E75" stroke-width="1"/>
+<circle cx="340" cy="250" r="4" fill="#7F77DD"/>
+<circle cx="340" cy="120" r="6" fill="#D85A30"/>
+<g font-family="sans-serif" font-size="14" fill="#2C2C2A">
+<text x="332" y="168" text-anchor="end" font-weight="500">vertical error</text>
+<text x="385" y="146" font-weight="500">nearest distance</text>
+<text x="340" y="425" text-anchor="middle" font-weight="500">vertical error / √(1 + slope_limit²) ≤ nearest distance ≤ vertical error</text>
+</g>
+<g font-family="sans-serif" font-size="12" fill="#5F5E5A">
+<text x="332" y="186" text-anchor="end">straight down to the model</text>
+<text x="385" y="164">straight to the steepest edge</text>
+<text x="340" y="280" text-anchor="middle">model value at this input</text>
+<text x="340" y="104" text-anchor="middle">data point</text>
+<text x="640" y="92" text-anchor="end">cone edge: slope_limit</text>
+</g>
+</svg>

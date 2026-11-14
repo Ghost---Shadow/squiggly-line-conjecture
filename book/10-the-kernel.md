@@ -116,6 +116,49 @@ has no such leash.
 Unable to fit the noise is safe. Barely able is the worst case. Easily
 able is safe again. That is double descent.
 
+## Run it yourself
+
+[`ch10_the_kernel.ipynb`](../experiments/part2/ch10_the_kernel.ipynb) uses a model that is linear in its
+weights: fixed Fourier features, with the kernel `features @ features.T`. Each experiment checks one claim.
+
+- **One step.** Against PyTorch's own gradient step, the error after one step
+  equals the old error minus the learning rate times the kernel times the old
+  error, to within `2e-15`, for random weights.
+- **Same kernel.** A second model with 23 weights instead of 17, different
+  weights, and the same kernel goes through the same errors as the first for
+  200 steps (largest gap `2e-15`). A model with a different kernel and the same
+  starting error does not (gap 0.76).
+- **One factor per step.** Along every pattern of the kernel the error is
+  multiplied by `1 − learning_rate × strength` (gap `5e-14`). On the strongest
+  pattern, at `learning_rate × strength` of 1.9 the error falls to 0.016 in 39
+  steps, and at 2.1 it grows to 41 from a start of 1.
+- **Travel.** For each of 12 patterns the travel is the size divided by the
+  root of the strength (gap `2e-10`), and for a mix the travel squared is the
+  sum of those terms.
+- **Double descent.** 20 noisy training points, 2000 held-out test points, and
+  the number of weights swept from 3 to 513 (1 to 256 Fourier terms), median
+  over 200 data sets. Both the test error and the travel peak at 21 weights,
+  one more than the 20 training points, where the model has just enough terms
+  to fit. The measured test error is 0.097 at 5 weights, 80 800 at 21, 0.305 at
+  65 and 0.31 at 513. The travel is 0.76, 385, 0.58 and 0.17. That is the
+  chapter's table to within the spread of different data sets. The test-error
+  peak is measured here, not proved.
+
+![The error along a pattern is multiplied by one factor each step.](figures/10-factor-per-step.png)
+
+![Two models with the same kernel have the same errors.](figures/10-same-kernel-same-errors.png)
+
+![Test error and travel against the number of weights, both peaking at 21.](figures/10-double-descent.png)
+
+These are measurements of one model, not proofs. The Lean theorems cover
+every linear model.
+
+Run it with:
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace experiments/part2/ch10_the_kernel.ipynb
+```
+
 ## What is not shown
 
 - **That the test error peaks there.** The travel peak is proved. That

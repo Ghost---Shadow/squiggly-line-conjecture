@@ -104,9 +104,9 @@ theorem one_le_slope_mul_dist_of_count
     {count : ℝ}
     (model_at_input : model input = count)
     (model_at_other_input : model other_input = count + 1) :
-    let count_jump           := (1 : ℝ)  -- from `count` to `count + 1`
-    let slope_times_distance := slope_limit * dist input other_input
-    count_jump ≤ slope_times_distance := by
+    let output_change     := (1 : ℝ)  -- from `count` to `count + 1`
+    let max_output_change := slope_limit * dist input other_input
+    output_change ≤ max_output_change := by
 ```
 
 *Read aloud:* if a model with slope at most `slope_limit` says `count`

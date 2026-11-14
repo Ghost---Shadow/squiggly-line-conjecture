@@ -59,4 +59,12 @@ grep -oh '(\.\./graphs/[^)]*)' [0-9][0-9]-*.md glossary.md how-to-cite.md README
       cp "../$image" "$site/$image"
     done
 
+# Figures drawn for the book live in book/figures and are linked as figures/x.png.
+mkdir -p "$site/figures"
+grep -oh '(figures/[^)]*)' [0-9][0-9]-*.md glossary.md how-to-cite.md README.md \
+  | sed 's/^(//; s/)$//' | sort -u \
+  | while read -r image; do
+      cp "$image" "$site/$image"
+    done
+
 echo "built book/$site (version ${version})"

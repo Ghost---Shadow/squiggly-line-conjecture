@@ -47,6 +47,8 @@ theorem residual_along
     residual_on_path = remaining_fraction • residual_at_start := by
 ```
 
+![The residual along the straight path](figures/09-straight-path.png)
+
 Half way along the path, half the error is gone. So the nearer the fit,
 the more error a fixed amount of movement removes
 (`exists_within_budget`).
@@ -111,6 +113,55 @@ and 0.22 for 129 and 513 parameters. Measured: 0.48 and 0.23.
 
 The row with 21 parameters, just enough to fit 20 points, is the worst.
 Chapter 10 comes back to it.
+
+![Start loss, travel and steps against the number of weights](figures/09-travel-sweep.png)
+
+## Run it yourself
+
+[`ch09_travel.ipynb`](../experiments/part2/ch09_travel.ipynb) checks the four
+claims on a model that is linear in its weights (a Fourier series whose sine and
+cosine coefficients are trained). All numbers below are **measured**. An
+experiment is evidence, not a proof.
+
+- **Straight path.** On a random 20 by 25 problem the residual at 31 fractions
+  of the path equals `(1 - fraction)` times the residual at the start, entry by
+  entry, to `1e-13`. A point off the path breaks it, so the check can fail.
+- **More weights.** Adding 1, 5, 20 or 100 weights that start at zero never
+  raised the travel: 0 violations in 800 trials, and it fell in all 800. New
+  random models of the bigger size, which do not contain the old one, travelled
+  further than the old one in 301 of 800 trials. The nesting matters. The new
+  weights must start at zero, as in the Lean statement.
+- **Tight features.** The hand example gives 0.5000 for 4 features and 0.1000
+  for 100. Three random tight examples match `residual_size / √squared_length`
+  to `1e-10`. Features that are not tight miss it (4.66 against 3.66).
+- **The sweep** (loss `0.5 × mean(residual²)`, steps to loss 0.001 at step size
+  one over the largest curvature, counted exactly from the singular values and
+  equal to real gradient descent where that is short). The median of 40 seeds:
+
+| parameters | loss at start | travel | steps |
+|---|---|---|---|
+| 9 | 0.91 | no fit | never |
+| 21 | 1.01 | 1290 | 245 000 000 |
+| 25 | 1.02 | 86 | 720 000 |
+| 65 | 0.89 | 1.54 | 387 |
+| 129 | 0.89 | 0.70 | 42 |
+| 513 | 0.92 | 0.27 | 4 |
+
+The loss stays level and the travel and the steps fall, as in the table above.
+The size of the numbers differs from the table above. The loss here is about 0.9
+rather than 0.65, and the travel at 129 is 0.70 rather than 0.48. The kind is the
+same. The 21-parameter row is by far the worst, and the individual draws vary a
+lot: the 513-parameter travel agrees with `residual_size / √squared_length` to
+within 1% (median ratio 1.00), but at 129 parameters the median ratio is 1.16 and
+single draws go up to 34 times the prediction. The exchange rate is a good guide
+only when the features are nearly tight. The experiment did not test why some
+draws are far from it.
+
+Run it with:
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace experiments/part2/ch09_travel.ipynb
+```
 
 ## What is not shown
 

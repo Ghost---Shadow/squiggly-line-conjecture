@@ -28,6 +28,8 @@ reach. That is the definition doing its job.
 A flat line covers only its own height. A straight sloping line covers
 every label, but only with a reach as large as the labels are far away.
 
+![Two sines, sin(x) above and sin(8x) below, with the label 0.55 marked as a dashed line. The shaded window is the reach: from a black input, the nearest input that hits the label lies inside it. The window is eight times narrower for the second curve.](figures/04-covers-within-reach.png)
+
 ## The definition
 
 ```lean
@@ -91,6 +93,8 @@ This is the honest form of "the squiggly curve is close to the data". It
 is close in the sense that a small move of the inputs makes it exact. It
 is a distance to move.
 
+![The curve 0.8 sin(8x) in light purple and a target in black. For each of seventeen inputs, an arrow runs sideways to the input where the model equals the target there. No arrow is longer than pi over 8.](figures/04-the-warp.png)
+
 **3. The slope tax.** Put chapter 3 after fact 1:
 
 ```
@@ -115,6 +119,24 @@ set. The average distance from a random point to the set equals the
 share of points the tube has not reached yet, added up over all radii. So
 "closer on average" and "covers more at every radius" are the same
 statement. Nothing later depends on it.
+
+![Bars before and after the warp, for sines of frequency 2, 8 and 20. Left: the gap between model and target is 0.36 to 0.57 before the warp and 2e-15 to 2e-14 after it. Right: the largest move of an input stays below the bound of pi over the frequency.](figures/04-before-and-after-warp.png)
+
+## Run it yourself
+
+[`ch04_nearness.ipynb`](../experiments/part1/ch04_nearness.ipynb) computes the
+reach of a sine exactly, because the inputs that hit a label are known in
+closed form. The measured reach of `sin(x)`, `sin(8x)` and `sin(20x)` is
+3.1416, 0.3927 and 0.1571: exactly `π` over the frequency. The warp
+moves every input by at most `π` over the frequency and makes the model
+equal the target to within `2e-14`. The slope tax says the vertical error is
+at most `√(1 + slope_limit²)` times the nearest distance. In 90 random data
+points on sines it reached 0.997 of that, measured without using the point
+straight above or below the data point as a sample, so the check could have
+failed. The version with `reach` in place of the nearest distance is weaker:
+the vertical error went up to 0.55 of `√(1 + slope_limit²) × reach`, but for
+a sine that room is built in, so it is a consequence and not evidence. These are checks of the sine case by
+measurement. The Lean theorems cover any model that covers its labels.
 
 ## Check yourself
 

@@ -102,7 +102,10 @@ every frequency.
 family (`not_learningClaim_sineWave`). `closer_but_no_better` in
 [`SineCloser.lean`](../lean/SquigglyLine/Theorem/SineCloser.lean) puts
 the two halves side by side: the nearest distance goes to zero while
-every regression loss stays exactly where it was.
+every regression loss stays exactly where it was, on average over the
+random start. This holds for any loss that reads one input at a time. A
+loss that reads two inputs at once, such as a smoothness penalty, is not
+covered.
 
 ## What the experiment shows
 
@@ -120,6 +123,71 @@ Sines of one amplitude with a random phase. Only the frequency changes.
 
 The nearest distance falls thirty times. The vertical error does not
 move. The theorem says this is no accident of the experiment.
+
+![Fourteen data points on sines of frequency 1, 4 and 16 times pi. Blue lines run to the nearest point of the curve and orange lines straight up or down. The blue lines shrink as the frequency rises and the orange lines stay as long.](figures/06-frequency-strip.png)
+
+The average loss at the start is the third thing the theorem says. It is
+`label² + amplitude² / 2` at every frequency, because a random phase gives
+the output the same distribution everywhere.
+
+![Left: nearest distance and vertical error against frequency. Right: the average loss at the start against frequency, a flat line.](figures/06-closer-but-no-better.png)
+
+Put the two ends side by side. Without the squiggle, at frequency 0.25
+times pi, the nearest distance is 0.61. With it, at 64 times pi, it is
+0.02. The vertical error and the average loss do not change.
+
+![Bars for a smooth curve and a squiggly curve. The nearest distance falls from 0.613 to 0.022. The vertical error stays at 0.665 and 0.667, and the average squared loss at 0.665 and 0.666.](figures/06-with-and-without-squiggle.png)
+
+## A model that learns
+
+A sine with a random phase has nothing to learn. Take the same idea and
+let it train. The **sine model** is a sum of `num_terms` sines. Term
+number `term` has the fixed frequency `term`, and its amplitude and phase
+are the learnable parameters, so there are `2 × num_terms` of them. It
+trains with plain gradient descent on squared error.
+
+In this model the **width** is `num_terms`, the number of terms. The
+**depth** is one hidden layer: each term turns the input into a sine of its
+own phase, and the amplitudes add them up. Adding width adds higher
+frequencies, so a wider sine model is squigglier by construction. That is not
+true of every network. Chapter 8 shows that for ReLU networks it is depth, not
+width, that buys squiggle.
+
+So the sine model gets squigglier with more terms because we built it
+that way. That is no evidence about networks with random weights, where
+the question of claim 2 is still open. The experiments here test width in
+a sum of sines. They do not test depth.
+
+![Left: for sine models of 1 to 64 terms, the nearest distance at the start falls from 0.61 to 0.04, while the average loss at the start stays near 0.7. Right: the number of training steps needed to reach a fixed loss, which falls once the model has 32 terms or more.](figures/06-trained-sine-model.png)
+
+The left side is the theorem at work. A bigger model starts nearer to the
+data and no lower in loss. The right side is **measured**, not proved: on
+40 data points, the steps to reach a loss of 0.05 fall once the model has
+32 terms or more, and are not monotone below that. The median was 111 steps
+with 4 terms, 155 with 8, 57 with 32 and 19 with 64. The 1-term and 2-term
+runs (medians 186 and 133, and one 2-term run did not reach it in 4000 steps)
+are held back by the target, which has a third frequency that they cannot
+fit. Their best loss is about 0.045, close to the 0.05 threshold, so they
+measure that floor and not the speed of a small model. The slope sandwich of chapter 3
+held at the start, the middle and the end of every run, with the slope
+limit worked out again from the current parameters each time.
+
+![Bars of the nearest distance and the average loss before training and after 4000 steps, for models of 1 to 64 terms. Both fall with training, and the bars after training fall further as the model gets bigger.](figures/06-before-and-after-training.png)
+
+This is five runs of full-batch gradient descent at one learning rate on
+one kind of data. It shows the shape of the effect. It does not say how
+fast any real network trains.
+
+## Run it yourself
+
+[`ch06_sine_theorem.ipynb`](../experiments/part1/ch06_sine_theorem.ipynb)
+checks the four claims and trains the sine model above. Claim 1 held in all 12 settings of amplitude and
+frequency, with 40 points each. Claim 3 held to `1e-15`. In claim 4 the
+shift was never more than `π` over the frequency. The table above is
+reproduced, in PyTorch with new random draws, to within 0.006 for the
+nearest distance and 0.002 for the vertical error. In the notebook's own
+draw the nearest distance falls 28 times, from 0.613 to 0.022. Every one of these is a
+measurement of the sine case. The theorem is the proof.
 
 ## Check yourself
 

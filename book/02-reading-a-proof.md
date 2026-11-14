@@ -48,8 +48,9 @@ most the vertical error.*
 | `PascalCase` | a type: a kind of thing | `Model`, `DataPoint`, `SlopeLimit` |
 
 Functions are verbs. `GET_…` returns a value, `IS_…` and `HAS_…` answer yes
-or no, `MAKE_…` and `DRAW_…` build something. Theorem names are older and
-shorter (`nearestDist_le_verticalDist`); read them as labels.
+or no, `MAKE_…` and `DRAW_…` build something. Theorem names
+predate the naming convention in the table above and are kept short
+(`nearestDist_le_verticalDist`). Treat them as labels.
 
 ## The symbols you will meet
 
@@ -61,15 +62,40 @@ shorter (`nearestDist_le_verticalDist`); read them as labels.
 | `∃ x, ...` | there is an `x` with | `any(... for x in ...)` |
 | `A → B` | if `A` then `B` | |
 | `A ∧ B`, `A ∨ B` | `A` and `B`; `A` or `B` | `and`, `or` |
-| `ℝ`, `ℕ` | a real number; a counting number | `float`, `int` |
+| `ℝ` | a real number | `float` |
+| `ℕ` | a counting number: 0, 1, 2, and so on | `int` that is never negative |
+| `ℤ` | a whole number, negatives allowed | `int` |
 | `‖v‖` | the length of the vector `v` | `np.linalg.norm(v)` |
 | `c • v` | the vector `v` scaled by `c` | `c * v` |
 | `dist a b` | the distance from `a` to `b` | |
-| `LipschitzWith K f` | `f` has slope at most `K` everywhere | |
+| `LipschitzWith slope_limit f` | `f` has slope at most `slope_limit` everywhere | |
 
 Two kinds of brackets are safe to skim. Curly brackets `{...}` hold givens
 that Lean works out by itself. Square brackets `[...]` hold fine print
 about a type, such as "these vectors can be added and measured".
+
+Two warnings about the number types. A `ℕ` has no negatives, so
+subtraction stops at 0: `3 - 5` is `0`, not `-2`. And a Lean real is
+exact. Unlike a Python `float`, it has no rounding.
+
+## The Lipschitz line
+
+The statement below, and chapter 3, use `LipschitzWith slope_limit model`
+and the line `{Inputs : Type*} [PseudoMetricSpace Inputs]`. Here is what
+they say.
+
+- **Lipschitz** means the slope never exceeds `slope_limit`. For any two
+  inputs, the outputs differ by at most `slope_limit` times the distance
+  between the inputs. Corners are allowed, so this is not the same as
+  being differentiable.
+- `LipschitzWith slope_limit f` is the Mathlib name for this. The
+  `slope_limit` is a non-negative real number.
+- `Type*` means "a type at any size level, picked by Lean".
+- `[PseudoMetricSpace Inputs]` means "`Inputs` has a distance". That is why
+  the results hold for inputs in 1, 2 or 3 dimensions alike.
+- `max_output_change` below is the slope limit times the gap between two
+  inputs: rise at most slope times run. It is not the slope at a point
+  times the input.
 
 ## If you do read a proof
 
@@ -112,9 +138,9 @@ theorem one_le_slope_mul_dist_of_count
     {count : ℝ}
     (model_at_input : model input = count)
     (model_at_other_input : model other_input = count + 1) :
-    let count_jump           := (1 : ℝ)  -- from `count` to `count + 1`
-    let slope_times_distance := slope_limit * dist input other_input
-    count_jump ≤ slope_times_distance := by
+    let output_change     := (1 : ℝ)  -- from `count` to `count + 1`
+    let max_output_change := slope_limit * dist input other_input
+    output_change ≤ max_output_change := by
 ```
 
 1. What are the three givens in round brackets, in plain words?
@@ -122,7 +148,8 @@ theorem one_le_slope_mul_dist_of_count
 3. If the two inputs are 0.1 apart, how steep must the model be?
 
 **Answers.** (1) The model has slope at most `slope_limit`; it says `count`
-at one input; it says `count + 1` at another. (2) One is at most the slope
+at one input; it says `count + 1` at another. (2) The output change of
+one is at most the largest change the slope allows, which is the slope
 limit times the distance between the two inputs. (3) At least 10.
 
 Previous: [1. Two distances](01-two-distances.md) · Next: [3. Slope](03-slope.md)

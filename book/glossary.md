@@ -17,7 +17,7 @@ introduced.
 | reach | how far you must walk sideways before the curve has passed every label | 4 |
 | covers within | the model hits every label of a range within `reach` of every input | 4 |
 | oscillation scale | the smallest reach that works | 4 |
-| warp | a way to move each input a little | 4 |
+| warp | a way to move each input a little, so that the model read at the moved input equals the target | 1, 4 |
 | random model | a model whose parameters are drawn at random | 5 |
 | marginal | the distribution of the output at one single input | 5 |
 | squeeze | make every wiggle of a function narrower by a factor | 7 |

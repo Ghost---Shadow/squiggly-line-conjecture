@@ -147,9 +147,9 @@ theorem dist_decode_snap_le
     (code : Codes)
     (book : Entries → Codes)
     (entry : Entries) :
-    let output_shift := dist (decoder code) (decoder (book entry))
-    let slope_times_distance := slope_limit * dist code (book entry)
-    output_shift ≤ slope_times_distance := by
+    let output_change := dist (decoder code) (decoder (book entry))
+    let max_output_change := slope_limit * dist code (book entry)
+    output_change ≤ max_output_change := by
   unfold_named_pieces
   exact slope_is_bounded.dist_le_mul _ _
 
@@ -166,9 +166,9 @@ theorem dist_snap_le_of_nearest
     (entry_is_nearest : ∀ other_entry,
       dist code (book nearest_entry) ≤ dist code (book other_entry))
     (other_entry : Entries) :
-    let output_shift := dist (decoder code) (decoder (book nearest_entry))
-    let slope_times_distance := slope_limit * dist code (book other_entry)
-    output_shift ≤ slope_times_distance := by
+    let output_change := dist (decoder code) (decoder (book nearest_entry))
+    let max_output_change := slope_limit * dist code (book other_entry)
+    output_change ≤ max_output_change := by
   unfold_named_pieces
   exact (slope_is_bounded.dist_le_mul _ _).trans
     (mul_le_mul_of_nonneg_left (entry_is_nearest other_entry)

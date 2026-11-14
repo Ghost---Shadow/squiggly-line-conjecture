@@ -31,6 +31,8 @@ than its vertical error. Then `√(1 + slope_limit²)` is at least 100, so
 the slope reaches about 100 somewhere. A curve buys nearness with slope.
 There is no other currency.
 
+![Left: a curve with slope at most the slope limit stays inside a shaded wedge, so the nearest point cannot be closer than the wedge allows. Right: 720 measured points of nearest distance over vertical error, all between the lower bound and 1.](figures/03-slope-sandwich.png)
+
 ## The statement
 
 The right side of the sandwich is the theorem you read in chapter 2. This
@@ -51,7 +53,8 @@ theorem verticalDist_le_of_lipschitz
 
 `LipschitzWith slope_limit model` is how Lean says "the model's slope is
 never more than `slope_limit`": two outputs differ by at most
-`slope_limit` times the distance between their inputs. The claim is the
+`slope_limit` times the distance between their inputs. Chapter 2 explains
+this line and the bracketed `Inputs` line above it. The claim is the
 left side of the sandwich with the square root moved across.
 
 ## Why it is true
@@ -89,6 +92,19 @@ the small lemma `add_mul_le_sqrt_mul_sqrt` just above it.
 This is the most reused theorem in the repository. Eight other files call
 it. Every time a later chapter says "that takes slope", this sandwich is
 the reason.
+
+## Run it yourself
+
+[`ch03_slope_sandwich.ipynb`](../experiments/part1/ch03_slope_sandwich.ipynb)
+measures the sandwich in PyTorch. For straight lines the left side is an
+equality, and the measured gap from it is at most `4e-16`. For 720 trials on 12 random
+sine models of 1, 3, 10 and 30 terms (the slope limit is the sum of
+frequency times the size of the amplitude) and 60 random data points each, both
+sides held every time. The upper side is measured without using the point
+straight above or below the data point as a sample, so it could have
+failed. The picture above is drawn from those 720 points.
+The nearest distance is measured on a fine polyline, so the check allows
+a slack of `3e-4`. This is a measurement. The Lean proof is the proof.
 
 ## Check yourself
 
