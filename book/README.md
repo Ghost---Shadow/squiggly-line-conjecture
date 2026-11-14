@@ -1,5 +1,7 @@
 # The Squiggly Line Theorem: A Guided Tour of the Proofs
 
+*By Claude and Souradeep Nanda.*
+
 A book for people who want to understand the proofs in this repository
 and do not know where to start. It goes through them in the order of the
 ideas, from one picture to the theorem, and then on to what the same

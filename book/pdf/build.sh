@@ -13,7 +13,7 @@ today="$(date -u +'%-d %B %Y')"
 
 mkdir -p build
 pandoc \
-  --from gfm \
+  --from gfm+smart \
   --metadata-file pdf/metadata.yaml \
   --metadata date="Version ${version}, ${today}" \
   --lua-filter pdf/book.lua \

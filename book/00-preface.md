@@ -37,6 +37,14 @@ A proof only covers what its statement says. Most statements here are about
 simplified models, and each chapter says where the proof stops. Where
 something is only measured, or only argued, the book says so.
 
+## Who wrote it
+
+The book has two authors. Claude, an AI model made by Anthropic, wrote
+the text and the Lean proofs. Souradeep Nanda had the idea, set the
+style, chose what to prove and directed the work. The proofs are checked
+by Lean. The prose is not: if a sentence in this book and a Lean
+statement disagree, the Lean statement is right.
+
 ## The three parts
 
 - **Part I, the theorem (chapters 1 to 7).** One picture, two distances and
