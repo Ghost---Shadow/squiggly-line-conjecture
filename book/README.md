@@ -9,6 +9,7 @@ You need to be able to read Python and to remember school mathematics.
 You do not need to know Lean.
 
 - **Read it here:** start with the [preface](00-preface.md).
+- **Read it on the web:** [https://ghost---shadow.github.io/squiggly-line-theorem/](https://ghost---shadow.github.io/squiggly-line-theorem/)
 - **Read it as a PDF:** a PDF is built for every tagged version and
   attached to the
   [release](https://github.com/Ghost---Shadow/squiggly-line-theorem/releases/latest).
@@ -66,4 +67,16 @@ tag starting with `v` is pushed.
 
 ```bash
 bash book/pdf/build.sh
+```
+
+## Building the web version
+
+The web version is made by [`html/build.sh`](html/build.sh) with pandoc and
+the filter [`html/site.lua`](html/site.lua). It writes a static site to
+`book/build/site/`. The `pages` job in
+[`.github/workflows/book.yml`](../.github/workflows/book.yml) builds it and
+publishes it on GitHub Pages whenever a tag starting with `v` is pushed.
+
+```bash
+bash book/html/build.sh
 ```

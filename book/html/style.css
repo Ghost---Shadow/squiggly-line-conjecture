@@ -1,0 +1,90 @@
+:root {
+  --bg: #fdfcf9;
+  --fg: #222222;
+  --muted: #666666;
+  --link: #1a5fb4;
+  --code-bg: #f1efe8;
+  --rule: #d9d6cc;
+  --bar-bg: #f1efe8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --fg: #e4e2dc;
+    --muted: #9a9890;
+    --link: #8ab4f8;
+    --code-bg: #232528;
+    --rule: #3a3c40;
+    --bar-bg: #202225;
+  }
+}
+html { background: var(--bg); }
+body {
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+.topbar {
+  background: var(--bar-bg);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.7rem 1rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.95rem;
+}
+.topbar a { color: var(--fg); text-decoration: none; font-weight: 600; }
+body > :not(.topbar) {
+  max-width: 46rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+}
+body > .topbar + * { margin-top: 1.5rem; }
+a { color: var(--link); }
+h1, h2, h3, h4 { line-height: 1.25; margin-top: 2rem; }
+h1 { font-size: 2rem; margin-top: 0; }
+img { max-width: 100%; height: auto; }
+pre {
+  background: var(--code-bg);
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+code {
+  background: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+pre code { background: none; padding: 0; overflow-wrap: normal; }
+table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+th, td { border: 1px solid var(--rule); padding: 0.35rem 0.6rem; text-align: left; }
+blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+}
+.footer {
+  color: var(--muted);
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid var(--rule);
+}

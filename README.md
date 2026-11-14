@@ -13,7 +13,9 @@ turned out to be true.
 **New to the proofs? Start with the book.**
 [A Guided Tour of the Proofs](book/README.md) goes through them chapter by
 chapter, in the order of the ideas, for a reader who knows Python and
-school mathematics and no Lean. A PDF is attached to every
+school mathematics and no Lean. You can also
+[read it on the web](https://ghost---shadow.github.io/squiggly-line-theorem/).
+A PDF is attached to every
 [release](https://github.com/Ghost---Shadow/squiggly-line-theorem/releases/latest).
 
 **What it connects to.** The tools behind the theorem also give short,
