@@ -5,7 +5,7 @@ A radial basis network is a sum of Gaussian bumps of one width. A bump of
 width `width` is the unit bump squeezed sideways by `1 / width`, so the
 squiggly line theorem for squeezed functions applies with `1 / width` in the
 place of the frequency: narrow bumps reach every label and are steep, wide
-bumps are gentle and cannot reach.
+bumps of modest height are gentle and cannot reach.
 
 Definitions:
 

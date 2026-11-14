@@ -70,6 +70,62 @@ Training, depth, time and noise are one calculation. Skip connections,
 open gates and normalisation (chapter 14) are all ways to hold the
 factor at one.
 
+## Run it yourself
+
+[`ch13_one_factor.ipynb`](../experiments/part3/ch13_one_factor.ipynb) checks the
+rows of the first table and one row of the second on a model that is linear in
+its weights (a Fourier series, 21 weights, 60 random inputs, each column scaled
+by its frequency so the strengths run from 1.20 down to 0.0034). All numbers
+below are **measured**. An experiment is evidence, not a proof.
+
+![Each direction fades on its own clock](figures/13-own-clocks.png)
+
+- **Own clocks.** The error along every kernel direction after 1, 5, 50 and 400
+  steps equals the factor to the power of the step count, to `6e-15`. The steps
+  to remove 90 percent run from 3.3 for the strongest direction to 1622 for the
+  weakest, and never decrease as strength falls.
+- **Early stopping.** With a smooth signal plus noise, the error against the
+  clean signal is lowest at step 38 (0.132) and ends at 0.243 after 20 000
+  steps. At step 38 the strongest direction is learned to over 99 percent and
+  the weakest five to between 5 and 15 percent.
+- **The largest rate.** Along the strongest direction, learning rate times
+  strength 1.9 leaves 0.0018 of the error after 60 steps, 2.0 leaves exactly 1,
+  and 2.1 grows it to 304.5. Each equals the factor to the power 60.
+
+![Below 2 the error shrinks, at 2 it holds, above 2 it grows](figures/13-edge-of-stability.png)
+
+- **Decay and stopping.** Ridge leaves the share `decay / (strength + decay)`
+  to `2e-14`. After 10, 100 and 1000 steps, at decay `1 / (learning_rate ×
+  steps)`, the share left stopped is below both `1 / (1 + steps × rate ×
+  strength)` and the ridge share in every direction. The closest it comes is
+  ratio 1.000 to the ridge share at 10 steps (the bound is nearly tight there)
+  and 0.585 at 1000. A decay ten times smaller leaves less than stopping in some
+  direction.
+- **Schedules.** A random schedule and a decaying one of 50 steps each leave the
+  product of their factors, to `6e-15`. Using only the mean rate misses by
+  0.0011 and 0.0024.
+- **Two batches.** Two steps on two batches of 30 points equal one step on both
+  minus the stated term, to rounding. The gap between them has log-log slope
+  2.00 against the learning rate over `1e-5` to `1e-2`.
+- **The sign rule.** In runs whose strengths differ by a factor of 10 000, the
+  largest gap falls by exactly 0.0100 per step at learning rate 0.01. One plain
+  gradient step on the strongest direction leaves 0.4999, 0.4940 and 0.0989 of 0.5.
+- **Layers.** Fifty orthogonal layers of gain 0.8, 1.0 and 1.2 turn a signal of
+  length 1 into `1.4e-5`, 1 and 9100, which is the gain to the power 50 for every
+  signal. Random layers that are not orthogonal do not give one factor: the
+  spread of the log-length is 0.88.
+
+![A signal dies, holds or explodes](figures/13-gain-through-layers.png)
+
+Not run: the rows on badly scaled problems, flat minima, Adam beyond the sign
+rule, and the other rows of the second table.
+
+Run it with:
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace experiments/part3/ch13_one_factor.ipynb
+```
+
 ## What is not shown
 
 All of this is for a fixed kernel. Real networks change their features

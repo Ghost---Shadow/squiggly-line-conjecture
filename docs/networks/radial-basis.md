@@ -105,8 +105,10 @@ same factor. For sines the dial was the frequency. For a radial basis
 network the dial is `1 / width`. A bump is a squeezed unit bump, in the
 exact sense of [`Compression.lean`](../../lean/SquigglyLine/Theorem/Compression.lean).
 
-Narrow bumps reach every label and are steep. Wide bumps are gentle and
-cannot reach. Nothing else is traded.
+Narrow bumps reach every label and are steep. Wide bumps of modest height
+are gentle and cannot reach. Wide bumps can still fit any labels, but only
+with very large heights (**measured**: `experiments/part2/ch11_the_lift.ipynb`).
+Nothing else is traded.
 
 ## What is not shown
 

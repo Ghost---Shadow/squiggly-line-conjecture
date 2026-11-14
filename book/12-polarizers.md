@@ -57,6 +57,10 @@ arrives pointing up, and it keeps at least `1 − PI² / (8 × plate_count)`
 of its strength.* With 10 plates that is at least 87%. With 100, at
 least 98.7%.
 
+**Measured**, from the notebook below:
+
+![Fraction of the light kept in a quarter turn against the number of plates](figures/12-quarter-turn.png)
+
 ## Why it matters for networks
 
 - **Depth is affordable.** A deep stack of layers that each turn the
@@ -80,6 +84,41 @@ depend only on the current ones. For tight features (chapter 9) the
 outer chain is the one-factor rule of chapter 10: after `step_count`
 steps the error is `(1 − learning_rate × squared_length) ^ step_count`
 times what it was (`HAS_TIGHT_FEATURES.residual_iterate_gradientStep`).
+
+## Run it yourself
+
+[`ch12_polarizers.ipynb`](../experiments/part2/ch12_polarizers.ipynb) checks the
+six claims on exact small models: ReLU on the plane, polarizers as 2 by 2
+projection matrices, random layers on a finite set of states, and a linear model
+with tight features. All numbers below are **measured**. An experiment is
+evidence, not a proof.
+
+- **ReLU is a projection.** For 200 random points, the ReLU point is no further
+  than any of 90 000 grid points of the quadrant (largest excess `4e-16`), and
+  the best grid point is within 0.006 of it.
+- **Malus's law.** At 721 angles and three amplitudes the passed length matches
+  `amplitude × cos(angle)` to `2e-15`. A crossed plate passes `6e-17`, which is
+  nothing.
+- **Three polarizers.** 90° alone passes 0. 45° then 90° passes 0.500000.
+- **Many small turns.** For 2 to 300 plates the light arrives pointing up with
+  length `cos(turn_angle) ^ plate_count`, and the bound `1 − PI² / (8 × plate_count)`
+  holds every time. Kept against bound: 0.5000 against 0.3831 at 2 plates, 0.8835
+  against 0.8766 at 10, and 0.9877 against 0.9877 at 100 (the gap is 0.00008).
+- **No memory.** Over 300 random stacks of 12 layers on 30 states, 311 390 merged
+  pairs stayed merged (0 broken), and a state every layer fixes never moved.
+  Controls: 530 138 pairs that were apart did merge later, and without the fixing
+  state 0 moved in 293 of 300 stacks.
+- **A chain of chains.** With tight features (8 points, 40 weights, squared
+  length 5) the residual after 20 steps matches
+  `(1 − learning_rate × squared_length) ^ step_count` times the start to `2e-15`
+  for four learning rates, and one step with the rate one over `squared_length`
+  leaves `9e-16`. With rows of different lengths the law fails (gap 0.17).
+
+Run it with
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace experiments/part2/ch12_polarizers.ipynb
+```
 
 ## What is not shown
 

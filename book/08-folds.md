@@ -47,6 +47,8 @@ layers draw four straight pieces. In general `layer_count` layers draw
 `2 ^ layer_count` pieces with `2 × layer_count` neurons. The turns are
 multiplied by depth and only added by width.
 
+![Tent layers drawing 2, 4, 8 and 16 pieces](figures/08-tent-zigzag.png)
+
 ## Folding is squeezing
 
 Each fold halves the reach of chapter 4. After `layer_count` folds every
@@ -71,7 +73,11 @@ network that many layers deep. `Set.Icc 0 1` is the interval from 0 to 1.
 
 So for this family the conjecture's chain "more layers, squigglier,
 closer" holds, at an exponential rate. Ten layers pass within a
-thousandth of every point. And by chapter 3 the price is slope: each fold
+thousandth of every point.
+
+![Largest distance to the curve against the number of tent layers](figures/08-tent-closer.png)
+
+And by chapter 3 the price is slope: each fold
 doubles it.
 
 ## Depth is the logarithm of frequency
@@ -96,11 +102,52 @@ unit interval with that slope
 ([`UniversalApproximation.lean`](../lean/SquigglyLine/Supporting/NetworkShape/UniversalApproximation.lean)).
 The cost in neurons goes as slope over error. Slope again.
 
+## Run it yourself
+
+[`ch08_folds.ipynb`](../experiments/part2/ch08_folds.ipynb) checks the claims on
+ReLU networks: a one-neuron chain, the tent layer, and random networks. All
+numbers below are **measured**. An experiment is evidence, not a proof.
+
+- **No turns.** 10000 random one-neuron chains, depth 1 to 40, were all
+  monotone (644 were not constant). Control: random networks with two neurons
+  per layer turned in 104 of 250 draws.
+- **Zigzag.** For 1 to 12 tent layers the output on the grid `k / 2 ^ layer_count`
+  is exactly 0, 1, 0, 1, and the curve has `2 ^ layer_count` pieces (4096 for
+  12 layers, with 24 neurons).
+- **Closeness.** The exact distance from 4004 random points of the unit square
+  to the curve, never clamped, stayed within `1 / 2 ^ layer_count` for 1 to 10
+  layers. The largest distance reaches 0.89, 0.97 and 0.99 of the bound for 1,
+  2 and 3 layers, and about 1.00 of it from 4 layers on, so the bound is tight.
+  Control: the unfolded line `output = input` has a point 0.71 away.
+- **Doubling.** `sin²(PI/2 × tent^n(input))` equals `sin²(2^n × PI/2 × input)`
+  to `1e-13` for 1 to 10 folds. It fails for negative inputs, as the hypothesis
+  says.
+- **Random weights.** The arc length of the curve on [-1, 1], averaged over 60
+  networks. **Width** is flat: from width 8 to width 512 it changes by -4% to
+  +3% (about 2.6 to 2.9 in every setting). **Depth** does not bear the
+  chapter's sentence out. With He scaling of the weights, depth 1 to 16 at
+  width 32 changed the length by -14%, -3% and -11% at bias scales 0, 0.5 and 1:
+  no growth. With weights 1.5 times He's variance it grows, and not "a little":
+  from 3.0 at depth 1 to 27 at depth 16.
+
+![Arc length of random networks against width and depth](figures/08-random-arc-length.png)
+
+To run it:
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace experiments/part2/ch08_folds.ipynb
+```
+
 ## What is not shown
 
 The weights of the tent are **chosen**. A network with **random** weights
-is another matter. Measured: with random weights, more width does not
-make the curve longer, and more depth makes it a little longer. Nothing
+is another matter. **Measured**: with random weights, more width does
+not make the curve longer. What depth does turns on the scale of the
+weights. At the standard scale the notebook above finds no growth from 1
+to 16 layers. With weights of one and a half times that variance the
+curve grows about ninefold. An older script in this repository, with a
+different setup, found a modest growth. So "depth makes a random network
+squigglier" is not a safe sentence without naming the scale. Nothing
 about random weights is proved here.
 
 ## Check yourself
