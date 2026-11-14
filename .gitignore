@@ -543,3 +543,5 @@ lean/port-log/
 
 # the book, built
 book/build/
+
+scratch
