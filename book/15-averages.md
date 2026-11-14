@@ -8,6 +8,7 @@
 [`Temperature.lean`](../lean/SquigglyLine/Supporting/NetworkShape/Temperature.lean),
 [`Neighbours.lean`](../lean/SquigglyLine/Supporting/NewInputs/Neighbours.lean).
 **You need:** chapters 10, 11 and 14.
+**The proofs, one by one:** part VI, chapters 36 to 41.
 
 ## The idea
 

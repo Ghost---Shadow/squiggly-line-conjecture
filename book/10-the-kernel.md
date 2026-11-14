@@ -123,7 +123,7 @@ able is safe again. That is double descent.
 - **A kernel that moves.** Everything here is for fixed features. In a
   real network the features change as it trains, and the kernel changes
   with them. This is the main limit of the whole repository, and
-  chapter 17 says more.
+  chapter 47 says more.
 
 ## Check yourself
 

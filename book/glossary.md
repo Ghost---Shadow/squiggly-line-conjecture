@@ -74,4 +74,4 @@ introduced.
 The names of older definitions, for readers who come from the paper, are
 listed in [`lean/RENAMES.txt`](../lean/RENAMES.txt).
 
-Previous: [17. What is not here](17-what-is-not-here.md) · Next: [How to cite this book](how-to-cite.md)
+Previous: [47. What is not here](47-what-is-not-here.md) · Next: [How to cite this book](how-to-cite.md)

@@ -5,6 +5,7 @@
 with notes in
 [`docs/supporting/new-inputs/`](../docs/supporting/new-inputs).
 **You need:** chapters 9 and 10.
+**The proofs, one by one:** part VII, chapters 42 to 46.
 
 ## The idea
 
@@ -75,4 +76,4 @@ The old errors change only through the kernel between the two tasks,
 and that is zero. (3) Not in general. It can fit arbitrary labels on at
 most 50 points.
 
-Previous: [15. Averages](15-averages.md) · Next: [17. What is not here](17-what-is-not-here.md)
+Previous: [15. Averages](15-averages.md) · Next: [17. The shortest trip](17-the-shortest-trip.md)

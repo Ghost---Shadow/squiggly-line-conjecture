@@ -5,6 +5,7 @@
 with notes in
 [`docs/supporting/network-shape/`](../docs/supporting/network-shape).
 **You need:** chapters 3 and 7.
+**The proofs, one by one:** part V, chapters 28 to 35.
 
 ## The idea
 

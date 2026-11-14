@@ -1,4 +1,4 @@
-# 17. What is not here
+# 47. What is not here
 
 **In the repository:**
 [`docs/wishlist.md`](../docs/wishlist.md),
@@ -74,4 +74,4 @@ or assume more than is reasonable. That is the kind of mistake to look
 for, and reading statements closely is how to find it. If you find one,
 open an issue on the repository.
 
-Previous: [16. New inputs](16-new-inputs.md) · Next: [Glossary](glossary.md)
+Previous: [46. The dimpled manifold](46-the-dimpled-manifold.md) · Next: [Glossary](glossary.md)

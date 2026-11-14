@@ -63,7 +63,7 @@ The names in capitals are functions and constants. Functions are verbs:
 | # | Claim | What happens to it |
 |---|---|---|
 | 1 | **Geometry.** A squigglier curve has a smaller nearest distance. | True. Chapters 4, 6 and 7. |
-| 2 | **Parameters.** More parameters give a squigglier curve. | Mixed. True for depth, chapter 8. Open for random weights, chapter 17. |
+| 2 | **Parameters.** More parameters give a squigglier curve. | Mixed. True for depth, chapter 8. Open for random weights, chapter 47. |
 | 3 | **Learning.** A smaller nearest distance means a smaller loss at the start. | False. Chapter 5. |
 
 So the picture is right and the conclusion is wrong. The nearness is real,

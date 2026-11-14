@@ -6,6 +6,9 @@ results paper by paper. The theorem and its proofs are in the
 [README](../README.md#7-the-proofs). What is not proved yet is in
 [`wishlist.md`](wishlist.md).
 
+For a gentle tour of these results, one topic per chapter and in the
+order to read them, see parts IV to VII of [the book](../book/README.md).
+
 ## By topic
 
 Nothing in this section is needed for the theorem. It is the same handful of

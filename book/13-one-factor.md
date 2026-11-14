@@ -4,9 +4,11 @@
 [`Supporting/Training/`](../lean/SquigglyLine/Supporting/Training), with
 notes in [`docs/supporting/training/`](../docs/supporting/training).
 **You need:** chapter 10.
+**The proofs, one by one:** part IV, chapters 17 to 27.
 
 Part III takes the tools of the first two parts and points them at
-well-known results of deep learning. Nothing here is needed for the
+well-known results of deep learning. It is a map: four short chapters.
+Parts IV to VII then go over the same ground one proof at a time. Nothing here is needed for the
 theorem. Every statement is for a simplified model, most often one with a
 fixed kernel, and each linked note says what it does not show.
 

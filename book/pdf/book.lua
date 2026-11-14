@@ -16,7 +16,12 @@ local REPOSITORY =
 local PART_BEFORE_CHAPTER = {
   ["1."] = "The theorem",
   ["8."] = "Networks",
-  ["13."] = "The same tools elsewhere",
+  ["13."] = "The same tools elsewhere: a map",
+  ["17."] = "Training, proof by proof",
+  ["28."] = "Architecture, proof by proof",
+  ["36."] = "Averages, proof by proof",
+  ["42."] = "New inputs, proof by proof",
+  ["47."] = "Where the proofs stop",
 }
 
 local function to_repository_url(target)

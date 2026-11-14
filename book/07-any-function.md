@@ -110,7 +110,7 @@ no better in loss.
 The theorem says what squeezing does. It does not say how squiggly a
 network with **random** weights is to begin with, which is the `reach` of
 such a network as it grows. That is the open half of claim 2 of chapter
-1. See chapter 17.
+1. See chapter 47.
 
 ## Check yourself
 
